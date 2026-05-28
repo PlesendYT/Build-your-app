@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Kontakt</h2>
+{% if sent %}
+<div class="success">Nachricht gesendet!</div>
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_name">Name</label>
+        {{ form.name }}
+    </div>
+    <div class="form-group">
+        <label for="id_email">E-Mail</label>
+        {{ form.email }}
+    </div>
+    <div class="form-group">
+        <label for="id_message">Nachricht</label>
+        {{ form.message }}
+    </div>
+    <button type="submit" class="btn">Senden</button>
+</form>
+{% endif %}
+{% endblock %}

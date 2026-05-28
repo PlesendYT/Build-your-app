@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Game.GamePage"
+             Title="2D Game">
+
+    <Grid>
+        <GraphicsView x:Name="GameCanvas"
+                       HeightRequest="600"
+                       WidthRequest="400"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+    </Grid>
+
+</ContentPage>

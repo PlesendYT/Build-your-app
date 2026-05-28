@@ -1,0 +1,135 @@
+-- Procedural dungeon generator for Defold roguelike
+go.property("tile_size", 64)
+go.property("grid_width", 40)
+go.property("grid_height", 30)
+
+local TILE = {
+    WALL = 1,
+    FLOOR = 2,
+    CORRIDOR = 3,
+}
+
+local grid = {}
+local rooms = {}
+local dungeon_level = 1
+
+function init(self)
+    generate_dungeon(self)
+    build_tilemap(self)
+end
+
+function generate_dungeon(self)
+    -- Initialize grid with walls
+    grid = {}
+    for x = 1, self.grid_width do
+        grid[x] = {}
+        for y = 1, self.grid_height do
+            grid[x][y] = TILE.WALL
+        end
+    end
+
+    rooms = {}
+
+    -- Place rooms
+    local max_rooms = 10
+    local min_size = 4
+    local max_size = 8
+
+    for attempt = 1, 50 do
+        local w = math.random(min_size, max_size)
+        local h = math.random(min_size, max_size)
+        local rx = math.random(1, self.grid_width - w - 1)
+        local ry = math.random(1, self.grid_height - h - 1)
+
+        local overlap = false
+        for _, room in ipairs(rooms) do
+            if rects_overlap(rx - 1, ry - 1, rx + w + 1, ry + h + 1,
+                             room.x, room.y, room.x + room.w, room.y + room.h) then
+                overlap = true
+                break
+            end
+        end
+
+        if not overlap then
+            table.insert(rooms, { x = rx, y = ry, w = w, h = h })
+            carve_room(rx, ry, w, h)
+        end
+    end
+
+    -- Connect rooms with corridors
+    for i = 2, #rooms do
+        local a = rooms[i - 1]
+        local b = rooms[i]
+        local ax = a.x + math.floor(a.w / 2)
+        local ay = a.y + math.floor(a.h / 2)
+        local bx = b.x + math.floor(b.w / 2)
+        local by = b.y + math.floor(b.h / 2)
+
+        carve_h_corridor(ax, bx, ay)
+        carve_v_corridor(ay, by, bx)
+    end
+end
+
+function carve_room(x, y, w, h)
+    for dx = 0, w - 1 do
+        for dy = 0, h - 1 do
+            grid[x + dx][y + dy] = TILE.FLOOR
+        end
+    end
+end
+
+function carve_h_corridor(x1, x2, y)
+    for x = math.min(x1, x2), math.max(x1, x2) do
+        grid[x][y] = TILE.CORRIDOR
+        grid[x][y + 1] = TILE.CORRIDOR
+    end
+end
+
+function carve_v_corridor(y1, y2, x)
+    for y = math.min(y1, y2), math.max(y1, y2) do
+        grid[x][y] = TILE.CORRIDOR
+        grid[x + 1][y] = TILE.CORRIDOR
+    end
+end
+
+function rects_overlap(x1, y1, x2, y2, x3, y3, x4, y4)
+    return x1 < x4 and x2 > x3 and y1 < y4 and y2 > y3
+end
+
+function build_tilemap(self)
+    -- Place player in first room
+    if #rooms > 0 then
+        local room = rooms[1]
+        local px = (room.x + math.floor(room.w / 2)) * self.tile_size
+        local py = (room.y + math.floor(room.h / 2)) * self.tile_size
+        msg.post("main:/player", "set_position", { x = px, y = py })
+    end
+
+    -- Send grid data to renderer
+    msg.post("#renderer", "build_map", { grid = grid, tile_size = self.tile_size })
+end
+
+function get_floor_positions(self)
+    local positions = {}
+    for x = 1, self.grid_width do
+        for y = 1, self.grid_height do
+            if grid[x][y] == TILE.FLOOR or grid[x][y] == TILE.CORRIDOR then
+                table.insert(positions, { x = x, y = y })
+            end
+        end
+    end
+    return positions
+end
+
+function get_random_floor(self)
+    local positions = get_floor_positions(self)
+    if #positions > 0 then
+        return positions[math.random(#positions)]
+    end
+    return { x = 5, y = 5 }
+end
+
+function is_walkable(self, gx, gy)
+    if gx < 1 or gx > self.grid_width or gy < 1 or gy > self.grid_height then return false end
+    return grid[gx][gy] ~= TILE.WALL
+end

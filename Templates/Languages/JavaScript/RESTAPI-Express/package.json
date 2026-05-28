@@ -1,0 +1,14 @@
+{
+  "name": "restapi-express",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Express.js REST API template",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^5.0.0"
+  }
+}

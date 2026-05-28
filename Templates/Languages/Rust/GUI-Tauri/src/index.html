@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head><meta charset="UTF-8"><title>Tauri App</title></head>
+<body>
+  <h1>Tauri App</h1>
+  <input id="name" placeholder="Enter name" />
+  <button onclick="greet()">Greet</button>
+  <p id="output"></p>
+  <script>
+    async function greet() {
+      const name = document.getElementById('name').value;
+      const { greet } = window.__TAURI__.invoke;
+      const msg = await greet(name);
+      document.getElementById('output').textContent = msg;
+    }
+  </script>
+</body>
+</html>

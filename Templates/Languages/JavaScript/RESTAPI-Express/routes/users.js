@@ -1,0 +1,53 @@
+import { Router } from 'express';
+
+const router = Router();
+
+// In-Memory-Daten
+const users = [
+  { id: 1, name: 'Alice', email: 'alice@example.com' },
+  { id: 2, name: 'Bob',   email: 'bob@example.com' },
+];
+let nextId = 3;
+
+// GET /api/users
+router.get('/', (_req, res) => {
+  res.json(users);
+});
+
+// GET /api/users/:id
+router.get('/:id', (req, res) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json(user);
+});
+
+// POST /api/users
+router.post('/', (req, res) => {
+  const { name, email } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ error: 'name and email are required' });
+  }
+  const user = { id: nextId++, name, email };
+  users.push(user);
+  res.status(201).json(user);
+});
+
+// PUT /api/users/:id
+router.put('/:id', (req, res) => {
+  const user = users.find(u => u.id === parseInt(req.params.id));
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  const { name, email } = req.body;
+  if (name)  user.name = name;
+  if (email) user.email = email;
+  res.json(user);
+});
+
+// DELETE /api/users/:id
+router.delete('/:id', (req, res) => {
+  const idx = users.findIndex(u => u.id === parseInt(req.params.id));
+  if (idx === -1) return res.status(404).json({ error: 'User not found' });
+  users.splice(idx, 1);
+  res.status(204).end();
+});
+
+export default router;

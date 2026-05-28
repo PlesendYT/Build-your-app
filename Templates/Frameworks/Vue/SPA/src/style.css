@@ -1,0 +1,13 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; background: #f0f2f5; color: #333; }
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+.header { background: #fff; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.logo { font-size: 1.5rem; color: #42b883; }
+.nav { display: flex; gap: 1rem; }
+.nav a { text-decoration: none; color: #333; padding: 0.5rem 1rem; border-radius: 6px; transition: background 0.2s; }
+.nav a:hover { background: #f0f0f0; }
+.main { flex: 1; padding: 2rem; max-width: 800px; margin: 0 auto; width: 100%; }
+.page { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.page h2 { margin-bottom: 1rem; color: #42b883; }
+.home-page { text-align: center; padding: 4rem 2rem; }
+.home-page h2 { font-size: 2rem; }

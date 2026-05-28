@@ -1,0 +1,13 @@
+{
+  "name": "cli-node",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Node.js CLI tool template",
+  "bin": {
+    "cli-node": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Popup</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; width: 250px; padding: 1rem; }
+    h1 { font-size: 1.2rem; margin-bottom: 1rem; }
+    p { margin-bottom: 0.5rem; }
+    button { background: #4a90d9; color: #fff; border: none; border-radius: 0.25rem; padding: 0.5rem; cursor: pointer; width: 100%; }
+    button:hover { background: #357abd; }
+    #count { font-weight: bold; font-size: 1.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Browser Extension</h1>
+  <p>Count: <span id="count">0</span></p>
+  <button id="increment">Increment</button>
+  <script src="popup.js"></script>
+</body>
+</html>

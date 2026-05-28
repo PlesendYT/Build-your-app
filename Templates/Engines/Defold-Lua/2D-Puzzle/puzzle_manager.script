@@ -1,0 +1,163 @@
+-- Puzzle manager for Defold puzzle game
+go.property("tile_size", 64)
+
+local grid = {}
+local player_pos = { x = 1, y = 1 }
+local current_level = 0
+local move_count = 0
+
+-- Level definitions (0=empty, 1=wall, 2=player start, 3=block, 4=goal)
+local levels = {
+    {
+        {1, 1, 1, 1, 1},
+        {1, 2, 0, 0, 1},
+        {1, 0, 3, 4, 1},
+        {1, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1},
+    },
+    {
+        {1, 1, 1, 1, 1, 1},
+        {1, 2, 0, 0, 0, 1},
+        {1, 0, 3, 0, 3, 1},
+        {1, 0, 0, 4, 0, 1},
+        {1, 0, 0, 4, 0, 1},
+        {1, 1, 1, 1, 1, 1},
+    }
+}
+
+function init(self)
+    load_level(current_level)
+end
+
+function load_level(self, index)
+    local level_data = levels[index + 1]
+    if not level_data then
+        msg.post("main:/game_manager", "game_complete")
+        return
+    end
+
+    grid = {}
+    move_count = 0
+
+    for y, row in ipairs(level_data) do
+        grid[y] = {}
+        for x, cell in ipairs(row) do
+            grid[y][x] = cell
+            if cell == 2 then
+                player_pos = { x = x, y = y }
+                grid[y][x] = 0
+            end
+        end
+    end
+
+    rebuild_scene(self)
+end
+
+function rebuild_scene(self)
+    -- Clear old tiles (simplified - in practice, delete children)
+    msg.post("#walls", "clear")
+    msg.post("#blocks", "clear")
+
+    for y, row in ipairs(grid) do
+        for x, cell in ipairs(row) do
+            local px = (x - 1) * self.tile_size + self.tile_size / 2
+            local py = (y - 1) * self.tile_size + self.tile_size / 2
+
+            if cell == 1 then
+                -- Wall
+                local wall = factory.create("#wall_factory", vmath.vector3(px, py, 0))
+                msg.post(wall, "set_position", { position = vmath.vector3(px, py, 0) })
+            elseif cell == 3 then
+                -- Block
+                local block = factory.create("#block_factory", vmath.vector3(px, py, 0))
+            elseif cell == 4 then
+                -- Goal
+                local goal = factory.create("#goal_factory", vmath.vector3(px, py, 0))
+            end
+        end
+    end
+
+    -- Place player
+    local px = (player_pos.x - 1) * self.tile_size + self.tile_size / 2
+    local py = (player_pos.y - 1) * self.tile_size + self.tile_size / 2
+    go.set_position(vmath.vector3(px, py, 0))
+end
+
+function move_player(self, dx, dy)
+    local new_x = player_pos.x + dx
+    local new_y = player_pos.y + dy
+
+    -- Bounds check
+    if new_y < 1 or new_y > #grid or new_x < 1 or new_x > #grid[1] then return false end
+
+    -- Wall check
+    if grid[new_y][new_x] == 1 then return false end
+
+    -- Block check
+    if grid[new_y][new_x] == 3 then
+        local push_x = new_x + dx
+        local push_y = new_y + dy
+
+        if push_y < 1 or push_y > #grid or push_x < 1 or push_x > #grid[1] then return false end
+
+        if grid[push_y][push_x] ~= 0 and grid[push_y][push_x] ~= 4 then return false end
+
+        -- Update grid
+        grid[new_y][new_x] = 0
+        grid[push_y][push_x] = 3
+
+        -- Move block visual (find block at new_x, new_y - simplified)
+        msg.post("#blocks", "move_block", { from_x = new_x, from_y = new_y, to_x = push_x, to_y = push_y })
+    end
+
+    -- Move player
+    player_pos.x = new_x
+    player_pos.y = new_y
+    move_count = move_count + 1
+
+    local px = (new_x - 1) * self.tile_size + self.tile_size / 2
+    local py = (new_y - 1) * self.tile_size + self.tile_size / 2
+    go.set_position(vmath.vector3(px, py, 0))
+
+    check_win(self)
+    return true
+end
+
+function check_win(self)
+    local blocks_on_goals = 0
+    local total_blocks = 0
+
+    for y, row in ipairs(grid) do
+        for x, cell in ipairs(row) do
+            if cell == 3 then
+                total_blocks = total_blocks + 1
+                -- Check if goal exists at this position in original level
+                local level_data = levels[current_level + 1]
+                if level_data and level_data[y] and level_data[y][x] == 4 then
+                    blocks_on_goals = blocks_on_goals + 1
+                end
+            end
+        end
+    end
+
+    if total_blocks > 0 and blocks_on_goals == total_blocks then
+        current_level = current_level + 1
+        load_level(self, current_level)
+    end
+end
+
+function on_input(self, action_id, action)
+    if action.pressed then
+        if action_id == hash("up") or action_id == hash("W") then
+            move_player(self, 0, -1)
+        elseif action_id == hash("down") or action_id == hash("S") then
+            move_player(self, 0, 1)
+        elseif action_id == hash("left") or action_id == hash("A") then
+            move_player(self, -1, 0)
+        elseif action_id == hash("right") or action_id == hash("D") then
+            move_player(self, 1, 0)
+        elseif action_id == hash("R") or action_id == hash("r") then
+            load_level(self, current_level)
+        end
+    end
+end

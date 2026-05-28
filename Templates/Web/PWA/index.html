@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Notes</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>📝 PWA Notes</h1>
+    <button id="installBtn" class="hidden btn">Install App</button>
+  </header>
+
+  <main>
+    <form id="noteForm">
+      <input type="text" id="noteInput" placeholder="Enter a note..." required>
+      <button type="submit" class="btn">Add Note</button>
+    </form>
+    <ul id="noteList"></ul>
+  </main>
+
+  <footer>
+    <p>Offline-ready Progressive Web App</p>
+  </footer>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

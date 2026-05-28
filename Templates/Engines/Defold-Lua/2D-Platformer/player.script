@@ -1,0 +1,93 @@
+-- Player controller for Defold platformer
+go.property("speed", 300)
+go.property("jump_height", -600)
+go.property("hp", 3)
+
+local gravity = -2000
+local velocity = vmath.vector3()
+local grounded = false
+local double_jump = true
+local can_double_jump = false
+
+function init(self)
+    msg.post(".", "acquire_input_focus")
+    velocity = vmath.vector3()
+    grounded = false
+    can_double_jump = true
+end
+
+function update(self, dt)
+    -- Apply gravity
+    velocity.y = velocity.y + gravity * dt
+
+    -- Move
+    local pos = go.get_position()
+    pos.x = pos.x + velocity.x * dt
+    pos.y = pos.y + velocity.y * dt
+    go.set_position(pos)
+
+    -- Ground check
+    grounded = false
+    local contact = physics.raycast(pos, pos + vmath.vector3(0, -2, 0), nil, "ground")
+    if contact then
+        grounded = true
+        velocity.y = 0
+        can_double_jump = true
+    end
+
+    -- Animation state
+    if grounded then
+        if math.abs(velocity.x) > 10 then
+            msg.post("#sprite", "play_animation", { id = hash("run") })
+        else
+            msg.post("#sprite", "play_animation", { id = hash("idle") })
+        end
+    else
+        if velocity.y > 0 then
+            msg.post("#sprite", "play_animation", { id = hash("jump") })
+        else
+            msg.post("#sprite", "play_animation", { id = hash("fall") })
+        end
+    end
+end
+
+function on_input(self, action_id, action)
+    if action_id == hash("left") or action_id == hash("A") then
+        if action.pressed or action.repeated then
+            velocity.x = -self.speed
+            go.set_scale(vmath.vector3(-1, 1, 1), "#sprite")
+        elseif action.released then
+            velocity.x = 0
+        end
+    elseif action_id == hash("right") or action_id == hash("D") then
+        if action.pressed or action.repeated then
+            velocity.x = self.speed
+            go.set_scale(vmath.vector3(1, 1, 1), "#sprite")
+        elseif action.released then
+            velocity.x = 0
+        end
+    elseif action_id == hash("space") or action_id == hash("W") or action_id == hash("up") then
+        if action.pressed then
+            if grounded then
+                velocity.y = self.jump_height
+                grounded = false
+            elseif can_double_jump then
+                velocity.y = self.jump_height * 0.75
+                can_double_jump = false
+            end
+        end
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("take_damage") then
+        self.hp = self.hp - 1
+        msg.post("#sprite", "flash")
+        if self.hp <= 0 then
+            msg.post("main:/game_manager", "player_died")
+            go.delete()
+        end
+    elseif message_id == hash("collect_coin") then
+        msg.post("main:/game_manager", "add_score", { amount = 10 })
+    end
+end

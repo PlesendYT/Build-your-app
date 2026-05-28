@@ -1,0 +1,28 @@
+#:kivy 2.2
+
+<MainLayout>
+    orientation: "vertical"
+    padding: 40
+    spacing: 20
+
+    Label:
+        text: "Welcome to Kivy!"
+        font_size: "24sp"
+        size_hint_y: 0.3
+
+    TextInput:
+        id: name_input
+        hint_text: "Enter your name"
+        multiline: False
+        size_hint_y: 0.2
+
+    Button:
+        text: "Greet"
+        size_hint_y: 0.2
+        on_release: app.root.greet(name_input.text)
+
+    Label:
+        id: result_label
+        text: ""
+        font_size: "18sp"
+        size_hint_y: 0.3

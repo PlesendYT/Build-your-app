@@ -1,0 +1,28 @@
+-- Pushable block script for Defold puzzle game
+go.property("grid_x", 0)
+go.property("grid_y", 0)
+
+local target_position = nil
+
+function init(self)
+    target_position = go.get_position()
+end
+
+function update(self, dt)
+    if target_position then
+        local current = go.get_position()
+        local diff = target_position - current
+        if vmath.length(diff) > 1 then
+            go.set_position(current + diff * 10 * dt)
+        else
+            go.set_position(target_position)
+            target_position = nil
+        end
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("move_to") then
+        target_position = vmath.vector3(message.x, message.y, 0)
+    end
+end

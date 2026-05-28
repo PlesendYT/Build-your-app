@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="hero">
+    <h2>Willkommen bei DjangoApp</h2>
+    <p>Moderne Django-Anwendung mit Class-Based Views</p>
+    <a href="{% url 'about' %}" class="btn">Mehr erfahren</a>
+</div>
+<section>
+    <h3>Daten</h3>
+    <div class="data-grid">
+        {% for item in items %}
+        <div class="data-card">
+            <h4>{{ item.title }}</h4>
+            <p>{{ item.description }}</p>
+        </div>
+        {% empty %}
+        <p>Keine Daten vorhanden.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,63 @@
+-- Enemy script for Defold tower defense
+go.property("hp", 20)
+go.property("speed", 60)
+go.property("reward", 10)
+go.property("damage_to_base", 1)
+
+local waypoints = {}
+local waypoint_index = 1
+local max_hp = 0
+local slow_timer = 0
+
+function init(self)
+    max_hp = self.hp
+    slow_timer = 0
+    -- Waypoints will be set by wave manager
+end
+
+function update(self, dt)
+    if slow_timer > 0 then
+        slow_timer = slow_timer - dt
+    end
+
+    if #waypoints == 0 then return end
+
+    local target_wp = waypoints[waypoint_index]
+    if not target_wp then
+        -- Reached end - damage base
+        msg.post("main:/game_manager", "damage_base", { amount = self.damage_to_base })
+        go.delete()
+        return
+    end
+
+    local pos = go.get_position()
+    local target_pos = vmath.vector3(target_wp.x, target_wp.y, 0)
+    local dir = target_pos - pos
+    local dist = vmath.length(dir)
+
+    if dist < 8 then
+        waypoint_index = waypoint_index + 1
+    else
+        local speed = self.speed
+        if slow_timer > 0 then
+            speed = speed * 0.5
+        end
+        pos = pos + vmath.normalize(dir) * speed * dt
+        go.set_position(pos)
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("set_waypoints") then
+        waypoints = message.waypoints
+        waypoint_index = 1
+    elseif message_id == hash("take_damage") then
+        self.hp = self.hp - message.amount
+        if self.hp <= 0 then
+            msg.post("main:/game_manager", "enemy_killed", { reward = self.reward })
+            go.delete()
+        end
+    elseif message_id == hash("slow") then
+        slow_timer = message.duration or 2
+    end
+end

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de" ng-app="myApp">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AngularJS App</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script type="module" src="app.module.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f5; padding: 1rem; }
+    header { text-align: center; padding: 2rem 0; }
+    main { max-width: 640px; margin: 0 auto; }
+    section { background: #fff; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2 { margin-bottom: 1rem; }
+    .count { font-size: 3rem; font-weight: bold; }
+    button { background: #4a90d9; color: #fff; border: none; border-radius: 0.25rem; padding: 0.5rem 1rem; cursor: pointer; margin-right: 0.5rem; }
+    input { padding: 0.5rem; border: 1px solid #ccc; border-radius: 0.25rem; width: 100%; margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Web-Angular</h1>
+    <p>AngularJS Template</p>
+  </header>
+
+  <main>
+    <app-counter></app-counter>
+    <app-greeting></app-greeting>
+  </main>
+</body>
+</html>

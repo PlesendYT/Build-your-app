@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhoenixApp</title>
+  <link phx-track-static rel="stylesheet" href={Routes.static_path(@conn, "/css/app.css")} />
+</head>
+<body>
+  <header class="header">
+    <h1 class="logo">PhoenixApp</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+    </nav>
+  </header>
+  <main class="main">
+    <%= @inner_content %>
+  </main>
+  <script phx-track-static type="text/javascript" src={Routes.static_path(@conn, "/js/app.js")}></script>
+</body>
+</html>

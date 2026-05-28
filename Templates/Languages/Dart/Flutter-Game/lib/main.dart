@@ -1,0 +1,167 @@
+import 'package:flutter/material.dart';
+import 'package:flame/game.dart';
+import 'package:flame/input.dart';
+import 'package:flame/components.dart';
+
+class Player extends CircleComponent with HasGameRef<MyGame> {
+  Player()
+      : super(
+          radius: 20,
+          position: Vector2(400, 500),
+          anchor: Anchor.center,
+        );
+
+  final double _speed = 300;
+
+  @override
+  Future<void> onLoad() async {
+    paint.color = const Color(0xFF3399FF);
+  }
+
+  @override
+  void update(double dt) {
+    final keys = gameRef.keyboard;
+    if (keys.isKeyPressed(LogicalKeyboardKey.arrowLeft)) {
+      position.x -= _speed * dt;
+    }
+    if (keys.isKeyPressed(LogicalKeyboardKey.arrowRight)) {
+      position.x += _speed * dt;
+    }
+    if (keys.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+      position.y -= _speed * dt;
+    }
+    if (keys.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+      position.y += _speed * dt;
+    }
+    position.clamp(
+      Vector2(radius, radius),
+      Vector2(gameRef.size.x - radius, gameRef.size.y - radius),
+    );
+  }
+}
+
+class Enemy extends CircleComponent {
+  Enemy(Vector2 position)
+      : super(
+          radius: 15,
+          position: position,
+          anchor: Anchor.center,
+        );
+
+  final double _speed = 100;
+
+  @override
+  Future<void> onLoad() async {
+    paint.color = const Color(0xFFFF3333);
+  }
+
+  @override
+  void update(double dt) {
+    position.y += _speed * dt;
+  }
+}
+
+class Bullet extends CircleComponent {
+  Bullet(Vector2 position)
+      : super(
+          radius: 4,
+          position: position,
+          anchor: Anchor.center,
+        );
+
+  final double _speed = 400;
+
+  @override
+  Future<void> onLoad() async {
+    paint.color = const Color(0xFFFFFF00);
+  }
+
+  @override
+  void update(double dt) {
+    position.y -= _speed * dt;
+  }
+}
+
+class MyGame extends FlameGame with KeyboardEvents {
+  late final Player _player;
+  int score = 0;
+  double _spawnTimer = 0;
+
+  @override
+  Future<void> onLoad() async {
+    _player = Player();
+    add(_player);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    _spawnTimer += dt;
+    if (_spawnTimer > 1.0) {
+      _spawnTimer = 0;
+      add(Enemy(Vector2(
+        50 + (size.x - 100) * (DateTime.now().millisecondsSinceEpoch % 100) / 100,
+        -30,
+      )));
+    }
+
+    // Remove off-screen enemies & check collision
+    for (final child in children.toList()) {
+      if (child is Enemy && child.position.y > size.y + 30) {
+        child.removeFromParent();
+      }
+      if (child is Bullet && child.position.y < -30) {
+        child.removeFromParent();
+      }
+    }
+
+    // Collision detection
+    for (final enemy in children.whereType<Enemy>().toList()) {
+      for (final bullet in children.whereType<Bullet>().toList()) {
+        if (enemy.position.distanceTo(bullet.position) < enemy.radius + bullet.radius) {
+          enemy.removeFromParent();
+          bullet.removeFromParent();
+          score += 10;
+        }
+      }
+      if (enemy.position.distanceTo(_player.position) < enemy.radius + _player.radius) {
+        _player.removeFromParent();
+        add(TextComponent(
+          text: 'GAME OVER - Score: $score',
+          textRenderer: TextPaint(style: TextStyle(
+            color: Colors.red,
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+          )),
+          anchor: Anchor.center,
+          position: size / 2,
+        ));
+      }
+    }
+  }
+
+  @override
+  KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+      add(Bullet(Vector2(_player.position.x, _player.position.y - 30)));
+    }
+    return KeyEventResult.handled;
+  }
+}
+
+class GameWidget extends StatelessWidget {
+  const GameWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GameWidget(game: MyGame());
+  }
+}
+
+void main() {
+  runApp(const MaterialApp(
+    title: 'Flutter Game',
+    home: Scaffold(body: GameWidget()),
+  ));
+}

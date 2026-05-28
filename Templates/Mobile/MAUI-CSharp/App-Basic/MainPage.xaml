@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AppBasic.MainPage"
+             Title="App Basic">
+
+    <VerticalStackLayout Spacing="16" Padding="24" VerticalOptions="Center">
+        <Label Text="Hello, Build Your App!"
+               FontSize="28"
+               FontAttributes="Bold"
+               HorizontalOptions="Center" />
+
+        <Label x:Name="CounterLabel"
+               Text="Count: 0"
+               FontSize="22"
+               HorizontalOptions="Center" />
+
+        <Button Text="Tap me"
+                Clicked="OnCounterClicked"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"
+                HorizontalOptions="Center" />
+    </VerticalStackLayout>
+
+</ContentPage>

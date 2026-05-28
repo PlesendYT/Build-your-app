@@ -1,0 +1,72 @@
+-- Tower script for Defold tower defense
+go.property("tower_type", hash("cannon"))
+go.property("range", 150)
+go.property("damage", 10)
+go.property("fire_rate", 0.5)
+go.property("level", 1)
+
+local fire_timer = 0
+local target = nil
+
+function init(self)
+    fire_timer = 0
+end
+
+function update(self, dt)
+    fire_timer = fire_timer - dt
+    if fire_timer <= 0 then
+        find_target(self)
+        if target then
+            fire_timer = self.fire_rate
+            fire_at_target(self)
+        end
+    end
+end
+
+function find_target(self)
+    target = nil
+    local min_dist = self.range
+    local pos = go.get_position()
+
+    -- Check all enemies (in practice, use a collection or message system)
+    msg.post("main:/enemy_manager", "get_enemies")
+    -- Simplified: enemies are stored in a global table
+    for _, enemy in ipairs(global_enemies or {}) do
+        local enemy_pos = enemy.position
+        local dist = vmath.length(enemy_pos - pos)
+        if dist < min_dist then
+            min_dist = dist
+            target = enemy
+        end
+    end
+end
+
+function fire_at_target(self)
+    if not target then return end
+
+    local pos = go.get_position()
+    local proj = factory.create("#projectile_factory", pos)
+
+    if proj then
+        msg.post(proj, "set_target", {
+            target = target,
+            damage = self.damage,
+            tower_type = self.tower_type
+        })
+    end
+end
+
+function upgrade(self)
+    if self.level < 3 then
+        self.level = self.level + 1
+        self.damage = self.damage + 5
+        self.range = self.range + 20
+        self.fire_rate = math.max(0.2, self.fire_rate - 0.1)
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("upgrade") then
+        upgrade(self)
+    end
+end

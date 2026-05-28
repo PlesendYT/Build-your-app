@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlaskApp</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: #f8f9fa; color: #333; }
+        .app-layout { display: flex; flex-direction: column; min-height: 100vh; }
+        .header { background: #fff; border-bottom: 1px solid #dee2e6; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 1.5rem; color: #333; }
+        .nav a { text-decoration: none; color: #333; margin-left: 1rem; }
+        .main { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .footer { background: #fff; border-top: 1px solid #dee2e6; padding: 1rem; text-align: center; color: #6c757d; }
+        .hero { text-align: center; padding: 4rem 0; }
+        .hero h2 { font-size: 2.5rem; }
+        .btn { display: inline-block; background: #333; color: #fff; padding: 0.6rem 1.5rem; border-radius: 8px; text-decoration: none; }
+        .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .data-card { background: #fff; border: 1px solid #dee2e6; border-radius: 8px; padding: 1.5rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.6rem; border: 1px solid #dee2e6; border-radius: 6px; }
+        .form-group textarea { min-height: 120px; }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <header class="header">
+            <h1 class="logo">FlaskApp</h1>
+            <nav class="nav">
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/contact">Contact</a>
+            </nav>
+        </header>
+        <main class="main">{% block content %}{% endblock %}</main>
+        <footer class="footer"><p>&copy; FlaskApp</p></footer>
+    </div>
+</body>
+</html>

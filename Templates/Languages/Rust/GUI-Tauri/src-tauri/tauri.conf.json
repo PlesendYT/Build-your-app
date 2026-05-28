@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicegui/tauri/main/crates/tauri-utils/schema.json",
+  "productName": "GUI-Tauri",
+  "version": "0.1.0",
+  "identifier": "com.example.tauri-template",
+  "build": {
+    "frontendDist": "../src",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Tauri App",
+        "width": 800,
+        "height": 600
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class GameManager : MonoBehaviour
+{
+    public static GameManager Instance { get; private set; }
+    public TMPro.TextMeshProUGUI scoreText;
+    public TMPro.TextMeshProUGUI livesText;
+    public GameObject gameOverPanel;
+    private int score;
+    private int chainMultiplier = 1;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void Start()
+    {
+        score = 0;
+        UpdateUI();
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
+    }
+
+    public void AddScore(int basePoints)
+    {
+        score += basePoints * chainMultiplier;
+        chainMultiplier = Mathf.Min(chainMultiplier + 1, 10);
+        UpdateUI();
+    }
+
+    public void BreakChain()
+    {
+        chainMultiplier = 1;
+    }
+
+    public void GameOver()
+    {
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(true);
+        Time.timeScale = 0f;
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void UpdateUI()
+    {
+        if (scoreText != null)
+            scoreText.text = "Score: " + score + " x" + chainMultiplier;
+    }
+}

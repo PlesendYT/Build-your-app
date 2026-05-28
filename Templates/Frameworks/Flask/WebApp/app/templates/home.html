@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="hero">
+    <h2>Willkommen bei FlaskApp</h2>
+    <p>Moderne Flask-Anwendung mit Blueprints</p>
+    <a href="/about" class="btn">Mehr erfahren</a>
+</div>
+<section>
+    <h3>Daten</h3>
+    <div class="data-grid">
+        {% for item in items %}
+        <div class="data-card">
+            <h4>{{ item.title }}</h4>
+            <p>{{ item.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

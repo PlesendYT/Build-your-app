@@ -1,0 +1,9 @@
+{
+  "name": "game-phaser",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Phaser 3 game template",
+  "dependencies": {
+    "phaser": "^3.80.0"
+  }
+}

@@ -1,0 +1,75 @@
+-- Top-down player controller for Defold
+go.property("speed", 200)
+go.property("hp", 5)
+
+local velocity = vmath.vector3()
+local has_key = false
+
+function init(self)
+    msg.post(".", "acquire_input_focus")
+    has_key = false
+end
+
+function update(self, dt)
+    local pos = go.get_position()
+    pos.x = pos.x + velocity.x * dt
+    pos.y = pos.y + velocity.y * dt
+
+    -- Clamp to world
+    pos.x = math.max(16, math.min(1000, pos.x))
+    pos.y = math.max(16, math.min(700, pos.y))
+
+    go.set_position(pos)
+
+    -- Update animation based on movement
+    if velocity.x ~= 0 or velocity.y ~= 0 then
+        msg.post("#sprite", "play_animation", { id = hash("walk") })
+        if math.abs(velocity.x) > math.abs(velocity.y) then
+            go.set_scale(vmath.vector3(velocity.x > 0 and 1 or -1, 1, 1), "#sprite")
+        end
+    else
+        msg.post("#sprite", "play_animation", { id = hash("idle") })
+    end
+end
+
+function on_input(self, action_id, action)
+    if action_id == hash("left") or action_id == hash("A") then
+        if action.pressed then velocity.x = -self.speed
+        elseif action.released then velocity.x = 0 end
+    elseif action_id == hash("right") or action_id == hash("D") then
+        if action.pressed then velocity.x = self.speed
+        elseif action.released then velocity.x = 0 end
+    elseif action_id == hash("up") or action_id == hash("W") then
+        if action.pressed then velocity.y = self.speed
+        elseif action.released then velocity.y = 0 end
+    elseif action_id == hash("down") or action_id == hash("S") then
+        if action.pressed then velocity.y = -self.speed
+        elseif action.released then velocity.y = 0 end
+    end
+
+    -- Diagonal normalization
+    if velocity.x ~= 0 and velocity.y ~= 0 then
+        velocity.x = velocity.x * 0.707
+        velocity.y = velocity.y * 0.707
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("take_damage") then
+        self.hp = self.hp - 1
+        msg.post("#sprite", "flash")
+        if self.hp <= 0 then
+            msg.post("main:/game_manager", "player_died")
+            go.delete()
+        end
+    elseif message_id == hash("pickup_key") then
+        has_key = true
+    elseif message_id == hash("pickup_item") then
+        msg.post("main:/game_manager", "add_item", { item = message.item })
+    elseif message_id == hash("unlock_door") then
+        if has_key then
+            msg.post(sender, "open")
+            has_key = false
+        end
+    end
+end

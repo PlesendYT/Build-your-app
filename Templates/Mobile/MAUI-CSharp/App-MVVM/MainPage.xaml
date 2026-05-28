@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AppMVVM.ViewModels"
+             x:Class="AppMVVM.MainPage"
+             x:DataType="vm:MainViewModel"
+             Title="MVVM App">
+
+    <VerticalStackLayout Spacing="12" Padding="16">
+        <Label Text="Todo List" FontSize="24" FontAttributes="Bold" />
+
+        <HorizontalStackLayout Spacing="8">
+            <Entry Text="{Binding NewTodoTitle}" Placeholder="Enter todo..." HorizontalOptions="FillAndExpand" />
+            <Button Text="Add" Command="{Binding AddTodoCommand}" />
+        </HorizontalStackLayout>
+
+        <CollectionView ItemsSource="{Binding Todos}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="x:Object">
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Delete" BackgroundColor="Red"
+                                           Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MainViewModel}}, Path=RemoveTodoCommand}"
+                                           CommandParameter="{Binding}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <HorizontalStackLayout Spacing="8" Padding="8">
+                            <CheckBox IsChecked="{Binding IsCompleted}" />
+                            <Label Text="{Binding Title}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+
+</ContentPage>

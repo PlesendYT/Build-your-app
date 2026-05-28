@@ -1,0 +1,11 @@
+<h1>Willkommen bei RailsApp</h1>
+<p>Moderne Rails-Anwendung mit Hotwire</p>
+
+<h2>Items</h2>
+<ul>
+  <% @items.each do |item| %>
+    <li><%= link_to item.title, item %></li>
+  <% end %>
+</ul>
+
+<%= link_to "Neues Item", new_item_path, class: "btn" %>

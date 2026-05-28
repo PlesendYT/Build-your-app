@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>jmonkey-game</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jme.version>3.6.0-stable</jme.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jmonkeyengine</groupId>
+            <artifactId>jme3-core</artifactId>
+            <version>${jme.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmonkeyengine</groupId>
+            <artifactId>jme3-desktop</artifactId>
+            <version>${jme.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmonkeyengine</groupId>
+            <artifactId>jme3-lwjgl3</artifactId>
+            <version>${jme.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest><mainClass>game.jmonkey.Main</mainClass></manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

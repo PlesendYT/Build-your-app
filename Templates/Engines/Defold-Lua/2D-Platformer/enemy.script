@@ -1,0 +1,45 @@
+-- Enemy patrol for Defold platformer
+go.property("speed", 80)
+go.property("patrol_range", 100)
+go.property("hp", 2)
+
+local start_x = 0
+local move_dir = 1
+local player_ref = nil
+
+function init(self)
+    start_x = go.get_position().x
+    player_ref = msg.url("main:/player")
+end
+
+function update(self, dt)
+    local pos = go.get_position()
+
+    -- Patrol
+    pos.x = pos.x + self.speed * move_dir * dt
+    if pos.x > start_x + self.patrol_range then
+        move_dir = -1
+        go.set_scale(vmath.vector3(-1, 1, 1), "#sprite")
+    elseif pos.x < start_x - self.patrol_range then
+        move_dir = 1
+        go.set_scale(vmath.vector3(1, 1, 1), "#sprite")
+    end
+
+    go.set_position(pos)
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("take_damage") then
+        self.hp = self.hp - 1
+        msg.post("#sprite", "flash")
+        if self.hp <= 0 then
+            msg.post("main:/game_manager", "enemy_killed", { score = 50 })
+            go.delete()
+        end
+    elseif message_id == hash("contact") then
+        -- Check if it's the player
+        if sender == player_ref then
+            msg.post(player_ref, "take_damage")
+        end
+    end
+end

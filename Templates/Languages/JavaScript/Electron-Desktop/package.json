@@ -1,0 +1,13 @@
+{
+  "name": "electron-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Electron desktop app template",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}

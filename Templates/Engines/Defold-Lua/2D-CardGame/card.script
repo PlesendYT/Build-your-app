@@ -1,0 +1,31 @@
+-- Card object for Defold card game
+go.property("card_name", "Strike")
+go.property("card_cost", 1)
+go.property("card_type", hash("attack"))
+go.property("card_value", 6)
+go.property("card_description", "Deal 6 damage")
+
+local is_selected = false
+local original_pos = nil
+
+function init(self)
+    original_pos = go.get_position()
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("select") then
+        is_selected = true
+        go.set_position(original_pos + vmath.vector3(0, 20, 0))
+    elseif message_id == hash("deselect") then
+        is_selected = false
+        go.set_position(original_pos)
+    elseif message_id == hash("play") then
+        msg.post("main:/card_game_manager", "play_card", {
+            name = self.card_name,
+            cost = self.card_cost,
+            card_type = self.card_type,
+            value = self.card_value
+        })
+        go.delete()
+    end
+end

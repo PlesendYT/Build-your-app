@@ -1,0 +1,15 @@
+{
+  "name": "app-state",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start"
+  },
+  "dependencies": {
+    "expo": "~50.0.0",
+    "react": "18.2.0",
+    "react-native": "0.73.4",
+    "@reduxjs/toolkit": "^2.0.1",
+    "react-redux": "^9.0.4"
+  }
+}

@@ -1,0 +1,79 @@
+-- Wave manager for Defold tower defense
+go.property("wave", 0)
+go.property("gold", 100)
+go.property("lives", 20)
+
+local enemies_per_wave = 5
+local enemies_spawned = 0
+local wave_active = false
+local spawn_timer = 0
+
+function init(self)
+    self.wave = 0
+    self.gold = 100
+    self.lives = 20
+    wave_active = false
+end
+
+function update(self, dt)
+    if not wave_active then
+        -- Check if player starts next wave
+        return
+    end
+
+    spawn_timer = spawn_timer - dt
+    if spawn_timer <= 0 and enemies_spawned < enemies_per_wave then
+        spawn_enemy(self)
+        spawn_timer = math.max(0.3, 1.5 - self.wave * 0.05)
+    end
+
+    -- Check if wave is complete
+    if enemies_spawned >= enemies_per_wave then
+        -- Check if all enemies are dead
+        -- (In practice, track enemy count)
+        wave_active = false
+    end
+end
+
+function spawn_enemy(self)
+    local difficulty_mult = 1 + self.wave * 0.15
+    local spawn_x = -32
+    local spawn_y = math.random(100, 500)
+
+    local enemy = factory.create("#enemy_factory", vmath.vector3(spawn_x, spawn_y, 0))
+    if enemy then
+        msg.post(enemy, "set_waypoints", {
+            waypoints = {
+                { x = 200, y = spawn_y },
+                { x = 600, y = spawn_y },
+                { x = 600, y = 300 },
+                { x = 200, y = 300 },
+                { x = 200, y = 550 },
+            }
+        })
+        msg.post(enemy, "scale_hp", { multiplier = difficulty_mult })
+    end
+    enemies_spawned = enemies_spawned + 1
+end
+
+function start_next_wave(self)
+    if wave_active then return end
+    self.wave = self.wave + 1
+    enemies_per_wave = 5 + self.wave * 3
+    enemies_spawned = 0
+    wave_active = true
+    spawn_timer = 1.0
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("start_wave") then
+        start_next_wave(self)
+    elseif message_id == hash("damage_base") then
+        self.lives = self.lives - message.amount
+        if self.lives <= 0 then
+            msg.post("main:/game_manager", "game_over")
+        end
+    elseif message_id == hash("enemy_killed") then
+        self.gold = self.gold + (message.reward or 10)
+    end
+end

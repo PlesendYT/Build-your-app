@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Framework Template</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { primary: '#2563eb' } } }
+    }
+  </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors">
+  <header class="sticky top-0 bg-white dark:bg-gray-900 shadow z-50">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <span class="text-xl font-bold">MyApp</span>
+      <div class="flex items-center gap-6">
+        <a href="#features" class="hover:text-primary">Features</a>
+        <a href="#team" class="hover:text-primary">Team</a>
+        <a href="#pricing" class="hover:text-primary">Pricing</a>
+        <button id="themeToggle" class="p-2 rounded bg-gray-200 dark:bg-gray-700">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero min-h-screen flex flex-col items-center justify-center text-center px-4 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">Build Your App</h1>
+    <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-xl">Modern, responsive templates powered by Tailwind CSS.</p>
+    <button class="bg-primary text-white px-8 py-3 rounded-lg text-lg hover:bg-blue-700 transition">Get Started</button>
+  </section>
+
+  <section id="features" class="max-w-6xl mx-auto px-4 py-20">
+    <h2 class="text-3xl font-bold text-center mb-12">Features</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-800">
+        <div class="text-4xl mb-4">⚡</div>
+        <h3 class="text-xl font-semibold mb-2">Fast</h3>
+        <p class="text-gray-600 dark:text-gray-300">Optimized for performance with utility-first CSS.</p>
+      </div>
+      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-800">
+        <div class="text-4xl mb-4">📱</div>
+        <h3 class="text-xl font-semibold mb-2">Responsive</h3>
+        <p class="text-gray-600 dark:text-gray-300">Works perfectly on all devices and screen sizes.</p>
+      </div>
+      <div class="p-6 rounded-xl bg-gray-50 dark:bg-gray-800">
+        <div class="text-4xl mb-4">🎨</div>
+        <h3 class="text-xl font-semibold mb-2">Customizable</h3>
+        <p class="text-gray-600 dark:text-gray-300">Easily customize with Tailwind's config system.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="team" class="bg-gray-50 dark:bg-gray-800 py-20">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Our Team</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="text-center">
+          <div class="w-24 h-24 bg-primary rounded-full mx-auto mb-4"></div>
+          <h3 class="text-xl font-semibold">Alice</h3>
+          <p class="text-gray-600 dark:text-gray-300">Designer</p>
+        </div>
+        <div class="text-center">
+          <div class="w-24 h-24 bg-green-500 rounded-full mx-auto mb-4"></div>
+          <h3 class="text-xl font-semibold">Bob</h3>
+          <p class="text-gray-600 dark:text-gray-300">Developer</p>
+        </div>
+        <div class="text-center">
+          <div class="w-24 h-24 bg-purple-500 rounded-full mx-auto mb-4"></div>
+          <h3 class="text-xl font-semibold">Carol</h3>
+          <p class="text-gray-600 dark:text-gray-300">Manager</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="max-w-6xl mx-auto px-4 py-20">
+    <h2 class="text-3xl font-bold text-center mb-12">Pricing</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="p-6 border rounded-xl text-center">
+        <h3 class="text-xl font-semibold mb-2">Starter</h3>
+        <p class="text-3xl font-bold mb-4">$9<span class="text-lg text-gray-500">/mo</span></p>
+        <ul class="mb-6 space-y-2">
+          <li>1 Project</li>
+          <li>Basic Support</li>
+        </ul>
+        <button class="bg-primary text-white px-6 py-2 rounded-lg">Choose</button>
+      </div>
+      <div class="p-6 border-2 border-primary rounded-xl text-center relative">
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-1 rounded-full text-sm">Popular</span>
+        <h3 class="text-xl font-semibold mb-2">Pro</h3>
+        <p class="text-3xl font-bold mb-4">$29<span class="text-lg text-gray-500">/mo</span></p>
+        <ul class="mb-6 space-y-2">
+          <li>10 Projects</li>
+          <li>Priority Support</li>
+        </ul>
+        <button class="bg-primary text-white px-6 py-2 rounded-lg">Choose</button>
+      </div>
+      <div class="p-6 border rounded-xl text-center">
+        <h3 class="text-xl font-semibold mb-2">Enterprise</h3>
+        <p class="text-3xl font-bold mb-4">$99<span class="text-lg text-gray-500">/mo</span></p>
+        <ul class="mb-6 space-y-2">
+          <li>Unlimited Projects</li>
+          <li>24/7 Support</li>
+        </ul>
+        <button class="bg-primary text-white px-6 py-2 rounded-lg">Choose</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="text-center py-8 text-gray-500 dark:text-gray-400">
+    <p>&copy; 2026 Build Your App. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('themeToggle')?.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      document.getElementById('themeIcon').textContent =
+        document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+    });
+  </script>
+</body>
+</html>

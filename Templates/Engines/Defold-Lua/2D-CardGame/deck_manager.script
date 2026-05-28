@@ -1,0 +1,139 @@
+-- Deck manager for Defold card game
+go.property("max_hand_size", 7)
+go.property("max_energy", 3)
+
+local deck = {}
+local hand = {}
+local discard = {}
+local energy = 0
+local player_hp = 30
+local enemy_hp = 30
+local turn = 1
+local phase = "player" -- "player" or "enemy"
+
+-- Card definitions
+local card_defs = {
+    { name = "Strike", cost = 1, type = hash("attack"), value = 6, desc = "Deal 6 damage" },
+    { name = "Strike", cost = 1, type = hash("attack"), value = 6, desc = "Deal 6 damage" },
+    { name = "Strike", cost = 1, type = hash("attack"), value = 6, desc = "Deal 6 damage" },
+    { name = "Defend", cost = 1, type = hash("defense"), value = 5, desc = "Gain 5 block" },
+    { name = "Defend", cost = 1, type = hash("defense"), value = 5, desc = "Gain 5 block" },
+    { name = "Defend", cost = 1, type = hash("defense"), value = 5, desc = "Gain 5 block" },
+    { name = "Fireball", cost = 2, type = hash("attack"), value = 12, desc = "Deal 12 damage" },
+    { name = "Heal", cost = 2, type = hash("spell"), value = 8, desc = "Heal 8 HP" },
+    { name = "Shield Bash", cost = 2, type = hash("attack"), value = 8, desc = "Deal 8, gain 4 block" },
+    { name = "Lightning", cost = 3, type = hash("attack"), value = 18, desc = "Deal 18 damage" },
+}
+
+function init(self)
+    deck = {}
+    hand = {}
+    discard = {}
+    energy = self.max_energy
+    player_hp = 30
+    enemy_hp = 30
+    turn = 1
+    phase = "player"
+
+    -- Initialize deck
+    for _, def in ipairs(card_defs) do
+        table.insert(deck, def)
+    end
+    shuffle_deck()
+    draw_hand(5)
+end
+
+function shuffle_deck()
+    for i = #deck, 2, -1 do
+        local j = math.random(i)
+        deck[i], deck[j] = deck[j], deck[i]
+    end
+end
+
+function draw_card()
+    if #deck == 0 then
+        deck = discard
+        discard = {}
+        shuffle_deck()
+    end
+    if #deck > 0 then
+        local card = table.remove(deck)
+        table.insert(hand, card)
+        return card
+    end
+    return nil
+end
+
+function draw_hand(count)
+    for _ = 1, count do
+        draw_card()
+    end
+end
+
+function play_card_from_hand(index)
+    if phase ~= "player" then return false end
+
+    local card = hand[index]
+    if not card then return false end
+    if card.cost > energy then return false end
+
+    energy = energy - card.cost
+
+    -- Apply effect
+    if card.type == hash("attack") then
+        enemy_hp = enemy_hp - card.value
+    elseif card.type == hash("defense") then
+        -- Add block (simplified)
+    elseif card.type == hash("spell") then
+        player_hp = math.min(30, player_hp + card.value)
+    end
+
+    table.insert(discard, card)
+    table.remove(hand, index)
+
+    if enemy_hp <= 0 then
+        msg.post("main:/game_manager", "victory")
+    end
+
+    return true
+end
+
+function end_player_turn()
+    -- Discard hand
+    for _, card in ipairs(hand) do
+        table.insert(discard, card)
+    end
+    hand = {}
+    energy = self.max_energy
+    phase = "enemy"
+    enemy_turn()
+end
+
+function enemy_turn()
+    -- Simple enemy AI
+    local damage = math.random(3, 6)
+    player_hp = player_hp - damage
+
+    if player_hp <= 0 then
+        msg.post("main:/game_manager", "defeat")
+        return
+    end
+
+    turn = turn + 1
+    energy = math.min(10, self.max_energy + math.floor(turn / 3))
+    phase = "player"
+    draw_hand(5)
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("play_card") then
+        for i, card in ipairs(hand) do
+            if card.name == message.name then
+                play_card_from_hand(i)
+                break
+            end
+        end
+    elseif message_id == hash("end_turn") then
+        end_player_turn()
+    end
+end

@@ -1,0 +1,12 @@
+package springapp.model
+
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
+
+@Table("tasks")
+data class Task(
+    @Id val id: Long? = null,
+    val title: String,
+    val description: String? = null,
+    val completed: Boolean = false
+)
