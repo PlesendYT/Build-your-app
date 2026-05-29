@@ -1,21 +1,25 @@
 import std/[asyncdispatch, json, strutils, tables, times]
 import jester
 
+## Represents a single to-do item with an id, title, and completion status
 type
-  Todo = ref object
-    id: int
-    title: string
-    completed: bool
+  Todo* = ref object
+    id*: int
+    title*: string
+    completed*: bool
 
+## In-memory store holding all to-do items and the next available id
 var
-  todos: seq[Todo]
-  nextId: int = 1
+  todos*: seq[Todo]
+  nextId*: int = 1
 
+## Seeds the in-memory store with a few sample to-do items
 proc initData() =
   todos.add(Todo(id: nextId; inc nextId; title: "Learn Nim"; completed: false))
   todos.add(Todo(id: nextId; inc nextId; title: "Build a web server"; completed: false))
   todos.add(Todo(id: nextId; inc nextId; title: "Deploy to production"; completed: true))
 
+## Serializes a Todo object into a JSON node
 proc todoToJson(t: Todo): JsonNode =
   result = %*{
     "id": t.id,
@@ -23,6 +27,7 @@ proc todoToJson(t: Todo): JsonNode =
     "completed": t.completed
   }
 
+## Deserializes a JSON node into a new Todo object with an auto-incremented id
 proc jsonToTodo(j: JsonNode): Todo =
   Todo(
     id: nextId; inc nextId;
@@ -30,6 +35,7 @@ proc jsonToTodo(j: JsonNode): Todo =
     completed: j.getOrDefault("completed").getBool(false)
   )
 
+## Placeholder for CORS header handling (currently returns empty)
 proc handleCors(): string =
   result = ""
 
@@ -38,9 +44,11 @@ settings:
   staticDir = getCurrentDir() / "public"
 
 routes:
+  # Root endpoint returning a welcome message
   get "/":
     resp "Nim WebServer - Jester"
 
+  # Health check returning status, version, and uptime
   get "/health":
     var health = %*{
       "status": "ok",
@@ -49,12 +57,14 @@ routes:
     }
     resp health
 
+  # List all to-do items as a JSON array
   get "/api/todos":
     var arr = newJArray()
     for t in todos:
       arr.add(todoToJson(t))
     resp arr
 
+  # Create a new to-do item from JSON body
   post "/api/todos":
     try:
       let body = parseJson(request.body)
@@ -64,6 +74,7 @@ routes:
     except:
       resp Http400, %*{"error": "Invalid JSON"}
 
+  # Get a single to-do item by id
   get "/api/todos/@id":
     let id = parseInt(@"id")
     for t in todos:
@@ -71,6 +82,7 @@ routes:
         resp todoToJson(t)
     resp Http404, %*{"error": "Not found"}
 
+  # Update an existing to-do item by id
   put "/api/todos/@id":
     try:
       let id = parseInt(@"id")
@@ -86,6 +98,7 @@ routes:
     except:
       resp Http400, %*{"error": "Invalid JSON"}
 
+  # Delete a to-do item by id
   delete "/api/todos/@id":
     let id = parseInt(@"id")
     for i, t in todos:
@@ -94,12 +107,15 @@ routes:
         resp Http204
     resp Http404, %*{"error": "Not found"}
 
+  # Personalized greeting endpoint
   get "/hello/@name":
     resp "Hello, " & @"name" & "!"
 
+  # Custom 404 error response as JSON
   error Http404:
     resp %*{"error": "Not found", "path": request.path}
 
+## Bootstraps data and starts the web server
 proc main() =
   initData()
   echo "Server starting on http://localhost:8080"

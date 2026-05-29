@@ -1,3 +1,6 @@
+/**
+ * Spring Boot application entry point for the REST API sample.
+ */
 package com.example.restapi;
 
 import org.springframework.boot.SpringApplication;

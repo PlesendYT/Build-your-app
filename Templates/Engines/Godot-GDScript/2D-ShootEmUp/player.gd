@@ -1,3 +1,4 @@
+# Shoot-em-up player with movement, shooting, weapon levels, lives, and score tracking
 extends CharacterBody2D
 
 @export var speed: float = 350.0

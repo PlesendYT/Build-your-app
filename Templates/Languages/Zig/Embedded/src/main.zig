@@ -1,13 +1,15 @@
+/// Embedded system simulation demonstrating GPIO, UART, and interrupts in Zig
 const std = @import("std");
 const builtin = @import("builtin");
 
-// Comptime chip configuration
+/// Supported microcontroller families for comptime dispatch
 const ChipType = enum {
     stm32f103,
     stm32f407,
     rp2040,
 };
 
+/// Detect target chip from compile-time CPU architecture
 const chip: ChipType = comptime blk: {
     if (builtin.target.cpu_arch == .thumb and builtin.target.cpu_model == .cortex_m3) {
         break :blk .stm32f103;
@@ -21,7 +23,7 @@ const chip: ChipType = comptime blk: {
     }
 };
 
-// Memory-mapped GPIO registers (simulated on host)
+/// Memory-mapped GPIO register layout (simulated)
 const GpioRegisters = struct {
     moder: u32,
     otyper: u32,
@@ -35,13 +37,16 @@ const GpioRegisters = struct {
     afrh: u32,
 };
 
+/// Global simulated GPIO registers
 var gpio_regs: GpioRegisters = @memset(std.mem.zeroes(GpioRegisters));
 
+/// Set the mode of a GPIO pin
 fn gpioSetMode(pin: u5, mode: u2) void {
     const shift = pin * 2;
     gpio_regs.moder = (gpio_regs.moder & ~(@as(u32, 0x3) << shift)) | (@as(u32, mode) << shift);
 }
 
+/// Write a digital value to a GPIO pin
 fn gpioWrite(pin: u5, value: bool) void {
     if (value) {
         gpio_regs.bsrr = @as(u32, 1) << pin;
@@ -51,11 +56,12 @@ fn gpioWrite(pin: u5, value: bool) void {
     gpio_regs.odr = (gpio_regs.odr & ~(@as(u32, 1) << pin)) | (@as(u32, @intFromBool(value)) << pin);
 }
 
+/// Read the digital value of a GPIO pin
 fn gpioRead(pin: u5) bool {
     return (gpio_regs.idr >> pin) & 1 == 1;
 }
 
-// Comptime-based peripheral configuration
+/// Get peripheral clock frequency for a given chip at compile time
 fn getPeripheralClock(comptime c: ChipType) u32 {
     return switch (c) {
         .stm32f103 => 72_000_000,
@@ -64,25 +70,30 @@ fn getPeripheralClock(comptime c: ChipType) u32 {
     };
 }
 
+/// Peripheral clock rate determined at compile time
 const PeripheralClock = comptime getPeripheralClock(chip);
 
-// UART implementation
+/// Simulated UART peripheral
 const Uart = struct {
     baud_rate: u32,
 
+    /// Initialize UART with a given baud rate
     fn init(baud: u32) Uart {
         return Uart{ .baud_rate = baud };
     }
 
+    /// Calculate baud rate divisor from peripheral clock
     fn divisor(self: Uart) u32 {
         return PeripheralClock / (16 * self.baud_rate);
     }
 
+    /// Send a single character via UART (writes to stdout in simulation)
     fn sendChar(_: Uart, c: u8) void {
         const stdout = std.io.getStdOut().writer();
         stdout.print("{c}", .{c}) catch {};
     }
 
+    /// Send a string via UART
     fn sendString(self: Uart, str: []const u8) void {
         for (str) |c| {
             self.sendChar(c);
@@ -90,7 +101,7 @@ const Uart = struct {
     }
 };
 
-// Simple LED blink task
+/// Simulate an LED blink task on pin 13
 fn blinkTask() void {
     gpioSetMode(13, 0b01); // Output mode on pin 13
     var timer: u32 = 0;
@@ -108,8 +119,8 @@ fn blinkTask() void {
     }
 }
 
+/// Busy-wait delay in milliseconds
 fn delayMs(ms: u32) void {
-    // Simple busy-wait delay
     const cycles = PeripheralClock / 1000 * ms / 4;
     var i: u32 = 0;
     while (i < cycles) : (i += 1) {
@@ -117,11 +128,12 @@ fn delayMs(ms: u32) void {
     }
 }
 
-// Interrupt handler simulation
+/// Simulated interrupt handler wrapper
 const InterruptHandler = struct {
     handler: *const fn () void,
     enabled: bool,
 
+    /// Trigger the interrupt if enabled
     fn trigger(self: *InterruptHandler) void {
         if (self.enabled) {
             self.handler();
@@ -129,16 +141,19 @@ const InterruptHandler = struct {
     }
 };
 
+/// UART RX interrupt handler instance
 var uartRxHandler = InterruptHandler{
     .handler = uartRxCallback,
     .enabled = true,
 };
 
+/// Callback executed on UART RX interrupt
 fn uartRxCallback() void {
     const stdout = std.io.getStdOut().writer();
     stdout.print("[ISR] UART RX received!\n", .{}) catch {};
 }
 
+/// Main entry point demonstrating embedded hardware abstractions
 pub fn main() !void {
     const stdout = std.io.getStdOut().writer();
 

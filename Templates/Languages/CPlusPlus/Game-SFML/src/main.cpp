@@ -1,12 +1,15 @@
+// SFML coin-collection game - collect yellow coins with keyboard controls (C++).
 #include <SFML/Graphics.hpp>
 #include <array>
 #include <random>
 #include <vector>
 
+// A collectible coin with a circular shape.
 struct Coin {
     sf::CircleShape shape;
 };
 
+// Entry point: create window, spawn coins, run game loop.
 auto main() -> int {
     sf::RenderWindow window{sf::VideoMode{{800, 600}}, "SFML Game"};
     window.setFramerateLimit(60);

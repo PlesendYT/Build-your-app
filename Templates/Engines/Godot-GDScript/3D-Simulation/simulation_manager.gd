@@ -1,3 +1,5 @@
+# City-building simulation manager
+# Handles grid-based placement, camera controls, building economy, and income
 extends Node3D
 
 @export var grid_size: float = 2.0

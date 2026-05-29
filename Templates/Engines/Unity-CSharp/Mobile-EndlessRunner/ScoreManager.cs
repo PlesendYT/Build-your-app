@@ -1,8 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages scoring, high score persistence, and UI updates for the endless runner.
+/// </summary>
 public class ScoreManager : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance of the ScoreManager.
+    /// </summary>
     public static ScoreManager Instance { get; private set; }
 
     [Header("Scoring")]
@@ -24,14 +30,18 @@ public class ScoreManager : MonoBehaviour
 
     private void Start()
     {
+        // Load saved high score
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         UpdateUI();
     }
 
     private void Update()
     {
+        // Accumulate score over time based on multiplier
         score += scorePerSecond * scoreMultiplier * Time.deltaTime;
         int displayScore = Mathf.FloorToInt(score);
+
+        // Update high score if current score exceeds it
         if (displayScore > highScore)
         {
             highScore = displayScore;
@@ -40,14 +50,27 @@ public class ScoreManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Adds a one-time bonus to the score.
+    /// </summary>
     public void AddBonus(int amount)
     {
         score += amount;
     }
 
+    /// <summary>
+    /// Returns the current score as an integer.
+    /// </summary>
     public int GetScore() => Mathf.FloorToInt(score);
+
+    /// <summary>
+    /// Returns the high score.
+    /// </summary>
     public int GetHighScore() => highScore;
 
+    /// <summary>
+    /// Refreshes the score and high score UI text.
+    /// </summary>
     private void UpdateUI()
     {
         if (scoreText != null) scoreText.text = GetScore().ToString("N0");

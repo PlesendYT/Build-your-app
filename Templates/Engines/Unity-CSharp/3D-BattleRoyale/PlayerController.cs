@@ -1,3 +1,6 @@
+/// <summary>
+/// BR player with movement, ADS, weapon switching, looting, and health management.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

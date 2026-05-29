@@ -1,11 +1,14 @@
+// Dashboard page — KPI stat cards and a monthly bar chart using Recharts
 'use client'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
+// Sample chart data for monthly values
 const data = [
   { name: 'Jan', value: 400 }, { name: 'Feb', value: 300 }, { name: 'Mär', value: 600 },
   { name: 'Apr', value: 800 }, { name: 'Mai', value: 500 }, { name: 'Jun', value: 900 },
 ]
 
+// Sample KPI stat cards
 const stats = [
   { label: 'Umsatz', value: '€12,430', change: '+12%', positive: true },
   { label: 'Bestellungen', value: '156', change: '+8%', positive: true },

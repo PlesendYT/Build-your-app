@@ -1,7 +1,10 @@
+/// A basic Flutter counter app with Material 3 design.
 import 'package:flutter/material.dart';
 
+/// Application entry point.
 void main() => runApp(const MyApp());
 
+/// Root widget of the basic Flutter app.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -15,6 +18,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// The home page with a counter that increments on button press.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -22,9 +26,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+/// State class managing the counter value and UI rendering.
 class _HomePageState extends State<HomePage> {
   int _counter = 0;
 
+  /// Increments the counter and triggers a UI rebuild.
   void _increment() => setState(() => _counter++);
 
   @override

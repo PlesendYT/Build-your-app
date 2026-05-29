@@ -1,3 +1,6 @@
+/// <summary>
+/// RPG character with movement, jump, mouse look, health, and interaction raycast.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

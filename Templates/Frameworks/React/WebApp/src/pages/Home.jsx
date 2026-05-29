@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../services/api'
 
+/** Home page displaying a hero section and a list of items fetched from the API. */
 function Home() {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Fetch data from the API on component mount
   useEffect(() => {
     api.get('/items')
       .then(res => setData(res.data))

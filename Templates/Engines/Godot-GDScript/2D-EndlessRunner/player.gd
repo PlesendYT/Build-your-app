@@ -1,3 +1,4 @@
+# Endless runner player with jump, slide, collision switching, scoring, and death
 extends CharacterBody2D
 
 @export var jump_velocity: float = -500.0

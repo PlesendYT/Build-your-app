@@ -7,7 +7,7 @@ import os
 import discord
 from discord.ext import commands
 
-
+# Set up bot intents to read message content
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -41,6 +41,7 @@ async def load_cogs() -> None:
 
 def main() -> None:
     """Start the bot."""
+    # Read the Discord bot token from environment variable
     token = os.getenv("DISCORD_TOKEN")
     if not token:
         raise ValueError("DISCORD_TOKEN environment variable is not set")
@@ -48,6 +49,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    # Load cogs before starting the bot
     import asyncio
     asyncio.run(load_cogs())
     main()

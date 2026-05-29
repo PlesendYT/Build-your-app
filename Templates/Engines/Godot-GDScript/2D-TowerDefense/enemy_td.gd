@@ -1,3 +1,4 @@
+# Tower defense enemy that follows a path, takes damage, and damages the base on reaching the end
 extends PathFollow2D
 
 @export var health: int = 10

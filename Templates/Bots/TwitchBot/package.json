@@ -1,0 +1,11 @@
+{
+  "name": "twitch-bot",
+  "version": "1.0.0",
+  "description": "A Twitch chat bot using tmi.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "tmi.js": "^1.8.5"
+  }
+}

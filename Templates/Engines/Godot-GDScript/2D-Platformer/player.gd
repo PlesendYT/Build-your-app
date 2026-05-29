@@ -1,3 +1,4 @@
+# Platformer player with double-jump, coyote time, acceleration/friction, and jump sound
 extends CharacterBody2D
 
 @export var speed: float = 300.0

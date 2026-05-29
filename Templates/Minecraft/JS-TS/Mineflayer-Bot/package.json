@@ -1,0 +1,14 @@
+{
+  "name": "mineflayer-bot",
+  "version": "1.0.0",
+  "description": "A Mineflayer bot with auto-farming and inventory management",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "mineflayer": "^4.20.1",
+    "mineflayer-auto-totem": "^0.1.0",
+    "vec3": "^0.1.10"
+  }
+}

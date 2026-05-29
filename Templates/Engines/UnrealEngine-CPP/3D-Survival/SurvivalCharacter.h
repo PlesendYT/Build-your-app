@@ -1,8 +1,10 @@
+// Header for a survival character with vitals, inventory, crafting, and building.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "SurvivalCharacter.generated.h"
 
+// Vital stats for the survival character.
 USTRUCT(BlueprintType)
 struct FVitalStats
 {
@@ -15,6 +17,7 @@ struct FVitalStats
     UPROPERTY(BlueprintReadWrite) float MaxStamina = 100.0f;
 };
 
+// A crafting recipe with ingredients and output.
 USTRUCT(BlueprintType)
 struct FCraftingRecipe
 {
@@ -34,15 +37,19 @@ public:
     UPROPERTY(Replicated, BlueprintReadWrite) FVitalStats Vitals;
     UPROPERTY(Replicated, BlueprintReadWrite) TMap<FName, int32> Inventory;
 
+    // Add gathered resources to inventory.
     UFUNCTION(BlueprintCallable)
     void GatherResource(FName ResourceType, int32 Amount);
 
+    // Attempt to craft an item from the recipe. Returns true on success.
     UFUNCTION(BlueprintCallable)
     bool CraftItem(FName RecipeID);
 
+    // Consume a food item to restore hunger and thirst.
     UFUNCTION(BlueprintCallable)
     void Eat(FName FoodItem, float HungerRestore, float ThirstRestore);
 
+    // Spawn a structure actor at the given location.
     UFUNCTION(BlueprintCallable)
     void BuildStructure(TSubclassOf<AActor> StructureClass, FVector Location, FRotator Rotation);
 

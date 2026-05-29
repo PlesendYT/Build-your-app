@@ -1,3 +1,6 @@
+/// <summary>
+/// Wheel-collider-based car with motor, steering, braking, and speed limiting.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

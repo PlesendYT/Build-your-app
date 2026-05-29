@@ -1,10 +1,11 @@
+// Wait for the DOM to be fully loaded before attaching event listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // CTA Button
+  // Scroll to the About section when the CTA button is clicked
   document.getElementById('ctaButton')?.addEventListener('click', () => {
     document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
   });
 
-  // Contact Form
+  // Handle contact form submission with validation and status message
   document.getElementById('contactForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('name').value;
@@ -22,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Smooth scroll for nav links
+  // Smooth scroll to section when a nav link is clicked
   document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();

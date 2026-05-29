@@ -1,4 +1,5 @@
 -- Solar2D Top-Down Adventure
+-- Main game controller: player movement, enemy AI, item pickup, door opening, and combat
 display.setStatusBar(display.HiddenStatusBar)
 
 local physics = require("physics")
@@ -14,7 +15,7 @@ local playerHP = 5
 local gameOver = false
 local moveSpeed = 3
 
--- Player
+-- Creates the player character with a dynamic circular physics body
 function createPlayer()
     player = display.newImageRect("player.png", 28, 32)
     player.x = display.contentCenterX
@@ -30,7 +31,7 @@ function createPlayer()
     player.moveY = 0
 end
 
--- Walls
+-- Creates a static wall rectangle as a physics barrier
 function createWall(x, y, w, h)
     local wall = display.newRect(x, y, w, h)
     wall:setFillColor(0.3, 0.3, 0.3)
@@ -42,7 +43,7 @@ function createWall(x, y, w, h)
     table.insert(walls, wall)
 end
 
--- Enemy
+-- Creates an enemy with chase AI, HP, damage, and attack cooldown
 function createEnemy(x, y)
     local enemy = display.newImageRect("enemy.png", 24, 24)
     enemy.x = x
@@ -61,7 +62,7 @@ function createEnemy(x, y)
     table.insert(enemies, enemy)
 end
 
--- Item
+-- Creates a collectible item (key or health) at the given position
 function createItem(x, y, itemType)
     local item = display.newImageRect("item.png", 16, 16)
     item.x = x
@@ -70,7 +71,7 @@ function createItem(x, y, itemType)
     table.insert(items, item)
 end
 
--- Input
+-- Handles WASD/arrow keys for movement and SPACE to open nearby doors
 function handleKey(event)
     if gameOver then return true end
 
@@ -91,7 +92,7 @@ function handleKey(event)
 end
 Runtime:addEventListener("key", handleKey)
 
--- Collision
+-- Handles collision events: item pickup (key/health) and enemy damage to player
 function onCollision(event)
     if event.phase == "began" then
         -- Item pickup
@@ -172,7 +173,7 @@ function initGame()
     createItem(550, 400, "health")
 end
 
--- Game loop
+-- Main game loop: updates player position and runs enemy chase AI
 function gameLoop()
     if gameOver then return end
 

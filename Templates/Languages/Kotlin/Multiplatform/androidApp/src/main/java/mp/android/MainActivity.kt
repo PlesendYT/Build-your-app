@@ -1,3 +1,7 @@
+/**
+ * Android app module of a Kotlin Multiplatform project.
+ * Displays a greeting fetched from shared KMP code using Jetpack Compose.
+ */
 package mp.android
 
 import android.os.Bundle
@@ -10,14 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import shared.Greeting
 
+/** Main entry point of the Android app. Sets up Compose UI with a greeting from shared code. */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
+                // Retrieve greeting data from the shared multiplatform module
                 val greeting = remember { Greeting() }
                 val data = remember { greeting.greet("KMP") }
 
+                // Display the greeting message and platform identifier
                 Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                     Text(data.message, style = MaterialTheme.typography.headlineMedium)
                     Text("Plattform: ${data.platform}")

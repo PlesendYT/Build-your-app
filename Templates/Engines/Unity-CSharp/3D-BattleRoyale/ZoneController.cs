@@ -1,3 +1,6 @@
+/// <summary>
+/// Shrinking safe zone with damage-over-time, phases, and minimap visualization.
+/// </summary>
 using UnityEngine;
 
 public class ZoneController : MonoBehaviour

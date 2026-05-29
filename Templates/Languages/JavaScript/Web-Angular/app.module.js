@@ -1,7 +1,9 @@
-// AngularJS Modul und Komponenten
+// AngularJS module — defines the main application module and components
+// Contains a counter component and a greeting component
 
 const app = angular.module('myApp', []);
 
+/** Counter component — increment, decrement, and reset a numeric value */
 app.component('appCounter', {
   template: `
     <section>
@@ -20,6 +22,7 @@ app.component('appCounter', {
   },
 });
 
+/** Greeting component — interactive greeting with two-way binding */
 app.component('appGreeting', {
   template: `
     <section>
@@ -29,6 +32,6 @@ app.component('appGreeting', {
     </section>
   `,
   controller() {
-    this.name = 'Welt / World';
+    this.name = 'World';
   },
 });

@@ -1,3 +1,4 @@
+// TCP network client - connects to a server, sends user input, echoes response.
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,10 +7,12 @@
 
 #define BUFFER_SIZE 4096
 
+// Entry point: connect to host:port, then run interactive send/receive loop.
 int main(int argc, char *argv[]) {
     const char *host = argc > 1 ? argv[1] : "127.0.0.1";
     int port = argc > 2 ? atoi(argv[2]) : 8080;
 
+    // Create TCP socket.
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0) {
         perror("socket");
@@ -25,6 +28,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    // Connect to the remote host.
     if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
         perror("connect");
         close(fd);
@@ -33,6 +37,7 @@ int main(int argc, char *argv[]) {
 
     printf("Connected to %s:%d\n", host, port);
 
+    // Interactive I/O loop: read user input, send to server, print response.
     char line[BUFFER_SIZE];
     while (printf("> "), fgets(line, sizeof(line), stdin)) {
         write(fd, line, strlen(line));

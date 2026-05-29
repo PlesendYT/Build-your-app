@@ -1,3 +1,6 @@
+/// <summary>
+/// Combo input detection system; includes HealthBar slider and GameManager for round management.
+/// </summary>
 using System.Collections.Generic;
 using UnityEngine;
 

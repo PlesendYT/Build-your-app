@@ -1,3 +1,4 @@
+// Dashboard page placeholder — protected area for authenticated users
 export default function Dashboard() {
   return (
     <div>

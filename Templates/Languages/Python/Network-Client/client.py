@@ -26,6 +26,7 @@ def http_client(url: str = "http://127.0.0.1:8000") -> None:
 
 
 def main() -> None:
+    # Present a menu and run the selected client type
     print("Choose client type:")
     print("1. TCP Client (connect to localhost:8888)")
     print("2. HTTP Client (fetch localhost:8000)")

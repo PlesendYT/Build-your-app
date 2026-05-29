@@ -1,16 +1,19 @@
 local love = love
 
+-- Player state: position, speed, size, and color
 local player = {
     x = 400, y = 500, speed = 300,
     radius = 20, color = {0.2, 0.6, 1.0}
 }
 
+-- Game state: bullets, enemies, score, spawn timer, and game-over flag
 local bullets = {}
 local enemies = {}
 local score = 0
 local spawnTimer = 0
 local gameOver = false
 
+-- Create a new enemy at a random x position above the screen
 local function spawnEnemy()
     table.insert(enemies, {
         x = math.random(50, 750),
@@ -21,12 +24,14 @@ local function spawnEnemy()
     })
 end
 
+-- LOVE entry point: set window title, size, and background
 function love.load()
     love.window.setTitle("LÖVE Game")
     love.window.setMode(800, 600)
     love.graphics.setBackgroundColor(0.05, 0.05, 0.15)
 end
 
+-- Per-frame update: movement, spawning, collision
 function love.update(dt)
     if gameOver then return end
 
@@ -87,6 +92,7 @@ function love.update(dt)
     end
 end
 
+-- Render player, bullets, enemies, score, and game-over overlay
 function love.draw()
     -- Player
     love.graphics.setColor(player.color)
@@ -116,6 +122,7 @@ function love.draw()
     end
 end
 
+-- Keyboard input: shoot (space), restart (r), quit (escape)
 function love.keypressed(key)
     if key == "escape" then
         love.event.quit()
@@ -134,6 +141,7 @@ function love.keypressed(key)
     end
 end
 
+-- Mouse click also fires a bullet
 function love.mousepressed(x, y, button)
     if button == 1 and not gameOver then
         table.insert(bullets, {x = player.x, y = player.y})

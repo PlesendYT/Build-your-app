@@ -1,0 +1,55 @@
+// Buildscript configuration for Fabric Loom
+plugins {
+    id 'fabric-loom' version '1.9-SNAPSHOT'
+    id 'maven-publish'
+}
+
+// Mod metadata used by Loom for generating access wideners and mixins
+version = project.mod_version
+group = project.maven_group
+
+// Base setup — Minecraft mappings, mod version, and loader version
+base {
+    archivesName = project.archives_base_name
+}
+
+loom {
+    // Split environment source sets for client/server separation
+    splitEnvironmentSourceSets()
+}
+
+repositories {
+    // Add any additional mod maven repositories here
+    mavenCentral()
+}
+
+dependencies {
+    // Fabric loader and API — provided by the game instance
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+processResources {
+    // Replace template tokens in fabric.mod.json with project values
+    inputs.properties project.properties
+    filteringCharset "UTF-8"
+    filesMatching("fabric.mod.json") {
+        expand project.properties
+    }
+}
+
+java {
+    // Use Java 21 for modern language features
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+// Configure the JAR manifest
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
+}

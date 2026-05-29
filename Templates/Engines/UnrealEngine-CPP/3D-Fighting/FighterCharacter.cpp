@@ -1,7 +1,9 @@
+// Fighting game character with combo system, input buffering, and special meter.
 #include "FighterCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+// Enable tick for input buffer timing.
 AFighterCharacter::AFighterCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;

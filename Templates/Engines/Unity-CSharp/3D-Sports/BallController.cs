@@ -1,3 +1,6 @@
+/// <summary>
+/// Ball with physics, friction, max speed, and goal detection for scoring.
+/// </summary>
 using UnityEngine;
 
 public class BallController : MonoBehaviour

@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls the Snake with grid-based movement, growth on eating food, and collision detection.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
@@ -16,6 +19,9 @@ public class SnakeController : MonoBehaviour
     private List<Transform> segments = new List<Transform>();
     private bool isAlive = true;
 
+    /// <summary>
+    /// Sets up the initial snake body segments.
+    /// </summary>
     private void Start()
     {
         nextDirection = moveDirection;
@@ -23,6 +29,9 @@ public class SnakeController : MonoBehaviour
             Grow();
     }
 
+    /// <summary>
+    /// Moves the snake forward at fixed intervals.
+    /// </summary>
     private void Update()
     {
         if (!isAlive) return;
@@ -36,6 +45,9 @@ public class SnakeController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Shifts segment positions and moves the head.
+    /// </summary>
     private void Move()
     {
         for (int i = segments.Count - 1; i > 0; i--)
@@ -45,12 +57,18 @@ public class SnakeController : MonoBehaviour
         transform.position = newPos;
     }
 
+    /// <summary>
+    /// Adds a new segment at the snake's tail position.
+    /// </summary>
     private void Grow()
     {
         GameObject segment = Instantiate(segmentPrefab, transform.position - (Vector3)moveDirection * gridSize, Quaternion.identity);
         segments.Add(segment.transform);
     }
 
+    /// <summary>
+    /// Reads input and sets the next direction, preventing reversal.
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context)
     {
         Vector2 input = context.ReadValue<Vector2>();
@@ -64,6 +82,9 @@ public class SnakeController : MonoBehaviour
             nextDirection = moveDirection;
     }
 
+    /// <summary>
+    /// Handles food pickup (grow + score) and collision with walls/self (game over).
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Food"))

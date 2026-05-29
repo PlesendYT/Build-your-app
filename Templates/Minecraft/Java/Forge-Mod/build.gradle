@@ -1,0 +1,73 @@
+// Buildscript for ForgeGradle — used to assemble the Forge mod
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+// Use a properties file for versioning
+version = mod_version
+group = maven_group
+
+base {
+    archivesName = archives_base_name
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+minecraft {
+    // Use Parchment mappings for better parameter names
+    mappings channel: 'parchment', version: parchment_version
+
+    // Configure access transformers (if any)
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            mods {
+                forgemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+            mods {
+                forgemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Forge MDK — provided by the game instance
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+}
+
+processResources {
+    // Substitute template tokens in mods.toml with project variables
+    inputs.properties project.properties
+    filesMatching("META-INF/mods.toml") {
+        expand project.properties
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "ForgeMod",
+            "Specification-Version": "1",
+            "Implementation-Title": project.name,
+            "Implementation-Version": project.version
+        ])
+    }
+}

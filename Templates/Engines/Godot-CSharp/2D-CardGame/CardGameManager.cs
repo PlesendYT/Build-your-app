@@ -1,7 +1,14 @@
+// File: CardGameManager.cs
+// Core game manager for a turn-based 2D card game. Handles deck, hand, mana, health, and card effects.
+
 using Godot;
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Manages the card game state including deck shuffling, hand management, mana, health,
+/// card playing, and turn flow.
+/// </summary>
 public partial class CardGameManager : Node
 {
     [Export] public int MaxHandSize = 7;
@@ -17,6 +24,7 @@ public partial class CardGameManager : Node
     public int MaxHealth { get; private set; } = 30;
     public int Shield { get; private set; } = 0;
 
+    // Signals emitted when game state changes
     public Action<List<Card>> HandUpdated;
     public Action<int, int> ManaUpdated;
     public Action<int, int> HealthUpdated;
@@ -24,6 +32,7 @@ public partial class CardGameManager : Node
 
     public override void _Ready()
     {
+        // Build the starting deck with basic cards
         _startingDeck = new Card[]
         {
             new Card { CardName = "Strike", Cost = 1, Damage = 6, CardType = "attack" },
@@ -33,6 +42,9 @@ public partial class CardGameManager : Node
         ShuffleDeck();
     }
 
+    /// <summary>
+    /// Fisher-Yates shuffle of the draw pile. Clears hand and discard pile.
+    /// </summary>
     public void ShuffleDeck()
     {
         _drawPile = new List<Card>(_startingDeck);
@@ -48,6 +60,9 @@ public partial class CardGameManager : Node
         _discardPile.Clear();
     }
 
+    /// <summary>
+    /// Begins a new turn: refill mana and draw one card.
+    /// </summary>
     public void StartTurn()
     {
         CurrentMana = MaxMana;
@@ -55,6 +70,9 @@ public partial class CardGameManager : Node
         EmitSignals();
     }
 
+    /// <summary>
+    /// Draws a specified number of cards from the draw pile, reshuffling the discard pile if needed.
+    /// </summary>
     public void DrawCards(int count)
     {
         for (int i = 0; i < count; i++)
@@ -71,6 +89,9 @@ public partial class CardGameManager : Node
         EmitSignals();
     }
 
+    /// <summary>
+    /// Moves all discard pile cards back into the draw pile and shuffles them.
+    /// </summary>
     private void ReshuffleDiscard()
     {
         _drawPile = new List<Card>(_discardPile);
@@ -85,6 +106,10 @@ public partial class CardGameManager : Node
         _discardPile.Clear();
     }
 
+    /// <summary>
+    /// Plays a card from the hand at the given index. Validates mana cost and applies effects.
+    /// </summary>
+    /// <returns>True if the card was successfully played.</returns>
     public bool PlayCard(int cardIndex, Node target = null)
     {
         if (cardIndex >= _hand.Count) return false;
@@ -99,6 +124,9 @@ public partial class CardGameManager : Node
         return true;
     }
 
+    /// <summary>
+    /// Applies damage, healing, shield, and draw effects from the played card.
+    /// </summary>
     private void ApplyCardEffects(Card card, Node target)
     {
         if (card.Damage > 0 && target != null && target.HasMethod("TakeDamage"))
@@ -114,6 +142,9 @@ public partial class CardGameManager : Node
             DrawCards(card.DrawCards);
     }
 
+    /// <summary>
+    /// Reduces health by the given amount, factoring in shield absorption. Triggers combat end if health reaches zero.
+    /// </summary>
     public void TakeDamage(int amount)
     {
         if (Shield > 0)
@@ -132,6 +163,9 @@ public partial class CardGameManager : Node
         EmitSignals();
     }
 
+    /// <summary>
+    /// Ends the current turn: discard remaining hand cards.
+    /// </summary>
     public void EndTurn()
     {
         foreach (var card in _hand)
@@ -140,6 +174,9 @@ public partial class CardGameManager : Node
         EmitSignals();
     }
 
+    /// <summary>
+    /// Fires all state-change events so the UI can update.
+    /// </summary>
     private void EmitSignals()
     {
         HandUpdated?.Invoke(new List<Card>(_hand));

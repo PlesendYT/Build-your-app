@@ -1,9 +1,10 @@
 -- Puzzle module for Solar2D
+-- Provides level definitions, grid cloning, player finding, and block counting utilities
 local M = {}
 
 local TILE_SIZE = 64
 
--- Puzzle level definitions
+-- Puzzle level definitions with name and grid layout
 M.levels = {
     {
         name = "Tutorial 1",
@@ -38,14 +39,17 @@ M.levels = {
     }
 }
 
+-- Returns a level by index (0-based), defaults to first level
 function M.getLevel(index)
     return M.levels[index + 1] or M.levels[1]
 end
 
+-- Returns the total number of defined levels
 function M.getLevelCount()
     return #M.levels
 end
 
+-- Creates a deep copy of a grid for safe manipulation
 function M.cloneGrid(gridData)
     local new = {}
     for y, row in ipairs(gridData) do
@@ -57,6 +61,7 @@ function M.cloneGrid(gridData)
     return new
 end
 
+-- Scans grid for player position (value 2), returns (1,1) as fallback
 function M.findPlayer(grid)
     for y, row in ipairs(grid) do
         for x, cell in ipairs(row) do
@@ -66,6 +71,7 @@ function M.findPlayer(grid)
     return 1, 1
 end
 
+-- Counts all pushable blocks (value 3) in the grid
 function M.countBlocks(grid)
     local count = 0
     for _, row in ipairs(grid) do

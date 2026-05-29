@@ -1,4 +1,5 @@
-// DiscordBot — Haupteinstieg
+// DiscordBot — main entry point
+// Initializes the Discord client, loads commands and events from disk, and logs in
 
 import { Client, GatewayIntentBits, Events, Collection } from 'discord.js';
 import { readdirSync } from 'node:fs';
@@ -7,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// Create the Discord client with required intents
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -17,7 +19,7 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// Kommandos laden
+// Load command modules from the commands directory
 const commandsPath = join(__dirname, 'commands');
 const commandFiles = readdirSync(commandsPath).filter(f => f.endsWith('.js'));
 
@@ -26,7 +28,7 @@ for (const file of commandFiles) {
   client.commands.set(command.data.name, command);
 }
 
-// Events laden
+// Load event modules from the events directory
 const eventsPath = join(__dirname, 'events');
 const eventFiles = readdirSync(eventsPath).filter(f => f.endsWith('.js'));
 
@@ -39,11 +41,12 @@ for (const file of eventFiles) {
   }
 }
 
-// Slash-Commands registrieren
+// Register slash commands globally once the client is ready
 client.once(Events.ClientReady, async () => {
   const commands = client.commands.map(c => c.data);
   await client.application.commands.set(commands);
-  console.log(`Bot online als ${client.user.tag}`);
+  console.log(`Bot online as ${client.user.tag}`);
 });
 
+// Log in using the bot token from environment variables
 client.login(process.env.DISCORD_TOKEN);

@@ -1,3 +1,6 @@
+/**
+ * JPA entity representing an item with a title and optional description.
+ */
 package com.example.restapi.model;
 
 import jakarta.persistence.*;

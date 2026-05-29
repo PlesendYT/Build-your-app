@@ -15,6 +15,7 @@ def handle_choice(choice: str) -> bool:
     """Process user choice. Return False to exit."""
     match choice:
         case "1":
+            # Prompt for name and greet the user
             name = input("Enter your name: ").strip()
             print(f"Hello, {name or 'World'}!")
             return True

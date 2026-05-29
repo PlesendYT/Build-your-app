@@ -1,3 +1,7 @@
+/**
+ * Android Game sample: an interactive ball simulation using SurfaceView.
+ * Balls bounce around the screen; tapping one removes it.
+ */
 package android.game;
 
 import android.app.Activity;
@@ -11,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+/** Entry Activity that hosts the game SurfaceView. */
 public final class MainActivity extends Activity {
 
     private GameView gameView;
@@ -35,6 +40,10 @@ public final class MainActivity extends Activity {
     }
 }
 
+/**
+ * Custom SurfaceView that runs a dedicated game loop with physics updates
+ * and touch-based interaction.
+ */
 final class GameView extends SurfaceView implements Runnable {
 
     private Thread gameThread;
@@ -45,6 +54,7 @@ final class GameView extends SurfaceView implements Runnable {
     private final ArrayList<Ball> balls = new ArrayList<>();
     private float touchX = -1, touchY = -1;
 
+    /** Spawns 5 balls with random positions, velocities, sizes, and colours. */
     public GameView(MainActivity activity) {
         super(activity);
         holder = getHolder();
@@ -60,17 +70,20 @@ final class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    /** Starts the game loop thread. */
     public void resume() {
         running = true;
         gameThread = new Thread(this);
         gameThread.start();
     }
 
+    /** Stops the game loop and waits for the thread to finish. */
     public void pause() {
         running = false;
         try { gameThread.join(); } catch (InterruptedException ignored) {}
     }
 
+    /** Removes the ball that was touched (if any). */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         touchX = event.getX();
@@ -90,6 +103,7 @@ final class GameView extends SurfaceView implements Runnable {
         return true;
     }
 
+    /** Core game loop: updates physics and redraws every ~16 ms. */
     @Override
     public void run() {
         while (running) {
@@ -103,6 +117,7 @@ final class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    /** Moves each ball and removes those that leave the screen; spawns extras when few remain. */
     private void update() {
         var width = getWidth();
         var height = getHeight();
@@ -115,6 +130,7 @@ final class GameView extends SurfaceView implements Runnable {
                 iter.remove();
             }
         }
+        // Ensure at least 3 balls remain on screen
         if (balls.size() < 3) {
             balls.add(new Ball(
                 random.nextFloat() * width,
@@ -127,12 +143,14 @@ final class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    /** Renders all balls and the touch coordinates. */
     private void draw(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
         for (var b : balls) {
             paint.setColor(b.color);
             canvas.drawCircle(b.x, b.y, b.radius, paint);
         }
+        // Show last touch position
         if (touchX >= 0) {
             paint.setColor(Color.WHITE);
             paint.setTextSize(30);
@@ -140,5 +158,6 @@ final class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    /** Immutable ball data: position, velocity, radius, and colour. */
     record Ball(float x, float y, float vx, float vy, float radius, int color) {}
 }

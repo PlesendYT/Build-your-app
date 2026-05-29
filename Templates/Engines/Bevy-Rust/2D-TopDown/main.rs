@@ -1,5 +1,8 @@
+//! A 2D top-down template with player movement, dash ability, and patrolling enemies.
+
 use bevy::prelude::*;
 
+/// Entry point: builds and runs the Bevy app.
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
@@ -8,6 +11,7 @@ fn main() {
         .run();
 }
 
+/// Player component with movement and dash stats.
 #[derive(Component)]
 struct Player {
     speed: f32,
@@ -16,6 +20,7 @@ struct Player {
     facing: Vec3,
 }
 
+/// Enemy component with patrol waypoints and aggro range.
 #[derive(Component)]
 struct Enemy {
     speed: f32,
@@ -24,6 +29,7 @@ struct Enemy {
     aggro_range: f32,
 }
 
+/// Dash ability state: timer, cooldown, active/ready flags.
 #[derive(Component)]
 struct Dash {
     timer: f32,
@@ -32,12 +38,15 @@ struct Dash {
     ready: bool,
 }
 
+/// Velocity component for movement.
 #[derive(Component)]
 struct Velocity(Vec3);
 
+/// Spawns camera, player with dash, and one patrolling enemy.
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
 
+    // Player at origin.
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("player.png"),
@@ -59,6 +68,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         Velocity(Vec3::ZERO),
     ));
 
+    // Enemy with a rectangular patrol path.
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("enemy.png"),
@@ -80,6 +90,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     ));
 }
 
+/// Arrow-key movement; sets velocity on the player. Disabled during dash.
 fn player_movement(
     keyboard: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
@@ -106,6 +117,7 @@ fn player_movement(
     }
 }
 
+/// Triggers a dash in the player's facing direction on Shift press.
 fn player_dash(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Velocity, &Player, &mut Dash)>,
@@ -121,6 +133,7 @@ fn player_dash(
     }
 }
 
+/// Manages dash timer expiry and cooldown recovery.
 fn dash_cooldown(time: Res<Time>, mut query: Query<&mut Dash>) {
     for mut dash in query.iter_mut() {
         if dash.active {
@@ -138,6 +151,7 @@ fn dash_cooldown(time: Res<Time>, mut query: Query<&mut Dash>) {
     }
 }
 
+/// Enemy behaviour: chase player when within aggro range, otherwise patrol waypoints.
 fn enemy_ai(
     mut query: Query<(&mut Velocity, &mut Enemy, &Transform)>,
     player_query: Query<&Transform, (With<Player>, Without<Enemy>)>,
@@ -152,9 +166,11 @@ fn enemy_ai(
         let distance = transform.translation.distance(player_pos);
 
         if distance < enemy.aggro_range {
+            // Chase the player at 1.5x speed.
             let direction = (player_pos - transform.translation).normalize();
             velocity.0 = direction * enemy.speed * 1.5;
         } else {
+            // Patrol between waypoints.
             let target = enemy.patrol_points[enemy.current_target];
             let direction = (target - transform.translation).normalize();
             velocity.0 = direction * enemy.speed;

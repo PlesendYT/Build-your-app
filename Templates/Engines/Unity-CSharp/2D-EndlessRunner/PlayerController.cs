@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls the endless runner player with forward movement, jumping, sliding, power-ups, and collision handling.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,17 +24,26 @@ public class PlayerController : MonoBehaviour
     public Animator animator;
     public Transform slideCollider;
 
+    /// <summary>
+    /// Caches the rigidbody component.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
+    /// <summary>
+    /// Checks if the player is grounded and updates animation each frame.
+    /// </summary>
     private void Update()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         UpdateAnimation();
     }
 
+    /// <summary>
+    /// Applies forward movement velocity when not sliding.
+    /// </summary>
     private void FixedUpdate()
     {
         if (!isSliding)
@@ -40,6 +52,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates animator parameters for grounded and sliding states.
+    /// </summary>
     private void UpdateAnimation()
     {
         if (animator != null)
@@ -49,6 +64,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Makes the player jump if grounded and not sliding.
+    /// </summary>
     public void OnJump(InputAction.CallbackContext context)
     {
         if (context.performed && isGrounded && !isSliding)
@@ -57,6 +75,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Starts the slide coroutine when the slide action is performed.
+    /// </summary>
     public void OnSlide(InputAction.CallbackContext context)
     {
         if (context.performed && isGrounded && !isSliding)
@@ -65,6 +86,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Disables the slide collider for the duration of the slide, then re-enables it.
+    /// </summary>
     private System.Collections.IEnumerator SlideRoutine()
     {
         isSliding = true;
@@ -78,6 +102,9 @@ public class PlayerController : MonoBehaviour
         isSliding = false;
     }
 
+    /// <summary>
+    /// Handles collisions: obstacles (destroyed by shield or kill player), collectibles, and power-ups.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Obstacle"))
@@ -106,8 +133,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Enables or disables the shield.
+    /// </summary>
     public void SetShield(bool active) => hasShield = active;
 
+    /// <summary>
+    /// Kills the player: stops movement, deactivates, and triggers game over.
+    /// </summary>
     private void Die()
     {
         rb.linearVelocity = Vector2.zero;

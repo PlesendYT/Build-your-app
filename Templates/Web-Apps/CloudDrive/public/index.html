@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!-- Cloud Drive - folder-based file management with sharing -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Drive</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f0f4f8; }
+    header { background: #1e293b; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    .breadcrumb { margin-bottom: 1rem; background: white; padding: 0.75rem 1rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .breadcrumb a { color: #2563eb; text-decoration: none; }
+    .breadcrumb span { color: #64748b; margin: 0 0.25rem; }
+    .actions { margin-bottom: 1rem; display: flex; gap: 0.5rem; }
+    .btn { background: #2563eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    .btn-secondary { background: #64748b; }
+    .item-list { background: white; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+    .folder-item, .file-item { padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .folder-item:hover, .file-item:hover { background: #f8fafc; }
+    .folder-item .icon { color: #eab308; margin-right: 0.5rem; }
+    .file-item .icon { color: #2563eb; margin-right: 0.5rem; }
+    .meta { font-size: 0.85rem; color: #64748b; }
+    .actions-right a { color: #2563eb; text-decoration: none; margin-left: 0.5rem; font-size: 0.85rem; }
+    #file-input { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cloud Drive</h1>
+    <div>
+      <button class="btn" id="new-folder-btn">+ New Folder</button>
+      <button class="btn btn-secondary" id="upload-btn">Upload</button>
+      <input type="file" id="file-input">
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Breadcrumb navigation -->
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <!-- File/folder listing -->
+    <div class="item-list" id="item-list"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

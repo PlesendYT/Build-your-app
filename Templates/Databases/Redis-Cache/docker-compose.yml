@@ -1,0 +1,29 @@
+# Redis + RedisInsight starter stack
+# Run: docker compose up -d
+
+version: "3.8"
+
+services:
+  # Redis in-memory data structure store (primary cache)
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    restart: unless-stopped
+    ports:
+      - "6379:6379" # Default Redis port
+    command: redis-server --requirepass secret --appendonly yes
+    volumes:
+      - redis-data:/data # Persistent AOF / RDB storage
+
+  # RedisInsight GUI for managing and visualizing Redis data
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redis-insight
+    restart: unless-stopped
+    ports:
+      - "5540:5540" # Access at http://localhost:5540
+    depends_on:
+      - redis
+
+volumes:
+  redis-data:

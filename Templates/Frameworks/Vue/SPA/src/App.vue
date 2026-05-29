@@ -1,6 +1,8 @@
 <script setup>
+// Import router components for navigation and routing
 import { RouterView, RouterLink, useRoute } from 'vue-router'
 
+// Navigation pages configuration with paths, names, and display labels
 const pages = [
   { path: '/', name: 'home', label: 'Home' },
   { path: '/page/services', name: 'services', label: 'Services' },
@@ -9,6 +11,7 @@ const pages = [
 ]
 </script>
 
+<!-- SPA layout with header, dynamic navigation links, and router view -->
 <template>
   <div class="app">
     <header class="header">

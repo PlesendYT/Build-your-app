@@ -1,3 +1,4 @@
+// Root component — demonstrates Angular Signals with a counter and HTTP weather fetch
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -55,10 +56,12 @@ export class AppComponent {
 
   constructor(private http: HttpClient) {}
 
+  // Counter actions
   increment(): void { this.count.update(c => c + 1); }
   decrement(): void { this.count.update(c => c - 1); }
   reset(): void     { this.count.set(0); }
 
+  // Fetch current weather data from the Open-Meteo API
   fetchWeather(): void {
     this.loading.set(true);
     this.http.get<WeatherData>(

@@ -1,3 +1,6 @@
+/// <summary>
+/// Represents a building that can be upgraded with money, changing its sprite at each level.
+/// </summary>
 using UnityEngine;
 
 public class Building : MonoBehaviour
@@ -9,11 +12,17 @@ public class Building : MonoBehaviour
     public Sprite[] levelSprites;
     private SpriteRenderer spriteRenderer;
 
+    /// <summary>
+    /// Caches the sprite renderer component.
+    /// </summary>
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Upgrades the building if below max level and enough money is available, updating the sprite.
+    /// </summary>
     public void Upgrade()
     {
         if (level >= maxLevel) return;
@@ -27,6 +36,9 @@ public class Building : MonoBehaviour
             spriteRenderer.sprite = levelSprites[level - 1];
     }
 
+    /// <summary>
+    /// Upgrades the building on mouse click.
+    /// </summary>
     private void OnMouseDown()
     {
         Upgrade();

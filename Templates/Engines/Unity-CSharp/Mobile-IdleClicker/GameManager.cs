@@ -1,7 +1,13 @@
 using UnityEngine;
 
+/// <summary>
+/// Central game manager for the idle clicker. Handles resources, prestige, save/load, and UI.
+/// </summary>
 public class GameManager : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance of the GameManager.
+    /// </summary>
     public static GameManager Instance { get; private set; }
 
     [Header("Resources")]
@@ -19,6 +25,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        // Enforce singleton pattern
         if (Instance == null) { Instance = this; DontDestroyOnLoad(gameObject); }
         else { Destroy(gameObject); }
     }
@@ -34,12 +41,18 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Adds resources to the player's total, tracking lifetime earnings.
+    /// </summary>
     public void AddResource(double amount)
     {
         resource += amount;
         totalEarned += amount;
     }
 
+    /// <summary>
+    /// Attempts to spend resources. Returns true if the purchase was successful.
+    /// </summary>
     public bool SpendResource(double amount)
     {
         if (resource >= amount)
@@ -50,11 +63,17 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Checks whether the player can afford a given amount.
+    /// </summary>
     public bool CanAfford(double amount)
     {
         return resource >= amount;
     }
 
+    /// <summary>
+    /// Displays the offline earnings panel with the earned amount for a few seconds.
+    /// </summary>
     public void ShowOfflineEarnings(double amount)
     {
         if (offlineEarningsPanel != null)
@@ -66,12 +85,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Hides the offline earnings panel.
+    /// </summary>
     private void HideOfflinePanel()
     {
         if (offlineEarningsPanel != null)
             offlineEarningsPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Performs a prestige reset if the player has earned enough total resources.
+    /// </summary>
     public void Prestige()
     {
         if (totalEarned < 10000) return;
@@ -83,6 +108,9 @@ public class GameManager : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
     }
 
+    /// <summary>
+    /// Saves resource, total earned, and prestige multiplier to PlayerPrefs.
+    /// </summary>
     public void SaveGame()
     {
         PlayerPrefs.SetString("Resource", resource.ToString());
@@ -91,6 +119,9 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    /// <summary>
+    /// Loads resource, total earned, and prestige multiplier from PlayerPrefs.
+    /// </summary>
     public void LoadGame()
     {
         if (PlayerPrefs.HasKey("Resource"))
@@ -101,6 +132,9 @@ public class GameManager : MonoBehaviour
             prestigeMultiplier = PlayerPrefs.GetFloat("PrestigeMultiplier");
     }
 
+    /// <summary>
+    /// Refreshes the resource and income display text.
+    /// </summary>
     private void UpdateUI()
     {
         if (resourceText != null) resourceText.text = FormatNumber(resource);
@@ -108,6 +142,9 @@ public class GameManager : MonoBehaviour
             incomeText.text = "/s: " + FormatNumber(generator.GetTotalProduction());
     }
 
+    /// <summary>
+    /// Formats a large number with K, M, B suffixes.
+    /// </summary>
     private string FormatNumber(double value)
     {
         if (value >= 1_000_000_000) return (value / 1_000_000_000).ToString("F2") + "B";

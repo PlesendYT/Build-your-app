@@ -1,3 +1,6 @@
+/// <summary>
+/// 3D platformer character with movement, jumping, double jump, and ground detection.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

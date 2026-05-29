@@ -1,9 +1,12 @@
 <script setup>
+// Import cart store to enable adding products from the shop view
 import { useCartStore } from '../stores/cart'
 
+// Reactive cart instance for add-to-cart functionality
 const cart = useCartStore()
 </script>
 
+<!-- Shop home view rendering product cards with add-to-cart buttons -->
 <template>
   <div>
     <h2>Shop</h2>
@@ -18,6 +21,7 @@ const cart = useCartStore()
 </template>
 
 <script>
+// Product catalog data (non-setup script)
 const products = [
   { id: 1, name: 'Laptop', price: 1299 },
   { id: 2, name: 'Maus', price: 49 },

@@ -1,3 +1,6 @@
+/// <summary>
+/// A tower that targets the closest enemy within range and fires projectiles, with upgrade support.
+/// </summary>
 using UnityEngine;
 
 public class Tower : MonoBehaviour
@@ -20,11 +23,17 @@ public class Tower : MonoBehaviour
     private Transform currentTarget;
     private SpriteRenderer spriteRenderer;
 
+    /// <summary>
+    /// Caches the sprite renderer.
+    /// </summary>
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Finds the nearest target and fires if the cooldown has elapsed.
+    /// </summary>
     private void Update()
     {
         FindTarget();
@@ -36,6 +45,9 @@ public class Tower : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Finds the closest enemy within range using a physics overlap circle.
+    /// </summary>
     private void FindTarget()
     {
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, range);
@@ -56,6 +68,9 @@ public class Tower : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instantiates a projectile aimed at the current target.
+    /// </summary>
     private void Fire()
     {
         if (projectilePrefab == null || firePoint == null || currentTarget == null) return;
@@ -68,6 +83,9 @@ public class Tower : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Upgrades the tower to the next level if funds are available.
+    /// </summary>
     public bool Upgrade()
     {
         if (upgradeLevel >= maxUpgradeLevel) return false;
@@ -82,12 +100,18 @@ public class Tower : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Returns the cost of the next upgrade, or -1 if maxed out.
+    /// </summary>
     public int GetUpgradeCost()
     {
         if (upgradeLevel >= maxUpgradeLevel) return -1;
         return upgradeCosts[upgradeLevel];
     }
 
+    /// <summary>
+    /// Draws the tower range gizmo in the editor.
+    /// </summary>
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;

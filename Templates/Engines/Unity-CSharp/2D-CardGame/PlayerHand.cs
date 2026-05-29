@@ -1,3 +1,6 @@
+/// <summary>
+/// Represents a player's hand in the card game, handling drawing, mana, health, and card visuals.
+/// </summary>
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,16 +22,25 @@ public class PlayerHand : MonoBehaviour
     private List<CardInstance> handCards = new List<CardInstance>();
     private GameManager gameManager;
 
+    /// <summary>
+    /// Finds the GameManager instance on awake.
+    /// </summary>
     private void Awake()
     {
         gameManager = FindAnyObjectByType<GameManager>();
     }
 
+    /// <summary>
+    /// Initializes mana to maximum on start.
+    /// </summary>
     private void Start()
     {
         currentMana = maxMana;
     }
 
+    /// <summary>
+    /// Called at the start of each turn: increments mana and draws a card.
+    /// </summary>
     public void StartTurn()
     {
         currentMana = Mathf.Min(currentMana + 1, maxMana);
@@ -36,6 +48,9 @@ public class PlayerHand : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Draws cards from the deck up to the maximum hand size.
+    /// </summary>
     public void DrawCards(int count)
     {
         for (int i = 0; i < count && handCards.Count < maxHandSize; i++)
@@ -50,7 +65,9 @@ public class PlayerHand : MonoBehaviour
         UpdateUI();
     }
 
-    public void DrawCards(int count) { } // stub to make compiler happy; actual implementation above
+    /// <summary>
+    /// Applies damage to the player and triggers game over if health reaches zero.
+    /// </summary>
     public void TakeDamage(int amount)
     {
         health = Mathf.Max(0, health - amount);
@@ -60,11 +77,17 @@ public class PlayerHand : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Heals the player up to the maximum health.
+    /// </summary>
     public void Heal(int amount)
     {
         health = Mathf.Min(maxHealth, health + amount);
     }
 
+    /// <summary>
+    /// Spends mana if enough is available; returns true on success.
+    /// </summary>
     public bool SpendMana(int amount)
     {
         if (currentMana >= amount)
@@ -76,13 +99,18 @@ public class PlayerHand : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Instantiates a card visual game object in the hand layout.
+    /// </summary>
     private void CreateCardVisual(CardInstance card)
     {
         if (cardPrefab == null || handLayout == null) return;
         GameObject obj = Instantiate(cardPrefab, handLayout);
-        // Setup card visual here
     }
 
+    /// <summary>
+    /// Updates the deck and hand count text displays.
+    /// </summary>
     public void UpdateUI()
     {
         if (deckCountText != null) deckCountText.text = "Deck: " + deck.GetDeckCount();

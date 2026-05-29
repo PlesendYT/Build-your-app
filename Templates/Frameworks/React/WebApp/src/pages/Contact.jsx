@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import api from '../services/api'
 
+/** Contact page with a form that submits user messages via the API. */
 function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
 
+  // Submit the contact form to the backend API
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {

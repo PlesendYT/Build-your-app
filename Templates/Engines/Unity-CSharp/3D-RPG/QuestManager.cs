@@ -1,3 +1,6 @@
+/// <summary>
+/// Quest system with active/completed tracking, logging, and completion events.
+/// </summary>
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,10 +9,49 @@ public class Quest
 {
     public string questName;
     public string description;
-    public bool isActive;
-    public bool isComplete;
-    public QuestObjective[] objectives;
-    public Reward reward;
+    public bool isCompleted;
+    public int rewardGold;
+}
+
+public class QuestManager : MonoBehaviour
+{
+    public List<Quest> activeQuests = new List<Quest>();
+    public List<Quest> completedQuests = new List<Quest>();
+
+    public TMPro.TextMeshProUGUI questLogText;
+
+    public event System.Action<Quest> OnQuestCompleted;
+
+    public void StartQuest(Quest quest)
+    {
+        if (!activeQuests.Contains(quest))
+        {
+            activeQuests.Add(quest);
+            Debug.Log("Quest started: " + quest.questName);
+        }
+    }
+
+    public void CompleteQuest(Quest quest)
+    {
+        if (activeQuests.Contains(quest))
+        {
+            quest.isCompleted = true;
+            activeQuests.Remove(quest);
+            completedQuests.Add(quest);
+            OnQuestCompleted?.Invoke(quest);
+            UpdateQuestLog();
+        }
+    }
+
+    private void UpdateQuestLog()
+    {
+        if (questLogText != null)
+        {
+            questLogText.text = "Active Quests:\n";
+            foreach (var q in activeQuests)
+                questLogText.text += "- " + q.questName + "\n";
+        }
+    }
 }
 
 [System.Serializable]

@@ -1,3 +1,4 @@
+# Moving platform that oscillates between start and target position with pause
 extends AnimatableBody3D
 
 @export var move_to: Vector3 = Vector3(10, 0, 0)

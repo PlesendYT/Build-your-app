@@ -1,3 +1,4 @@
+# Horror game enemy AI with patrol, search, and chase states
 extends CharacterBody3D
 
 @export var patrol_speed: float = 2.0

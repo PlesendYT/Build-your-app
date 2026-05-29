@@ -1,0 +1,40 @@
+<!-- New thread form - create a discussion thread -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Thread - Forum</title>
+</head>
+<body>
+  <nav>
+    <a href="/threads">Forum</a>
+    <div>
+      <span><%= user.username %></span>
+      <a href="/auth/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>New Thread</h1>
+    <!-- Form to create a new discussion thread -->
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/threads" method="POST">
+      <input type="text" name="title" placeholder="Thread title" required>
+      <textarea name="content" placeholder="Write your post..." rows="8" required></textarea>
+      <button type="submit">Create Thread</button>
+    </form>
+  </div>
+
+  <style>
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    input, textarea { display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; }
+    button { background: #2563eb; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
+    .error { color: #dc2626; }
+    nav { background: #1f2937; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    nav a { color: white; text-decoration: none; margin-left: 1rem; }
+  </style>
+</body>
+</html>

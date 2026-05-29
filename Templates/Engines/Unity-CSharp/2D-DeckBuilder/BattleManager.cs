@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages turn-based deck-builder combat: playing cards, enemy AI turns, blocking, and health tracking.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
@@ -29,6 +32,9 @@ public class BattleManager : MonoBehaviour
     private int enemyBlock;
     private bool isPlayerTurn = true;
 
+    /// <summary>
+    /// Draws initial hand and starts the first player turn.
+    /// </summary>
     private void Start()
     {
         DeckManager.Instance.DrawCards(DeckManager.Instance.handSize);
@@ -36,6 +42,9 @@ public class BattleManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Starts the player's turn: resets energy and block, draws cards, updates UI.
+    /// </summary>
     private void StartPlayerTurn()
     {
         isPlayerTurn = true;
@@ -46,6 +55,9 @@ public class BattleManager : MonoBehaviour
         LogMessage("Your turn!");
     }
 
+    /// <summary>
+    /// Plays a card from hand: spends energy, applies damage/block, and checks for victory.
+    /// </summary>
     public void PlayCard(CardData card, bool targetEnemy = true)
     {
         if (!isPlayerTurn) return;
@@ -77,6 +89,9 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Ends the player's turn and starts the enemy turn coroutine.
+    /// </summary>
     public void EndTurn()
     {
         if (!isPlayerTurn) return;
@@ -85,6 +100,9 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(EnemyTurn());
     }
 
+    /// <summary>
+    /// Enemy turn: deals damage (mitigated by player block) and generates enemy block.
+    /// </summary>
     private System.Collections.IEnumerator EnemyTurn()
     {
         LogMessage(enemyName + "'s turn!");
@@ -114,11 +132,17 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Displays a message in the battle log.
+    /// </summary>
     private void LogMessage(string msg)
     {
         if (logText != null) logText.text = msg;
     }
 
+    /// <summary>
+    /// Updates all UI text elements for health, energy, and block values.
+    /// </summary>
     private void UpdateUI()
     {
         if (playerHPText != null) playerHPText.text = "HP: " + playerHealth + "/" + playerMaxHealth + (playerBlock > 0 ? " (+" + playerBlock + ")" : "");

@@ -1,4 +1,4 @@
-// FPSGameMode.h
+// Header for FPS game mode with kill score and respawn logic.
 #pragma once
 
 #include "CoreMinimal.h"
@@ -15,6 +15,8 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+
+    // Called when a player is killed; handles score and respawn timer.
     virtual void OnPlayerKilled(AController* Victim, AController* Killer);
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -25,5 +27,6 @@ protected:
 
     FTimerHandle RespawnTimerHandle;
 
+    // Respawn a player at a random PlayerStart.
     virtual void RespawnPlayer(AController* Controller);
 };

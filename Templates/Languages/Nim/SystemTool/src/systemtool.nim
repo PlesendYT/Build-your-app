@@ -1,19 +1,22 @@
 import std/[os, strutils, sequtils, json, times, cpuinfo, parseopt]
 
+## Aggregate system information including hardware and process data
 type
-  SystemInfo = object
-    hostname: string
-    os: string
-    cpu: string
-    cpuCores: int
-    memoryTotal: int64
-    processes: seq[ProcessInfo]
+  SystemInfo* = object
+    hostname*: string
+    os*: string
+    cpu*: string
+    cpuCores*: int
+    memoryTotal*: int64
+    processes*: seq[ProcessInfo]
 
-  ProcessInfo = object
-    pid: int
-    name: string
-    state: string
+## Information about a single system process
+  ProcessInfo* = object
+    pid*: int
+    name*: string
+    state*: string
 
+## Gathers basic system information from the host OS
 proc getSystemInfo(): SystemInfo =
   result.hostname = try: hostname() except: "unknown"
   result.os = hostOS
@@ -22,6 +25,7 @@ proc getSystemInfo(): SystemInfo =
   result.memoryTotal = try: getTotalMem() else: 0
   result.processes = @[]
 
+## Parses /proc/meminfo on Linux into a key-value table of memory stats
 proc parseLinuxMemInfo(): Table[string, int64] =
   result = initTable[string, int64]()
   try:
@@ -34,6 +38,7 @@ proc parseLinuxMemInfo(): Table[string, int64] =
   except:
     discard
 
+## Reads the /proc filesystem and returns a list of running processes
 proc getProcList(): seq[ProcessInfo] =
   result = @[]
   try:
@@ -58,6 +63,7 @@ proc getProcList(): seq[ProcessInfo] =
   except:
     discard
 
+## Prints a formatted summary of system information to stdout
 proc printSystemInfo(info: SystemInfo) =
   echo "=== System Information ==="
   echo "Hostname: ", info.hostname
@@ -82,6 +88,7 @@ proc printSystemInfo(info: SystemInfo) =
   if info.processes.len > 21:
     echo "... and ", info.processes.len - 21, " more"
 
+## Converts the system information structure into a JSON node
 proc toJson(info: SystemInfo): JsonNode =
   var procArr = newJArray()
   for p in info.processes:
@@ -100,10 +107,12 @@ proc toJson(info: SystemInfo): JsonNode =
     "processes": procArr
   }
 
+## Entry point: parses CLI arguments and outputs system info in the requested format
 proc main() =
   var outputJson = false
   var section = "all"
 
+  # Parse command-line arguments
   var args = commandLineParams()
   var i = 0
   while i < args.len:
@@ -118,6 +127,7 @@ proc main() =
 
   var info = getSystemInfo()
 
+  # Dispatch to the requested section handler
   case section
   of "processes":
     info.processes = getProcList()

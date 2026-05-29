@@ -1,3 +1,4 @@
+// About page component — displays information about the app and its technology stack
 import { Component } from '@angular/core'
 
 @Component({

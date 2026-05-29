@@ -1,0 +1,18 @@
+{
+  "name": "cms-app",
+  "version": "1.0.0",
+  "description": "Express CMS with content management and media upload",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "multer": "^1.4.5-lts.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cookie-parser": "^1.4.6",
+    "method-override": "^3.0.0"
+  }
+}

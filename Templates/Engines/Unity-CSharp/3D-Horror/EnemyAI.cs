@@ -1,3 +1,6 @@
+/// <summary>
+/// Horror enemy with patrol, chase, attack, and unpredictable behaviour patterns.
+/// </summary>
 using UnityEngine;
 using UnityEngine.AI;
 

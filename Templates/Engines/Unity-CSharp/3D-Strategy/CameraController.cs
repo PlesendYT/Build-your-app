@@ -1,3 +1,6 @@
+/// <summary>
+/// RTS-style camera with pan, zoom, and bounds clamping.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

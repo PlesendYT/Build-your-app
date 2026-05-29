@@ -12,6 +12,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def __init__(self, screen_width: int, screen_height: int) -> None:
         super().__init__()
+        # Create a 24x24 red square, spawn at random x above the screen
         self.image = pygame.Surface((24, 24))
         self.image.fill((255, 50, 50))
         self.rect = self.image.get_rect(
@@ -26,5 +27,6 @@ class Enemy(pygame.sprite.Sprite):
     def update(self, *args: object, **kwargs: object) -> None:
         """Move enemy downward."""
         self.rect.y += self.speed
+        # Remove the enemy once it falls past the bottom of the screen
         if self.rect.top > self.screen_height:
             self.kill()

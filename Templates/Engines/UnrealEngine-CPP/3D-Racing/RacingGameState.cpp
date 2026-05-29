@@ -1,6 +1,8 @@
+// Racing game state with leaderboard, lap tracking, and position sorting.
 #include "RacingGameState.h"
 #include "Net/UnrealNetwork.h"
 
+// Set up replication for the Racers array.
 void ARacingGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);

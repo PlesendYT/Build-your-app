@@ -1,3 +1,4 @@
+# Racing game vehicle controller with physics-based acceleration, steering, and lap tracking
 extends RigidBody3D
 
 @export var engine_power: float = 800.0

@@ -1,3 +1,6 @@
+/// <summary>
+/// Stealth guard with patrol, sight/hearing detection, chase, and alert states.
+/// </summary>
 using UnityEngine;
 using UnityEngine.AI;
 

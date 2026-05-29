@@ -1,6 +1,8 @@
+# Mix project definition for the Phoenix web application
 defmodule Webapp.MixProject do
   use Mix.Project
 
+  # Project configuration
   def project do
     [
       app: :webapp,
@@ -11,10 +13,12 @@ defmodule Webapp.MixProject do
     ]
   end
 
+  # Application configuration with supervisor tree
   def application do
     [extra_applications: [:logger], mod: {Webapp, []}]
   end
 
+  # Project dependencies including Phoenix, LiveView, and Ecto
   defp deps do
     [
       {:phoenix, "~> 1.7"},

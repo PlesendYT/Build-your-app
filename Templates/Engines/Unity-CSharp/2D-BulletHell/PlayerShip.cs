@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls player ship movement with speed boost/dodge, boundary clamping, and health management.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,18 +23,27 @@ public class PlayerShip : MonoBehaviour
     private int currentHealth;
     public GameObject deathEffect;
 
+    /// <summary>
+    /// Caches the rigidbody and initializes health.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
     }
 
+    /// <summary>
+    /// Counts down the dodge timer each frame.
+    /// </summary>
     private void Update()
     {
         if (dodgeTimer > 0f)
             dodgeTimer -= Time.deltaTime;
     }
 
+    /// <summary>
+    /// Applies movement velocity with optional speed boost and clamps position to boundaries.
+    /// </summary>
     private void FixedUpdate()
     {
         float speed = dodgeTimer > 0f ? boostSpeed : moveSpeed;
@@ -43,11 +55,17 @@ public class PlayerShip : MonoBehaviour
         transform.position = pos;
     }
 
+    /// <summary>
+    /// Reads movement input from the Input System.
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
 
+    /// <summary>
+    /// Activates the dodge speed boost if the cooldown has elapsed.
+    /// </summary>
     public void OnDodge(InputAction.CallbackContext context)
     {
         if (context.performed && dodgeTimer <= 0f)
@@ -56,6 +74,9 @@ public class PlayerShip : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reduces health on damage; triggers game over and death effect when health reaches zero.
+    /// </summary>
     public void TakeDamage()
     {
         currentHealth--;
@@ -68,5 +89,8 @@ public class PlayerShip : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the current health value.
+    /// </summary>
     public int GetHealth() => currentHealth;
 }

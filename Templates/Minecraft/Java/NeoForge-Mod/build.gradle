@@ -1,0 +1,59 @@
+// Buildscript for NeoGradle — used to assemble NeoForge mods
+plugins {
+    id 'net.neoforged.gradle.userdev' version '7.0.165'
+}
+
+base {
+    archivesName = archives_base_name
+}
+
+version = mod_version
+group = maven_group
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+runs {
+    configureEach {
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+    }
+
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // NeoForge — provided by the game instance
+    implementation "net.neoforged:neoforge:${neo_version}"
+}
+
+processResources {
+    // Replace template tokens in neoforge.mods.toml with project values
+    inputs.properties project.properties
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand project.properties
+    }
+}
+
+// Attach the mod JAR manifest
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "NeoForgeMod",
+            "Specification-Version": "1",
+            "Implementation-Title": project.name,
+            "Implementation-Version": project.version
+        ])
+    }
+}

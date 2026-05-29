@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!-- Password Manager UI - master password screen and credential list -->
+<html lang="en">
+<head>
+  <!-- Document metadata -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Manager</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 1rem; background: #f5f5f5; }
+    #unlockScreen, #vaultScreen { max-width: 600px; margin: 2rem auto; background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    input { display: block; width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button.danger { background: #dc2626; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.5rem; text-align: left; border-bottom: 1px solid #eee; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Unlock screen requiring master password entry -->
+  <div id="unlockScreen">
+    <h2>Enter Master Password</h2>
+    <input type="password" id="masterPassword" placeholder="Master password">
+    <button onclick="unlock()">Unlock</button>
+    <p id="unlockError" style="color:red;"></p>
+  </div>
+
+  <!-- Main vault screen showing credentials and add form -->
+  <div id="vaultScreen" class="hidden">
+    <h2>Password Vault</h2>
+    <form id="addForm">
+      <input name="site" placeholder="Site" required>
+      <input name="username" placeholder="Username" required>
+      <input name="password" type="password" placeholder="Password" required>
+      <button type="submit">Add Entry</button>
+    </form>
+    <table>
+      <thead><tr><th>Site</th><th>Username</th><th>Action</th></tr></thead>
+      <tbody id="passwordList"></tbody>
+    </table>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

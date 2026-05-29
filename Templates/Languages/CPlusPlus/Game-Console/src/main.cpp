@@ -1,3 +1,4 @@
+// Rock-Paper-Scissors console game (C++).
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
@@ -5,8 +6,10 @@
 #include <string>
 #include <vector>
 
+// The three possible choices in Rock-Paper-Scissors.
 enum class Choice { Rock, Paper, Scissors };
 
+// Convert a string input to a Choice enum.
 auto to_choice(const std::string& s) -> std::optional<Choice> {
     if (s == "rock" || s == "r") return Choice::Rock;
     if (s == "paper" || s == "p") return Choice::Paper;
@@ -14,6 +17,7 @@ auto to_choice(const std::string& s) -> std::optional<Choice> {
     return std::nullopt;
 }
 
+// Convert a Choice enum to a display string.
 auto to_string(Choice c) -> std::string_view {
     using namespace std::string_view_literals;
     switch (c) {
@@ -24,6 +28,7 @@ auto to_string(Choice c) -> std::string_view {
     return "?"sv;
 }
 
+// Determine winner: 1=player, 0=draw, -1=computer.
 auto determine_winner(Choice player, Choice computer) -> int {
     if (player == computer) return 0;
     if ((player == Choice::Rock && computer == Choice::Scissors) ||
@@ -34,6 +39,7 @@ auto determine_winner(Choice player, Choice computer) -> int {
     return -1;
 }
 
+// Entry point: play Rock-Paper-Scissors rounds until player quits.
 auto main() -> int {
     std::mt19937 gen{std::random_device{}()};
     std::uniform_int_distribution dist{0, 2};

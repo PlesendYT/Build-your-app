@@ -1,0 +1,32 @@
+# Compose file for the Node.js API with a MongoDB backend
+# Start with: docker compose up -d
+version: "3.9"
+
+services:
+  # ---------- Node.js API server ----------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node-api
+    ports:
+      - "3000:3000"                # Map host 3000 to container 3000
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/mydb   # MongoDB connection string
+      - PORT=3000
+    depends_on:
+      - mongo                      # Wait for mongo service to start
+    restart: unless-stopped
+
+  # ---------- MongoDB database ----------
+  mongo:
+    image: mongo:7
+    container_name: node-mongo
+    ports:
+      - "27017:27017"              # Expose MongoDB port for debugging
+    volumes:
+      - mongo_data:/data/db        # Persist database files
+    restart: unless-stopped
+
+volumes:
+  mongo_data:                      # Named volume for MongoDB persistence

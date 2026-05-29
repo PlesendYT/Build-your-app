@@ -1,8 +1,10 @@
+/// Top-level game file for a simple Flame-based shooter game with a player, enemies, and bullets.
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/components.dart';
 
+/// A circular player character controlled by arrow keys, with a reference to the parent game.
 class Player extends CircleComponent with HasGameRef<MyGame> {
   Player()
       : super(
@@ -40,6 +42,7 @@ class Player extends CircleComponent with HasGameRef<MyGame> {
   }
 }
 
+/// A circular enemy that moves downward from the top of the screen.
 class Enemy extends CircleComponent {
   Enemy(Vector2 position)
       : super(
@@ -61,6 +64,7 @@ class Enemy extends CircleComponent {
   }
 }
 
+/// A small bullet projectile that travels upward from the player's position.
 class Bullet extends CircleComponent {
   Bullet(Vector2 position)
       : super(
@@ -82,11 +86,13 @@ class Bullet extends CircleComponent {
   }
 }
 
+/// The main game class that manages spawning enemies, handling collisions, and tracking the score.
 class MyGame extends FlameGame with KeyboardEvents {
   late final Player _player;
   int score = 0;
   double _spawnTimer = 0;
 
+  /// Initializes the player and adds it to the game world.
   @override
   Future<void> onLoad() async {
     _player = Player();
@@ -106,7 +112,7 @@ class MyGame extends FlameGame with KeyboardEvents {
       )));
     }
 
-    // Remove off-screen enemies & check collision
+    // Remove off-screen enemies and bullets
     for (final child in children.toList()) {
       if (child is Enemy && child.position.y > size.y + 30) {
         child.removeFromParent();
@@ -141,6 +147,7 @@ class MyGame extends FlameGame with KeyboardEvents {
     }
   }
 
+  /// Handles keyboard input: fires a bullet from the player's position on spacebar press.
   @override
   KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
@@ -150,6 +157,7 @@ class MyGame extends FlameGame with KeyboardEvents {
   }
 }
 
+/// Wraps the [MyGame] instance in a Flutter GameWidget for display.
 class GameWidget extends StatelessWidget {
   const GameWidget({super.key});
 
@@ -159,6 +167,7 @@ class GameWidget extends StatelessWidget {
   }
 }
 
+/// Application entry point. Runs the game inside a MaterialApp.
 void main() {
   runApp(const MaterialApp(
     title: 'Flutter Game',

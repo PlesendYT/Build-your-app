@@ -1,4 +1,5 @@
 ## Script for Horror Visual Novel
+# Horror story: sanity, keys, and choices determine survival and multiple endings (Freedom, Loop, Together, Madness)
 
 label start:
     scene bg dark_room

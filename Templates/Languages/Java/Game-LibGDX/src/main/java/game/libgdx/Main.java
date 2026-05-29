@@ -1,3 +1,7 @@
+/**
+ * LibGDX game sample: spawns coloured circles on SPACE and animates their
+ * movement until they leave the screen.
+ */
 package game.libgdx;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -13,6 +17,7 @@ import com.badlogic.gdx.math.MathUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/** Core application listener that manages the game loop and rendering. */
 public final class Main implements ApplicationListener {
 
     private OrthographicCamera camera;
@@ -27,6 +32,7 @@ public final class Main implements ApplicationListener {
         new Lwjgl3Application(new Main(), config);
     }
 
+    /** Initialises the orthographic camera and shape renderer. */
     @Override
     public void create() {
         camera = new OrthographicCamera();
@@ -34,6 +40,7 @@ public final class Main implements ApplicationListener {
         renderer = new ShapeRenderer();
     }
 
+    /** Main render loop: handles input, updates physics, and draws entities. */
     @Override
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -45,6 +52,7 @@ public final class Main implements ApplicationListener {
         renderer.setProjectionMatrix(camera.combined);
         renderer.begin(ShapeRenderer.ShapeType.Filled);
 
+        // Draw every entity as a filled circle
         for (var entity : entities) {
             renderer.setColor(entity.color());
             renderer.circle(entity.x(), entity.y(), entity.radius());
@@ -53,6 +61,7 @@ public final class Main implements ApplicationListener {
         renderer.end();
     }
 
+    /** Spawns 5 random entities when SPACE is pressed. */
     private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             for (int i = 0; i < 5; i++) {
@@ -66,6 +75,7 @@ public final class Main implements ApplicationListener {
         }
     }
 
+    /** Moves each entity; removes those that go off-screen. */
     private void update(float delta) {
         Iterator<Entity> iter = entities.iterator();
         while (iter.hasNext()) {
@@ -76,6 +86,7 @@ public final class Main implements ApplicationListener {
                 iter.remove();
                 continue;
             }
+            // Replace with updated position
             e = new Entity(x, y, e.vx(), e.vy(), e.radius(), e.color());
             iter.remove();
             entities.add(e);

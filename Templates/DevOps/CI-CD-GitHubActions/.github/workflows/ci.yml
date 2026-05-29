@@ -1,0 +1,48 @@
+# CI workflow that runs on every push and pull request to the main branch
+# Steps: install dependencies, run linter, execute tests
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ---------- Build and test job ----------
+  build:
+    # Run on the latest Ubuntu runner provided by GitHub
+    runs-on: ubuntu-latest
+
+    # Define the Node.js version matrix for multi-version testing
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      # Check out the repository source code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up the Node.js runtime with caching for faster installs
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+
+      # Install project dependencies from package.json
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./app
+
+      # Run the test suite (exit code assert tests pass or fail the workflow)
+      - name: Run tests
+        run: npm test
+        working-directory: ./app
+
+      # Lint the source code for style and formatting issues
+      - name: Lint code
+        run: npx eslint .
+        working-directory: ./app

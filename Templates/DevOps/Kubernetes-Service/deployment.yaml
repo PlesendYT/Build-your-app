@@ -1,0 +1,76 @@
+# Kubernetes Deployment for the Go HTTP service
+# Manages a replicated set of pods with rolling update strategy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-service
+  labels:
+    app: go-service
+    tier: backend
+spec:
+  # Run 3 replicas for high availability
+  replicas: 3
+  selector:
+    matchLabels:
+      app: go-service
+  template:
+    metadata:
+      labels:
+        app: go-service
+        tier: backend
+    spec:
+      containers:
+        - name: app
+          # Replace with your actual image registry URL
+          image: myregistry/go-service:latest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          # Read configuration values from the ConfigMap
+          envFrom:
+            - configMapRef:
+                name: go-service-config
+          # Liveness probe restarts the container if it becomes unresponsive
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          # Readiness probe prevents traffic routing to an unready pod
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+      # Always pull the image to ensure the latest version is used
+      imagePullSecrets:
+        - name: regcred
+---
+# Horizontal Pod Autoscaler scales replicas based on CPU utilization
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: go-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: go-service
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70

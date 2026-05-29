@@ -1,0 +1,75 @@
+<!-- Pastebin home - create a new paste and see recent pastes -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pastebin</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f8fafc; }
+    header { background: #1e293b; color: white; padding: 1rem 2rem; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    form { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    input, textarea, select { display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px; }
+    textarea { min-height: 200px; font-family: monospace; }
+    .form-row { display: flex; gap: 1rem; }
+    .form-row > * { flex: 1; }
+    button { background: #2563eb; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; }
+    .error { color: #dc2626; margin-bottom: 1rem; }
+    .recent-list { background: white; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+    .recent-item { padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; }
+    .recent-item a { color: #2563eb; text-decoration: none; }
+    .recent-item .meta { color: #64748b; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pastebin</h1>
+  </header>
+
+  <div class="container">
+    <!-- Create paste form -->
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/" method="POST">
+      <input type="text" name="title" placeholder="Paste title (optional)">
+      <textarea name="content" placeholder="Paste your code here..." required></textarea>
+      <div class="form-row">
+        <select name="language">
+          <option value="plaintext">Plain Text</option>
+          <option value="javascript">JavaScript</option>
+          <option value="python">Python</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="json">JSON</option>
+          <option value="bash">Bash</option>
+          <option value="sql">SQL</option>
+        </select>
+        <select name="expiration">
+          <option value="never">Never expire</option>
+          <option value="1">1 hour</option>
+          <option value="24">24 hours</option>
+          <option value="168">7 days</option>
+        </select>
+      </div>
+      <button type="submit">Create Paste</button>
+    </form>
+
+    <!-- Recent pastes list -->
+    <h2>Recent Pastes</h2>
+    <div class="recent-list">
+      <% if (recent.length === 0) { %>
+        <div class="recent-item">No pastes yet.</div>
+      <% } %>
+      <% recent.forEach(p => { %>
+        <div class="recent-item">
+          <a href="/<%= p.code %>"><%= p.title %></a>
+          <span class="meta"><%= p.language %> | <%= new Date(p.createdAt).toLocaleDateString() %></span>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+</html>

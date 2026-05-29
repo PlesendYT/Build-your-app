@@ -1,15 +1,24 @@
+/**
+ * CLI tool template supporting greet and calc commands.
+ * Uses coroutines and Flow internally for command processing.
+ */
 package cli
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.system.*
 
+/** Sealed class representing all supported CLI commands. */
 sealed class Command {
+    /** Greets a name, optionally in uppercase. */
     data class Greet(val name: String, val upper: Boolean = false) : Command()
+    /** Performs an arithmetic operation (add/sub/mul/div). */
     data class Calc(val op: String, val a: Int, val b: Int) : Command()
+    /** Displays usage help text. */
     data object Help : Command()
 }
 
+/** Parses raw CLI arguments into a Command sealed class instance. */
 fun parseArgs(args: Array<String>): Command = when {
     args.isEmpty() -> Command.Help
     args[0] == "greet" -> {
@@ -23,6 +32,7 @@ fun parseArgs(args: Array<String>): Command = when {
     else -> Command.Help
 }
 
+/** Processes a command using a coroutine Flow and returns the output string. */
 suspend fun processCommand(cmd: Command): String = coroutineScope {
     flow {
         emit(Unit)
@@ -53,6 +63,7 @@ suspend fun processCommand(cmd: Command): String = coroutineScope {
     }.last() as String
 }
 
+/** Main entry point — parses args, processes the command, and prints the result. */
 fun main() = runBlocking {
     val cmd = parseArgs(args)
     val result = processCommand(cmd)

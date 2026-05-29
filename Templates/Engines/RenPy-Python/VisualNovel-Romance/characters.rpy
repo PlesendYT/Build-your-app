@@ -1,4 +1,5 @@
 ## Characters for Romance Visual Novel
+# Defines love interests and tracks affection levels for each character
 
 define player = Character("Jamie", color="#ffffff")
 define elena = Character("Elena", color="#e74c3c")

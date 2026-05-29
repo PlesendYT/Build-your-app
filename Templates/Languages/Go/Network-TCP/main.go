@@ -1,3 +1,5 @@
+// Package main implements a simple TCP chat server and client
+// supporting echo, broadcast, and graceful shutdown.
 package main
 
 import (
@@ -14,8 +16,11 @@ import (
 	"time"
 )
 
+// clients stores connected TCP connections keyed by remote address.
 var clients sync.Map
 
+// runServer starts a TCP listener on the given port, accepting connections
+// and handling each in a goroutine. Supports graceful shutdown on signal.
 func runServer(port string) {
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
@@ -42,6 +47,8 @@ func runServer(port string) {
 	}
 }
 
+// handleConnection manages a single client session: reads messages,
+// echoes them back, supports /broadcast and /quit commands.
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
 	conn.SetDeadline(time.Now().Add(5 * time.Minute))
@@ -72,6 +79,8 @@ func handleConnection(conn net.Conn) {
 	clients.Delete(conn.RemoteAddr().String())
 }
 
+// runClient connects to a TCP server, reads server messages in a
+// background goroutine, and sends user input from stdin.
 func runClient(addr string) {
 	conn, err := net.DialTimeout("tcp", addr, 10*time.Second)
 	if err != nil {
@@ -96,6 +105,7 @@ func runClient(addr string) {
 	}
 }
 
+// main parses flags and starts either the server or client mode.
 func main() {
 	var mode string
 	var port string

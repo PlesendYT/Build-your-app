@@ -1,4 +1,4 @@
-// FPSCharacter.h
+// Header for an FPS character with first-person camera, sprint, weapons, and armor.
 #pragma once
 
 #include "CoreMinimal.h"
@@ -11,6 +11,9 @@ class AFPSWeapon;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+
+// Delegate for weapon change events.
+// (FOnWeaponChanged should be declared elsewhere in the project.)
 
 UCLASS()
 class AFPSCharacter : public ACharacter

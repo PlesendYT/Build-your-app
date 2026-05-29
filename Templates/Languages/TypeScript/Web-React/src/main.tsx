@@ -1,3 +1,4 @@
+// React entry point — renders the App component inside StrictMode
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.js';

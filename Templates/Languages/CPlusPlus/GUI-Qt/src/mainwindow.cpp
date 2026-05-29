@@ -1,5 +1,7 @@
+// MainWindow implementation - Qt widget with label, text entry, button, and counter.
 #include "mainwindow.hpp"
 
+// Constructor: set up layout with title, input field, counter label, and button.
 MainWindow::MainWindow(QWidget* parent)
     : QWidget{parent} {
     auto* layout = new QVBoxLayout{this};
@@ -25,6 +27,7 @@ MainWindow::MainWindow(QWidget* parent)
     resize(400, 300);
 }
 
+// Slot: increment counter and update label when button is clicked.
 void MainWindow::onButtonClicked() {
     ++counter_;
     label_->setText(QString{"Count: %1"}.arg(counter_));

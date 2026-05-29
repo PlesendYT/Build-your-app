@@ -1,3 +1,4 @@
+// Third-person shooter character with aiming, cover, weapons, and damage.
 #include "TPSCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -6,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
 
+// Set up spring arm camera, gun mesh, movement, and initial health.
 ATPSCharacter::ATPSCharacter()
 {
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -38,6 +40,7 @@ void ATPSCharacter::BeginPlay()
     DefaultFOV = Camera->FieldOfView;
 }
 
+// Bind all enhanced input actions for TPS controls.
 void ATPSCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
 {
     Super::SetupPlayerInputComponent(PIC);
@@ -57,6 +60,7 @@ void ATPSCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
     }
 }
 
+// Handle movement input.
 void ATPSCharacter::Move(const FInputActionValue& Value)
 {
     FVector2D V = Value.Get<FVector2D>();
@@ -64,6 +68,7 @@ void ATPSCharacter::Move(const FInputActionValue& Value)
     AddMovementInput(GetActorRightVector(), V.X);
 }
 
+// Handle mouse look input.
 void ATPSCharacter::Look(const FInputActionValue& Value)
 {
     FVector2D V = Value.Get<FVector2D>();
@@ -71,11 +76,16 @@ void ATPSCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(V.Y);
 }
 
+// Start jump.
 void ATPSCharacter::StartJump() { Jump(); }
+// Start firing current weapon.
 void ATPSCharacter::StartFire() { if (CurrentWeapon) CurrentWeapon->StartFire(); }
+// Stop firing current weapon.
 void ATPSCharacter::StopFire() { if (CurrentWeapon) CurrentWeapon->StopFire(); }
+// Reload current weapon.
 void ATPSCharacter::Reload() { if (CurrentWeapon) CurrentWeapon->Reload(); }
 
+// Enter aiming state: shorten spring arm, zoom FOV, slow walk speed.
 void ATPSCharacter::StartAim()
 {
     bIsAiming = true;
@@ -84,6 +94,7 @@ void ATPSCharacter::StartAim()
     GetCharacterMovement()->MaxWalkSpeed = 250.0f;
 }
 
+// Exit aiming state: restore defaults.
 void ATPSCharacter::StopAim()
 {
     bIsAiming = false;
@@ -92,22 +103,26 @@ void ATPSCharacter::StopAim()
     GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 }
 
+// Enter cover: reduce walk speed.
 void ATPSCharacter::StartCover()
 {
     if (!bIsInCover) { bIsInCover = true; GetCharacterMovement()->MaxWalkSpeed = 150.0f; }
 }
 
+// Exit cover: restore walk speed.
 void ATPSCharacter::StopCover()
 {
     if (bIsInCover) { bIsInCover = false; GetCharacterMovement()->MaxWalkSpeed = 500.0f; }
 }
 
+// Switch weapon based on scroll input.
 void ATPSCharacter::SwitchWeapon(const FInputActionValue& Value)
 {
     float Scroll = Value.Get<float>();
     if (Scroll != 0.0f && CurrentWeapon) CurrentWeapon->Destroy();
 }
 
+// Server RPC: spawn default weapon and attach to gun mesh.
 void ATPSCharacter::ServerSpawnWeapons_Implementation()
 {
     if (WeaponClasses.Num() > 0)
@@ -124,6 +139,7 @@ void ATPSCharacter::ServerSpawnWeapons_Implementation()
     }
 }
 
+// Apply damage and destroy if health reaches zero.
 float ATPSCharacter::TakeDamage(float Damage, FDamageEvent const& Event, AController* Instigator, AActor* Causer)
 {
     float Actual = Super::TakeDamage(Damage, Event, Instigator, Causer);
@@ -132,6 +148,7 @@ float ATPSCharacter::TakeDamage(float Damage, FDamageEvent const& Event, AContro
     return Actual;
 }
 
+// Replicate health and current weapon.
 void ATPSCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);

@@ -1,9 +1,11 @@
+/// A Flame game where a player collects randomly spawning coins with collision detection.
 import 'dart:math';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+/// Main game class that manages the player, coin spawning timer, and score.
 class MyFlameGame extends FlameGame with HasCollisionDetection {
   late final Player _player;
   int score = 0;
@@ -30,11 +32,13 @@ class MyFlameGame extends FlameGame with HasCollisionDetection {
 
   late final TimerComponent _spawnTimer;
 
+  /// Increases the score by 1 when the player collects a coin.
   void incrementScore() {
     score++;
   }
 }
 
+/// The player-controlled circle that can collide with coins.
 class Player extends CircleComponent with CollisionCallbacks {
   Player()
       : super(
@@ -59,6 +63,7 @@ class Player extends CircleComponent with CollisionCallbacks {
   }
 }
 
+/// A collectible coin that disappears when the player collides with it.
 class Coin extends CircleComponent with CollisionCallbacks {
   Coin({required Vector2 position})
       : super(

@@ -24,22 +24,27 @@ class MainWindow(QMainWindow):
 
     def _setup_ui(self) -> None:
         """Build the user interface."""
+        # Create a central widget with a vertical layout
         central = QWidget()
         self.setCentralWidget(central)
         layout = QVBoxLayout(central)
 
+        # Greeting label at the top
         self.label = QLabel("Welcome to PyQt6!")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.label)
 
+        # Name input field
         self.input = QLineEdit()
         self.input.setPlaceholderText("Enter your name")
         layout.addWidget(self.input)
 
+        # Greet button connected to handler
         self.button = QPushButton("Greet")
         self.button.clicked.connect(self._on_greet)
         layout.addWidget(self.button)
 
+        # Result label that updates on greet
         self.result = QLabel("")
         self.result.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.result)

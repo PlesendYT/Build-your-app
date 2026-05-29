@@ -1,8 +1,14 @@
+/// <summary>
+/// Spawns waves of enemies sequentially, waiting for each wave to be cleared before proceeding.
+/// </summary>
 using UnityEngine;
 using System.Collections;
 
 public class WaveSpawner : MonoBehaviour
 {
+    /// <summary>
+    /// Defines a single wave with enemy type, count, and spawn delays.
+    /// </summary>
     [System.Serializable]
     public class Wave
     {
@@ -20,12 +26,18 @@ public class WaveSpawner : MonoBehaviour
     private int currentWave;
     private bool allWavesComplete;
 
+    /// <summary>
+    /// Starts spawning waves automatically if enabled.
+    /// </summary>
     private void Start()
     {
         if (autoStart)
             StartCoroutine(SpawnWaves());
     }
 
+    /// <summary>
+    /// Spawns each wave after a delay, waiting for all enemies to be cleared between waves.
+    /// </summary>
     private IEnumerator SpawnWaves()
     {
         for (int i = 0; i < waves.Length; i++)
@@ -51,6 +63,9 @@ public class WaveSpawner : MonoBehaviour
         GameManager.Instance.Victory();
     }
 
+    /// <summary>
+    /// Resumes the game if paused, allowing the next wave to proceed.
+    /// </summary>
     public void StartNextWave()
     {
         if (!allWavesComplete)

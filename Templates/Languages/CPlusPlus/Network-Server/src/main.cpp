@@ -1,3 +1,4 @@
+// TCP echo server (C++) - accepts clients and echoes their messages.
 #include <algorithm>
 #include <csignal>
 #include <cstring>
@@ -9,8 +10,10 @@
 #include <unistd.h>
 #include <vector>
 
+// TCP server: binds, listens, accepts clients, echoes data back.
 class TCPServer {
 public:
+    // Bind and listen on the given port.
     explicit TCPServer(uint16_t port) {
         server_fd_ = socket(AF_INET, SOCK_STREAM, 0);
         if (server_fd_ < 0) throw std::runtime_error("socket() failed");
@@ -40,6 +43,7 @@ public:
         if (server_fd_ >= 0) close(server_fd_);
     }
 
+    // Accept and handle clients until stopped.
     void run() {
         while (running_) {
             sockaddr_in client_addr{};
@@ -57,9 +61,11 @@ public:
         }
     }
 
+    // Signal the server to stop accepting.
     void stop() { running_ = false; }
 
 private:
+    // Read from client and echo data back.
     void handle_client(int client_fd) {
         char buffer[4096];
         std::string response;
@@ -81,12 +87,15 @@ private:
     bool running_ = true;
 };
 
+// Global pointer for signal handler access.
 static TCPServer* global_server = nullptr;
 
+// Signal handler: gracefully stop the server.
 void handle_signal(int) {
     if (global_server) global_server->stop();
 }
 
+// Entry point: create server, register signal handlers, run.
 int main(int argc, char* argv[]) {
     auto port = static_cast<uint16_t>(argc > 1 ? std::atoi(argv[1]) : 8080);
 

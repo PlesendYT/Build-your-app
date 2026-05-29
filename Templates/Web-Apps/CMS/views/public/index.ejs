@@ -1,0 +1,39 @@
+<!-- Public home page - lists published content -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f8fafc; }
+    header { background: #1e293b; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    header a { color: white; text-decoration: none; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    .card { background: white; padding: 1.5rem; margin: 1rem 0; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+    .card h2 a { color: #1e293b; text-decoration: none; }
+    .meta { color: #64748b; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/"><strong>CMS</strong></a>
+    <a href="/admin/login">Admin</a>
+  </header>
+
+  <div class="container">
+    <h1>Welcome</h1>
+    <!-- Published content listing -->
+    <% if (contents.length === 0) { %>
+      <p>No content published yet.</p>
+    <% } %>
+    <% contents.forEach(c => { %>
+      <div class="card">
+        <h2><a href="/<%= c.slug %>"><%= c.title %></a></h2>
+        <p class="meta"><%= new Date(c.createdAt).toLocaleDateString() %></p>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

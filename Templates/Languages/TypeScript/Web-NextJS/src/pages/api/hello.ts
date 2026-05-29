@@ -1,3 +1,4 @@
+// Next.js API route (Pages Router) — returns a health-check JSON response with timestamp
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = {

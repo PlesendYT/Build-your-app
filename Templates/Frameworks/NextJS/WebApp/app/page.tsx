@@ -1,3 +1,4 @@
+// Home page — welcome hero section with a call-to-action link
 import Link from 'next/link'
 
 export default function Home() {

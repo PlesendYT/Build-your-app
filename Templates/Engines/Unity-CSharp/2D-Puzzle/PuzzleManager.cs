@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages puzzle game state: tracks move count, target blocks, and win condition.
+/// </summary>
 using UnityEngine;
 
 public class PuzzleManager : MonoBehaviour
@@ -11,6 +14,9 @@ public class PuzzleManager : MonoBehaviour
     private int totalTargets;
     private int completedTargets;
 
+    /// <summary>
+    /// Initializes the move counter and counts total target tiles.
+    /// </summary>
     private void Start()
     {
         moveCount = 0;
@@ -21,6 +27,9 @@ public class PuzzleManager : MonoBehaviour
             levelCompletePanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Counts the number of target tiles on the grid.
+    /// </summary>
     private int CountTargets()
     {
         int count = 0;
@@ -35,23 +44,35 @@ public class PuzzleManager : MonoBehaviour
         return count;
     }
 
+    /// <summary>
+    /// Increments the move counter and updates the UI.
+    /// </summary>
     public void RegisterMove()
     {
         moveCount++;
         UpdateUI();
     }
 
+    /// <summary>
+    /// Registers a block reaching a target and checks the win condition.
+    /// </summary>
     public void RegisterBlockOnTarget()
     {
         completedTargets++;
         CheckWinCondition();
     }
 
+    /// <summary>
+    /// Registers a block leaving a target.
+    /// </summary>
     public void RegisterBlockOffTarget()
     {
         completedTargets--;
     }
 
+    /// <summary>
+    /// Checks if all targets are covered by blocks and shows the level complete panel.
+    /// </summary>
     private void CheckWinCondition()
     {
         if (completedTargets >= totalTargets && totalTargets > 0)
@@ -62,12 +83,18 @@ public class PuzzleManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the move counter text display.
+    /// </summary>
     private void UpdateUI()
     {
         if (moveCounterText != null)
             moveCounterText.text = "Moves: " + moveCount;
     }
 
+    /// <summary>
+    /// Loads the next level scene.
+    /// </summary>
     public void NextLevel()
     {
         Time.timeScale = 1f;

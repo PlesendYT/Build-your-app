@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages health, damage, healing, invincibility frames, and UI display.
+/// </summary>
 using UnityEngine;
 
 public class HealthSystem : MonoBehaviour
@@ -16,11 +19,17 @@ public class HealthSystem : MonoBehaviour
     private bool isInvincible;
     private float lastDamageTime;
 
+    /// <summary>
+    /// Initializes health to maximum on awake.
+    /// </summary>
     private void Awake()
     {
         currentHealth = maxHealth;
     }
 
+    /// <summary>
+    /// Tracks invincibility expiry and updates the UI each frame.
+    /// </summary>
     private void Update()
     {
         if (isInvincible && Time.time >= lastDamageTime + invincibilityDuration)
@@ -30,6 +39,9 @@ public class HealthSystem : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Reduces health by the given amount if not invincible, triggers invincibility and damage effects.
+    /// </summary>
     public void TakeDamage(int amount)
     {
         if (isInvincible) return;
@@ -49,17 +61,26 @@ public class HealthSystem : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Restores health up to the maximum amount.
+    /// </summary>
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
         UpdateUI();
     }
 
+    /// <summary>
+    /// Deactivates the game object when health reaches zero.
+    /// </summary>
     private void Die()
     {
         gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Refreshes the health bar and text display.
+    /// </summary>
     private void UpdateUI()
     {
         if (healthText != null)

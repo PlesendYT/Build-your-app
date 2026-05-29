@@ -1,6 +1,12 @@
+/// <summary>
+/// Manages quiz trivia gameplay: question pool, shuffling, timer, scoring with speed bonus.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// Data for a single trivia question with answers and difficulty.
+/// </summary>
 [System.Serializable]
 public class QuestionData
 {
@@ -29,6 +35,9 @@ public class QuizManager : MonoBehaviour
     private float timer;
     private bool isAnswered;
 
+    /// <summary>
+    /// Singleton instance for global access.
+    /// </summary>
     public static QuizManager Instance { get; private set; }
     public QuestionData CurrentQuestion => currentQuestion;
     public int CurrentScore => currentScore;
@@ -37,17 +46,26 @@ public class QuizManager : MonoBehaviour
     public float Timer => timer;
     public bool IsAnswered => isAnswered;
 
+    /// <summary>
+    /// Initializes the singleton instance.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Starts the first round on game start.
+    /// </summary>
     private void Start()
     {
         StartRound();
     }
 
+    /// <summary>
+    /// Shuffles all questions, queues them up, and starts the first question.
+    /// </summary>
     public void StartRound()
     {
         currentScore = 0;
@@ -71,6 +89,9 @@ public class QuizManager : MonoBehaviour
         NextQuestion();
     }
 
+    /// <summary>
+    /// Loads the next question or ends the round if the queue is empty.
+    /// </summary>
     public void NextQuestion()
     {
         if (questionQueue.Count == 0)
@@ -85,6 +106,9 @@ public class QuizManager : MonoBehaviour
         questionIndex++;
     }
 
+    /// <summary>
+    /// Counts down the timer each frame and auto-advances on timeout.
+    /// </summary>
     private void Update()
     {
         if (currentQuestion == null || isAnswered) return;
@@ -97,6 +121,9 @@ public class QuizManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Submits an answer: awards score with time bonus if correct.
+    /// </summary>
     public void SubmitAnswer(int answerIndex)
     {
         if (isAnswered) return;
@@ -112,6 +139,9 @@ public class QuizManager : MonoBehaviour
         Invoke(nameof(NextQuestion), 1.5f);
     }
 
+    /// <summary>
+    /// Logs the final score and accuracy at the end of the round.
+    /// </summary>
     private void EndRound()
     {
         float percentage = (float)correctCount / questionsPerRound * 100f;

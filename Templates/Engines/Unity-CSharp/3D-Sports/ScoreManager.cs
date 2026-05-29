@@ -1,3 +1,6 @@
+/// <summary>
+/// Tracks scores and triggers match end; includes GameManager for restart logic.
+/// </summary>
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour

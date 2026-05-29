@@ -1,6 +1,11 @@
+"""E-commerce shop models: Product, Category, and Order."""
+
 from django.db import models
 
+
 class Product(models.Model):
+    """Product with category, pricing, stock, and image fields."""
+
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField()
@@ -13,7 +18,10 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
 class Category(models.Model):
+    """Product category with unique slug."""
+
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
 
@@ -23,7 +31,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Order(models.Model):
+    """Customer order with item data and total stored as JSON."""
+
     customer_name = models.CharField(max_length=200)
     customer_email = models.EmailField()
     items = models.JSONField()

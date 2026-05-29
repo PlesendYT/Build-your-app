@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls enemy patrol between two points, damages the player on contact, and has basic health.
+/// </summary>
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -13,6 +16,9 @@ public class EnemyController : MonoBehaviour
     [Header("Health")]
     public int health = 1;
 
+    /// <summary>
+    /// Caches component references and sets the initial patrol target.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -20,11 +26,17 @@ public class EnemyController : MonoBehaviour
         targetPoint = patrolPointB.position;
     }
 
+    /// <summary>
+    /// Moves the enemy between patrol points each physics frame.
+    /// </summary>
     private void FixedUpdate()
     {
         Patrol();
     }
 
+    /// <summary>
+    /// Moves toward the current patrol target and switches direction when close.
+    /// </summary>
     private void Patrol()
     {
         float distanceToTarget = Vector2.Distance(transform.position, targetPoint);
@@ -40,6 +52,9 @@ public class EnemyController : MonoBehaviour
         rb.linearVelocity = new Vector2(direction.x * moveSpeed, rb.linearVelocity.y);
     }
 
+    /// <summary>
+    /// Damages the player on contact.
+    /// </summary>
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -48,6 +63,9 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reduces health and destroys the enemy when health reaches zero.
+    /// </summary>
     public void TakeDamage()
     {
         health--;

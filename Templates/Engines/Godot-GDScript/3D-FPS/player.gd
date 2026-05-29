@@ -1,3 +1,4 @@
+# FPS player controller with gun mechanics, ammo/reload, armor, and health
 extends CharacterBody3D
 
 @export var mouse_sensitivity: float = 0.002

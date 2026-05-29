@@ -1,3 +1,4 @@
+// VR Pawn implementation - handles VR camera, controllers, teleport, and grabbing.
 #include "VRPawn.h"
 #include "Camera/CameraComponent.h"
 #include "MotionControllerComponent.h"
@@ -6,6 +7,7 @@
 #include "VRInteractable.h"
 #include "Net/UnrealNetwork.h"
 
+// Set up VR origin, camera, and motion controller components.
 AVRPawn::AVRPawn()
 {
     VROrigin = CreateDefaultSubobject<USceneComponent>(TEXT("VROrigin"));
@@ -23,6 +25,7 @@ AVRPawn::AVRPawn()
     RightController->SetTrackingSource(EControllerHand::Right);
 }
 
+// Register the enhanced input mapping context at start.
 void AVRPawn::BeginPlay()
 {
     Super::BeginPlay();
@@ -31,6 +34,7 @@ void AVRPawn::BeginPlay()
             S->AddMappingContext(InputMapping, 0);
 }
 
+// Bind enhanced input actions for teleport, grab, and interact.
 void AVRPawn::SetupPlayerInputComponent(UInputComponent* PIC)
 {
     if (auto* EIC = Cast<UEnhancedInputComponent>(PIC))
@@ -42,16 +46,19 @@ void AVRPawn::SetupPlayerInputComponent(UInputComponent* PIC)
     }
 }
 
+// Request a teleport to the given location (calls server RPC).
 void AVRPawn::TeleportToLocation(FVector Location)
 {
     ServerTeleport(Location);
 }
 
+// Server-side teleport: set actor location.
 void AVRPawn::ServerTeleport_Implementation(FVector Location)
 {
     SetActorLocation(Location);
 }
 
+// Grab an actor with the specified motion controller and attach it.
 void AVRPawn::GrabActor(UMotionControllerComponent* Controller, AActor* Target)
 {
     if (Target)
@@ -61,6 +68,7 @@ void AVRPawn::GrabActor(UMotionControllerComponent* Controller, AActor* Target)
     }
 }
 
+// Release the currently grabbed actor from the given controller.
 void AVRPawn::ReleaseActor(UMotionControllerComponent* Controller)
 {
     if (AActor* Grabbed = GrabbedActors.FindRef(Controller))
@@ -70,6 +78,7 @@ void AVRPawn::ReleaseActor(UMotionControllerComponent* Controller)
     }
 }
 
+// Perform a line trace from the controller to find and interact with objects.
 void AVRPawn::Interact(UMotionControllerComponent* Controller)
 {
     FVector Start = Controller->GetComponentLocation();

@@ -1,20 +1,27 @@
+//! A simple Bevy game where the player collects enemies for points.
+
 use bevy::prelude::*;
 
+/// Marker component for the player, with movement speed.
 #[derive(Component)]
 struct Player {
     speed: f32,
 }
 
+/// Marker component for enemies the player can collect.
 #[derive(Component)]
 struct Enemy;
 
+/// Global score resource, incremented when an enemy is collected.
 #[derive(Resource)]
 struct Score(u32);
 
+/// Spawns the camera, player, and initial set of enemies.
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2d);
     commands.insert_resource(Score(0));
 
+    // Spawn the player as a blue square at the origin.
     commands.spawn((
         Sprite {
             color: Color::srgb(0.2, 0.6, 1.0),
@@ -25,6 +32,7 @@ fn setup(mut commands: Commands) {
         Player { speed: 300.0 },
     ));
 
+    // Spawn 5 red enemy squares at random positions.
     for _ in 0..5 {
         let x = rand::random::<f32>() * 600.0 - 300.0;
         let y = rand::random::<f32>() * 600.0 - 300.0;
@@ -40,6 +48,7 @@ fn setup(mut commands: Commands) {
     }
 }
 
+/// Moves the player based on arrow-key input, frame-rate independent.
 fn player_movement(
     time: Res<Time>,
     keyboard: Res<ButtonInput<KeyCode>>,
@@ -59,6 +68,7 @@ fn player_movement(
     transform.translation.y += delta.y;
 }
 
+/// Despawns enemies within range of the player and adds to the score.
 fn collect_enemies(
     mut commands: Commands,
     player: Query<&Transform, With<Player>>,
@@ -76,10 +86,12 @@ fn collect_enemies(
     }
 }
 
+/// Prints the current score to the console each frame.
 fn score_display(score: Res<Score>) {
     println!("Score: {}", score.0);
 }
 
+/// Entry point: builds and runs the Bevy app.
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)

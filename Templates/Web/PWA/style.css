@@ -1,11 +1,14 @@
+/* CSS custom properties for the PWA theme */
 :root {
   --primary: #2563eb;
   --bg: #ffffff;
   --text: #1f2937;
 }
 
+/* Global reset */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Page body styling */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
@@ -16,6 +19,7 @@ body {
   line-height: 1.6;
 }
 
+/* Header bar with install button */
 header {
   display: flex;
   justify-content: space-between;
@@ -25,8 +29,10 @@ header {
   margin-bottom: 1.5rem;
 }
 
+/* Page title */
 h1 { font-size: 1.5rem; }
 
+/* Reusable button styles */
 .btn {
   background: var(--primary);
   color: white;
@@ -37,12 +43,16 @@ h1 { font-size: 1.5rem; }
   font-size: 0.9rem;
 }
 
+/* Button hover effect */
 .btn:hover { opacity: 0.9; }
 
+/* Utility to hide elements */
 .hidden { display: none !important; }
 
+/* Note input form layout */
 #noteForm { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
 
+/* Text input for new notes */
 #noteInput {
   flex: 1;
   padding: 0.5rem;
@@ -51,8 +61,10 @@ h1 { font-size: 1.5rem; }
   font-size: 1rem;
 }
 
+/* Note list container */
 #noteList { list-style: none; }
 
+/* Individual note list item */
 #noteList li {
   display: flex;
   justify-content: space-between;
@@ -63,6 +75,7 @@ h1 { font-size: 1.5rem; }
   margin-bottom: 0.5rem;
 }
 
+/* Delete button for each note */
 .delete-btn {
   background: #ef4444;
   color: white;
@@ -74,4 +87,5 @@ h1 { font-size: 1.5rem; }
   font-size: 0.8rem;
 }
 
+/* Footer styling */
 footer { text-align: center; margin-top: 2rem; color: #6b7280; font-size: 0.9rem; }

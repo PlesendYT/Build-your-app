@@ -4,19 +4,24 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
+// Navigator instances used throughout the app.
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+/** Screen shown on the Home tab with a link to the Details screen. */
 function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Home Screen</Text>
+      {/* Navigate to Details screen, passing a parameter */}
       <Button title="Go to Details" onPress={() => navigation.navigate('Details', { item: 'Hello from Home!' })} />
     </View>
   );
 }
 
+/** Displays the parameter received from the Home screen. */
 function DetailsScreen({ route }) {
+  // Extract the item passed via navigation params.
   const { item } = route.params;
   return (
     <View style={styles.container}>
@@ -26,6 +31,7 @@ function DetailsScreen({ route }) {
   );
 }
 
+/** Standalone settings screen accessible from the bottom tab. */
 function SettingsScreen() {
   return (
     <View style={styles.container}>
@@ -34,6 +40,7 @@ function SettingsScreen() {
   );
 }
 
+/** Wraps Home and Details in a stack navigator for push/pop transitions. */
 function HomeStack() {
   return (
     <Stack.Navigator>
@@ -43,6 +50,7 @@ function HomeStack() {
   );
 }
 
+/** Root component rendering the tab navigator inside a NavigationContainer. */
 export default function App() {
   return (
     <NavigationContainer>
@@ -54,6 +62,7 @@ export default function App() {
   );
 }
 
+/** Shared styles for navigation screen layouts. */
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 24, marginBottom: 16 },

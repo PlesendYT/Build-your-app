@@ -1,7 +1,9 @@
+// IndexedDB configuration constants
 const DB_NAME = 'pwa-notes-db';
 const DB_VERSION = 1;
 const STORE_NAME = 'notes';
 
+/** Open a connection to the IndexedDB database, creating the object store if needed */
 function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -16,6 +18,7 @@ function openDB() {
   });
 }
 
+/** Add a new note with the given text and current timestamp */
 async function addNote(text) {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readwrite');
@@ -23,6 +26,7 @@ async function addNote(text) {
   await new Promise((resolve) => (tx.oncomplete = resolve));
 }
 
+/** Retrieve all notes from the database */
 async function getNotes() {
   const db = await openDB();
   return new Promise((resolve) => {
@@ -33,6 +37,7 @@ async function getNotes() {
   });
 }
 
+/** Delete a note by its ID */
 async function deleteNote(id) {
   const db = await openDB();
   const tx = db.transaction(STORE_NAME, 'readwrite');

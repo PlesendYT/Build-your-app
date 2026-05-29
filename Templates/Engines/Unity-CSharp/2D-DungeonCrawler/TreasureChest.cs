@@ -1,3 +1,6 @@
+/// <summary>
+/// Represents a treasure chest that awards gold and heals the player when opened.
+/// </summary>
 using UnityEngine;
 
 public class TreasureChest : MonoBehaviour
@@ -7,6 +10,9 @@ public class TreasureChest : MonoBehaviour
     public GameObject openEffect;
     private bool isOpened;
 
+    /// <summary>
+    /// Opens the chest: awards score, plays effect, changes color, and heals the player.
+    /// </summary>
     public void Open()
     {
         if (isOpened) return;

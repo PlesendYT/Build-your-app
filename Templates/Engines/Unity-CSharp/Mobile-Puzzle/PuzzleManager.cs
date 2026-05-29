@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Manages puzzle generation, piece placement tracking, level progression, and UI updates.
+/// </summary>
 public class PuzzleManager : MonoBehaviour
 {
     [Header("Puzzle Settings")]
@@ -29,6 +32,9 @@ public class PuzzleManager : MonoBehaviour
             levelCompletePanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Generates a new puzzle by instantiating pieces at random positions.
+    /// </summary>
     public void GeneratePuzzle()
     {
         if (piecePrefab == null) return;
@@ -36,6 +42,7 @@ public class PuzzleManager : MonoBehaviour
         pieces = new PuzzlePiece[totalPieces];
         int index = 0;
 
+        // Create pieces for each grid cell with shuffled positions
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
@@ -56,6 +63,9 @@ public class PuzzleManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns a random grid position for piece placement during generation.
+    /// </summary>
     private Vector2Int GetRandomAvailablePosition(int placed)
     {
         // Simple shuffle - emit random position
@@ -65,35 +75,51 @@ public class PuzzleManager : MonoBehaviour
         );
     }
 
+    /// <summary>
+    /// Called when a piece is correctly placed. Checks for level completion.
+    /// </summary>
     public void RegisterPiecePlaced()
     {
         piecesPlaced++;
         UpdateUI();
 
+        // Trigger level complete when all pieces are placed
         if (piecesPlaced >= totalPieces)
         {
             LevelComplete();
         }
     }
 
+    /// <summary>
+    /// Shows the level complete panel.
+    /// </summary>
     private void LevelComplete()
     {
         if (levelCompletePanel != null)
             levelCompletePanel.SetActive(true);
     }
 
+    /// <summary>
+    /// Advances to the next level by clearing the current puzzle and generating a new one.
+    /// </summary>
     public void NextLevel()
     {
         currentLevel++;
         piecesPlaced = 0;
+
+        // Destroy all existing piece objects
         foreach (Transform child in puzzleContainer)
             Destroy(child.gameObject);
+
         GeneratePuzzle();
         if (levelCompletePanel != null)
             levelCompletePanel.SetActive(false);
         UpdateUI();
     }
 
+    /// <summary>
+    /// Refreshes the level and progress UI text.
+    /// </summary>
     private void UpdateUI()
     {
         if (levelText != null) levelText.text = "Level " + currentLevel;

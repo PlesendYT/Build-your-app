@@ -1,3 +1,6 @@
+// Web-React — application entry point
+// Renders the root App component inside StrictMode
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';

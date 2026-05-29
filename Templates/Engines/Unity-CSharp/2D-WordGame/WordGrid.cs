@@ -1,3 +1,6 @@
+/// <summary>
+/// Generates a word search grid with randomly placed words in multiple directions and filler letters.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -19,12 +22,18 @@ public class WordGrid : MonoBehaviour
 
     private enum Direction { Horizontal, Vertical, DiagonalDown, DiagonalUp }
 
+    /// <summary>
+    /// Initializes the grid and generates the word search on start.
+    /// </summary>
     private void Start()
     {
         grid = new LetterCell[gridSize, gridSize];
         GenerateGrid();
     }
 
+    /// <summary>
+    /// Places all words from the word list into the grid and fills remaining cells with random letters.
+    /// </summary>
     private void GenerateGrid()
     {
         foreach (string word in wordList)
@@ -47,6 +56,9 @@ public class WordGrid : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Tries to place a word at a random position and direction (up to 100 attempts).
+    /// </summary>
     private bool TryPlaceWord(string word)
     {
         for (int attempt = 0; attempt < 100; attempt++)
@@ -65,6 +77,9 @@ public class WordGrid : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Checks whether a word can be placed at the given position and direction without conflicts.
+    /// </summary>
     private bool CanPlace(string word, int x, int y, Direction dir)
     {
         int dx = 0, dy = 0;
@@ -86,6 +101,9 @@ public class WordGrid : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Places a word's letters into the grid at the specified position and direction.
+    /// </summary>
     private void PlaceWord(string word, int x, int y, Direction dir)
     {
         int dx = 0, dy = 0;
@@ -112,6 +130,9 @@ public class WordGrid : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if the selected cells form a valid word from the word list, marks them found, and awards score.
+    /// </summary>
     public bool CheckWord(List<Vector2Int> selectedCells)
     {
         char[] letters = new char[selectedCells.Count];

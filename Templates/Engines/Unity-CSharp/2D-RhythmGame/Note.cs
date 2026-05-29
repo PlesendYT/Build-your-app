@@ -1,3 +1,6 @@
+/// <summary>
+/// A rhythm game note that travels from a spawn point to a target, with hit detection and scoring.
+/// </summary>
 using UnityEngine;
 
 public class Note : MonoBehaviour
@@ -15,6 +18,9 @@ public class Note : MonoBehaviour
     private bool isHit;
     private float lifetime;
 
+    /// <summary>
+    /// Sets the note's lane, start/target positions, and travel duration.
+    /// </summary>
     public void Initialize(int lane, Vector3 start, Vector3 target, float timeUntilBeat)
     {
         this.lane = lane;
@@ -25,6 +31,9 @@ public class Note : MonoBehaviour
         transform.position = start;
     }
 
+    /// <summary>
+    /// Moves the note toward its target and triggers a miss if it passes the window.
+    /// </summary>
     private void Update()
     {
         if (isHit) return;
@@ -39,6 +48,9 @@ public class Note : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Attempts to hit the note within the precision window, returning true on success.
+    /// </summary>
     public bool TryHit(float precisionWindow)
     {
         if (isHit) return false;
@@ -56,6 +68,9 @@ public class Note : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Determines the accuracy rating based on how close the hit was to the beat.
+    /// </summary>
     private ScoreRating GetRating()
     {
         if (Mathf.Abs(lifetime) < 0.1f) return ScoreRating.Perfect;
@@ -63,6 +78,9 @@ public class Note : MonoBehaviour
         return ScoreRating.Bad;
     }
 
+    /// <summary>
+    /// Handles a miss: adds miss score, changes color, and destroys the note.
+    /// </summary>
     private void Miss()
     {
         isHit = true;
@@ -73,4 +91,7 @@ public class Note : MonoBehaviour
     }
 }
 
+/// <summary>
+/// Accuracy rating for rhythm game note hits.
+/// </summary>
 public enum ScoreRating { Miss, Bad, Good, Perfect }

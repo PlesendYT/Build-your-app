@@ -1,6 +1,8 @@
+# Application module defining the OTP supervisor tree and startup
 defmodule Webapp do
   use Application
 
+  # Start the supervision tree with Repo, PubSub, and Endpoint
   def start(_type, _args) do
     children = [
       Webapp.Repo,
@@ -11,6 +13,7 @@ defmodule Webapp do
     Supervisor.start_link(children, opts)
   end
 
+  # Handle runtime configuration changes
   def config_change(changed, _new, removed) do
     Webapp.Endpoint.config_change(changed, removed)
     :ok

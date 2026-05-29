@@ -1,3 +1,5 @@
+// Package main implements a simple REST API server using only the standard
+// library, with middleware for logging and CORS.
 package main
 
 import (
@@ -8,6 +10,7 @@ import (
 	"time"
 )
 
+// Todo represents a to-do item stored in the in-memory slice.
 type Todo struct {
 	ID        int       `json:"id"`
 	Title     string    `json:"title"`
@@ -15,12 +18,16 @@ type Todo struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// todos is the in-memory store of Todo items, pre-populated with one entry.
 var todos = []Todo{
 	{ID: 1, Title: "Go lernen", Completed: false, CreatedAt: time.Now()},
 }
 
+// nextID is the auto-incrementing ID counter for new todos.
 var nextID = 2
 
+// loggingMiddleware logs every request method, path, and client IP
+// along with the total handling duration.
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
@@ -30,6 +37,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// corsMiddleware adds permissive CORS headers and handles OPTIONS preflight.
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -43,6 +51,7 @@ func corsMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// handleTodos serves GET (list all) and POST (create new) on /api/todos.
 func handleTodos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -68,11 +77,14 @@ func handleTodos(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// handleIndex serves the root HTML page with a link to the API.
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, `<h1>Go WebServer</h1><p>API: <a href="/api/todos">/api/todos</a></p>`)
 }
 
+// main configures routes, wraps them with middleware, and starts the
+// HTTP server on :8080 with read/write timeouts.
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handleIndex)

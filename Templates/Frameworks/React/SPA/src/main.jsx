@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom'
 import './index.css'
 
+// Static page data used for dynamic routing via /page/:id
 const pages = [
   { id: 'home', title: 'Startseite', content: 'Willkommen bei unserer SPA.' },
   { id: 'services', title: 'Dienstleistungen', content: 'Wir bieten Webentwicklung, Design und Beratung.' },
@@ -10,6 +11,7 @@ const pages = [
   { id: 'contact', title: 'Kontakt', content: 'Erreichen Sie uns per E-Mail oder Telefon.' }
 ]
 
+/** Landing page displayed at the root route. */
 function Home() {
   return (
     <div className="page home">
@@ -19,8 +21,10 @@ function Home() {
   )
 }
 
+/** Dynamic page rendered based on the :id route parameter. Falls back to a 404 message. */
 function Page() {
   const { id } = useParams()
+  // Look up the page data matching the current URL parameter
   const page = pages.find(p => p.id === id)
   if (!page) return <div className="page"><h2>Seite nicht gefunden</h2></div>
   return (
@@ -31,6 +35,7 @@ function Page() {
   )
 }
 
+/** Root application component with header navigation and route definitions. */
 function App() {
   return (
     <div className="app">
@@ -53,6 +58,7 @@ function App() {
   )
 }
 
+// Mount the React app into the DOM with routing enabled
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>

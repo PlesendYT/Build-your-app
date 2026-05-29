@@ -1,0 +1,13 @@
+# Paper plugin using Kotlin — requires Paper's built-in Kotlin support
+name: KotlinPlugin
+main: com.example.plugin.KotlinPlugin
+api-version: '1.20'
+version: 1.0.0
+author: ExampleAuthor
+description: An example Paper plugin written in Kotlin
+
+# Register the /ping command
+commands:
+  ping:
+    description: Replies with Pong!
+    usage: /<command>

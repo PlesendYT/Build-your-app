@@ -1,0 +1,34 @@
+<!-- Forum main layout - shared header and navigation -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f0f2f5; }
+    nav { background: #1f2937; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    nav a { color: white; text-decoration: none; margin-left: 1rem; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+  </style>
+</head>
+<body>
+  <!-- Navigation bar with auth links -->
+  <nav>
+    <a href="/">Forum</a>
+    <div>
+      <% if (typeof user !== 'undefined' && user) { %>
+        <span><%= user.username %></span>
+        <a href="/auth/logout">Logout</a>
+      <% } else { %>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Register</a>
+      <% } %>
+    </div>
+  </nav>
+  <div class="container">
+    <%- body %>
+  </div>
+</body>
+</html>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
+// Set page metadata for the home page
 useHead({ title: 'Home' })
 </script>
 
+<!-- Home page hero section with welcome message and call-to-action link -->
 <template>
   <div class="hero">
     <h2>Willkommen bei NuxtApp</h2>

@@ -13,6 +13,7 @@ def create_pipeline() -> Pipeline:
     Returns:
         A scikit-learn Pipeline with scaling and classification.
     """
+    # Build a pipeline: first standardize features, then train a random forest
     return Pipeline([
         ("scaler", StandardScaler()),
         ("classifier", RandomForestClassifier(

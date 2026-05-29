@@ -1,3 +1,4 @@
+// Header for a 2D platformer character with double jump and collectibles.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -17,15 +18,19 @@ public:
     UPROPERTY(BlueprintReadOnly) int32 Lives = 3;
     UPROPERTY(BlueprintReadOnly) bool bIsFacingRight = true;
 
+    // Add coins to the character.
     UFUNCTION(BlueprintCallable)
     void AddCoin(int32 Amount);
 
+    // Add gems to the character.
     UFUNCTION(BlueprintCallable)
     void AddGem(int32 Amount);
 
+    // Handle character death (lose a life, respawn or destroy).
     UFUNCTION(BlueprintCallable)
     void Die();
 
+    // Respawn at the last checkpoint.
     UFUNCTION(BlueprintCallable)
     void Respawn();
 

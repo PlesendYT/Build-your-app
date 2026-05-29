@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!-- App Launcher - searchable grid of installed applications -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Launcher</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; padding: 2rem; }
+    #searchBar { width: 100%; padding: 0.75rem; font-size: 1.1rem; border: 1px solid #d1d5db; border-radius: 8px; margin-bottom: 1rem; }
+    #appGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+    .app-card { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; cursor: pointer; }
+    .app-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.15); transform: translateY(-2px); }
+    .app-card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
+    .app-card p { font-size: 0.8rem; color: #6b7280; }
+    #addForm { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    #addForm input { padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; flex: 1; }
+    #addForm button { padding: 0.5rem 1rem; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .remove-btn { margin-top: 0.5rem; padding: 0.2rem 0.5rem; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <!-- Add app form and search input -->
+  <form id="addForm">
+    <input name="name" placeholder="App name" required>
+    <input name="path" placeholder="Executable path" required>
+    <button type="submit">Add App</button>
+  </form>
+  <input id="searchBar" placeholder="Search apps..." oninput="renderApps()">
+
+  <!-- App grid container filled by renderer script -->
+  <div id="appGrid"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

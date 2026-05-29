@@ -1,3 +1,4 @@
+# Shoot-em-up bullet that moves in a direction and damages player or enemies on contact
 extends Area2D
 
 @export var speed: float = 500.0

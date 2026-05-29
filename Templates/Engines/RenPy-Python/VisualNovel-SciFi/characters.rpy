@@ -1,4 +1,5 @@
 ## Characters for Sci-Fi Visual Novel
+# Defines crew, alien, and AI characters plus ship stats: hull, fuel, morale, tech, and trust
 
 define captain = Character("Captain Nova", color="#f39c12")
 define officer = Character("Lt. Chen", color="#1abc9c")

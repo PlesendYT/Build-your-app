@@ -1,6 +1,8 @@
+/// CLI tool library implementing a simple command pattern with greet, calc, and help commands.
 import 'dart:io';
 import 'package:args/args.dart';
 
+/// Represents a parsed CLI command with an execute method. Supports greet, calc, and help.
 sealed class Command {
   factory Command.parse(List<String> args) {
     final parser = ArgParser()
@@ -27,6 +29,7 @@ sealed class Command {
   String execute();
 }
 
+/// Command that prints a greeting message, optionally in uppercase.
 class GreetCommand implements Command {
   final String name;
   final bool upper;
@@ -39,6 +42,7 @@ class GreetCommand implements Command {
   }
 }
 
+/// Command that performs an arithmetic operation (add, sub, mul, div) on two integers.
 class CalcCommand implements Command {
   final String op;
   final int a;
@@ -58,6 +62,7 @@ class CalcCommand implements Command {
   }
 }
 
+/// Command that prints usage instructions for the CLI tool.
 class HelpCommand implements Command {
   @override
   String execute() {

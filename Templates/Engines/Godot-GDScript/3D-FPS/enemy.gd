@@ -1,3 +1,4 @@
+# FPS enemy AI with detection, ranged attacks, health, and death handling
 extends CharacterBody3D
 
 @export var health: int = 50

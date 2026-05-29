@@ -1,3 +1,4 @@
+# Card resource with name, cost, type, damage/heal/shield values, texture, and rarity
 class_name Card
 extends Resource
 

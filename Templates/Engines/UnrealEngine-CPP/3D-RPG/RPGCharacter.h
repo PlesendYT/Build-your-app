@@ -1,8 +1,10 @@
+// Header for an RPG character with stats, inventory, quests, and leveling.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "RPGCharacter.generated.h"
 
+// Core character stats (level, experience, attributes).
 USTRUCT(BlueprintType)
 struct FCharacterStats
 {
@@ -16,6 +18,7 @@ struct FCharacterStats
     UPROPERTY(EditAnywhere, BlueprintReadWrite) int32 Constitution = 10;
 };
 
+// A quest entry with completion status.
 USTRUCT(BlueprintType)
 struct FQuestData
 {
@@ -25,6 +28,7 @@ struct FQuestData
     UPROPERTY(EditAnywhere, BlueprintReadWrite) bool bIsCompleted = false;
 };
 
+// An inventory item with stack support.
 USTRUCT(BlueprintType)
 struct FInventoryItem
 {
@@ -45,24 +49,31 @@ public:
     UPROPERTY(Replicated, BlueprintReadWrite) TArray<FQuestData> ActiveQuests;
     UPROPERTY(Replicated, BlueprintReadWrite) TArray<FInventoryItem> Inventory;
 
+    // Add experience and check for level-up.
     UFUNCTION(BlueprintCallable)
     void AddExperience(int32 Amount);
 
+    // Add an item to inventory (with stacking).
     UFUNCTION(BlueprintCallable)
     void AddItem(FName ItemID, int32 Quantity = 1);
 
+    // Remove items from inventory. Returns false if insufficient quantity.
     UFUNCTION(BlueprintCallable)
     bool RemoveItem(FName ItemID, int32 Quantity = 1);
 
+    // Check if the character has at least Quantity of an item.
     UFUNCTION(BlueprintCallable)
     bool HasItem(FName ItemID, int32 Quantity = 1) const;
 
+    // Accept a new quest.
     UFUNCTION(BlueprintCallable)
     void AcceptQuest(FName QuestID);
 
+    // Complete a quest and grant experience reward.
     UFUNCTION(BlueprintCallable)
     void CompleteQuest(FName QuestID);
 
+    // Get a stat bonus based on stat type.
     UFUNCTION(BlueprintCallable)
     int32 GetStatBonus(EStatType StatType) const;
 

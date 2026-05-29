@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls the roguelike player with grid-based movement, combat, and health.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +21,9 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
+    /// <summary>
+    /// Caches component references and finds the dungeon generator.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -26,6 +32,9 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
     }
 
+    /// <summary>
+    /// Moves the player one grid tile at a time, attacks enemies in the way.
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context)
     {
         if (isDead || !context.performed || Time.time < lastMoveTime + moveDelay) return;
@@ -56,12 +65,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Attacks an enemy, dealing damage equal to attack power.
+    /// </summary>
     private void Attack(EnemyController enemy)
     {
         enemy.TakeDamage(attackDamage);
         lastMoveTime = Time.time;
     }
 
+    /// <summary>
+    /// Reduces health and triggers death if health reaches zero.
+    /// </summary>
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -71,6 +86,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Marks the player as dead, changes color, and shows the game over panel.
+    /// </summary>
     private void Die()
     {
         isDead = true;
@@ -82,12 +100,18 @@ public class PlayerController : MonoBehaviour
     public int GetMaxHealth() => maxHealth;
 }
 
+/// <summary>
+/// A basic enemy with health, damage, and XP reward.
+/// </summary>
 public class EnemyController : MonoBehaviour
 {
     public int health = 3;
     public int damage = 1;
     public int xpReward = 10;
 
+    /// <summary>
+    /// Reduces health and destroys the enemy when health reaches zero.
+    /// </summary>
     public void TakeDamage(int amount)
     {
         health -= amount;

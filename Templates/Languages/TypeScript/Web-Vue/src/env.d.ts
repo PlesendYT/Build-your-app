@@ -1,3 +1,4 @@
+// Type declarations for Vite client types and .vue module imports
 /// <reference types="vite/client" />
 
 declare module '*.vue' {

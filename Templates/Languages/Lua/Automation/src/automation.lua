@@ -1,10 +1,12 @@
 #!/usr/bin/env lua
 
+-- Log a timestamped message to stderr with the given level
 local function log(level, msg)
     local ts = os.date("%Y-%m-%d %H:%M:%S")
     io.stderr:write(string.format("[%s] [%s] %s\n", ts, level, msg))
 end
 
+-- Run a shell command and capture its output (first 200 chars)
 local function runCommand(cmd)
     log("INFO", "Ausführung: " .. cmd)
     local handle = io.popen(cmd .. " 2>&1")
@@ -19,6 +21,7 @@ local function runCommand(cmd)
     end
 end
 
+-- Poll a directory every 2 seconds and invoke callback on file create/delete
 local function watchDirectory(dir, callback)
     log("INFO", "Überwache Verzeichnis: " .. dir)
 
@@ -55,6 +58,7 @@ local function watchDirectory(dir, callback)
     end
 end
 
+-- Split a cron spec string into space-separated parts
 local function parseCron(spec)
     local parts = {}
     for part in spec:gmatch("%S+") do
@@ -63,6 +67,7 @@ local function parseCron(spec)
     return parts
 end
 
+-- Check if the current time matches a parsed cron schedule
 local function cronMatches(parts, t)
     if t == nil then t = os.date("*t") end
 
@@ -84,6 +89,7 @@ local function cronMatches(parts, t)
     return true
 end
 
+-- Run a command on a cron schedule, checking every 30 seconds
 local function runScheduler(spec, cmd)
     local parts = parseCron(spec)
     log("INFO", string.format("Scheduler: %s -> %s", spec, cmd))
@@ -100,6 +106,7 @@ local function runScheduler(spec, cmd)
     end
 end
 
+-- Entry point: parse CLI args and run watch or schedule mode
 local function main()
     local args = {...}
     if #args < 2 then

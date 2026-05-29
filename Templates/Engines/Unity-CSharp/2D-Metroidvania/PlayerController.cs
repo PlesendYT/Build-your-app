@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls the metroidvania player with movement, jump, double jump, dash, power-ups, and health.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,6 +28,9 @@ public class PlayerController : MonoBehaviour
     private int currentHealth;
     private Animator animator;
 
+    /// <summary>
+    /// Caches components and initializes health.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -32,6 +38,9 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
     }
 
+    /// <summary>
+    /// Checks grounded state, resets double jump and dash when grounded, and updates animations.
+    /// </summary>
     private void Update()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
@@ -43,11 +52,17 @@ public class PlayerController : MonoBehaviour
         UpdateAnimation();
     }
 
+    /// <summary>
+    /// Applies horizontal movement velocity.
+    /// </summary>
     private void FixedUpdate()
     {
         rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
     }
 
+    /// <summary>
+    /// Updates animator parameters for speed, grounded state, and vertical velocity.
+    /// </summary>
     private void UpdateAnimation()
     {
         if (animator != null)
@@ -58,11 +73,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reads horizontal movement input.
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
 
+    /// <summary>
+    /// Handles jumping: normal jump when grounded, double jump if unlocked.
+    /// </summary>
     public void OnJump(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -78,6 +99,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Performs a dash in the horizontal movement direction if unlocked.
+    /// </summary>
     public void OnDash(InputAction.CallbackContext context)
     {
         if (context.performed && hasDash && canDash)
@@ -87,6 +111,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Unlocks a power-up ability (double jump or dash).
+    /// </summary>
     public void UnlockPowerUp(PowerUpType type)
     {
         switch (type)
@@ -100,6 +127,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reduces health by damage and triggers death if health reaches zero.
+    /// </summary>
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -109,6 +139,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Deactivates the player and triggers game over.
+    /// </summary>
     private void Die()
     {
         gameObject.SetActive(false);
@@ -121,4 +154,7 @@ public class PlayerController : MonoBehaviour
     public bool HasDash() => hasDash;
 }
 
+/// <summary>
+/// Types of power-ups the player can unlock.
+/// </summary>
 public enum PowerUpType { DoubleJump, Dash, WallJump }

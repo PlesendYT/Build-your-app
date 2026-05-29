@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages the drawing canvas, handling texture creation, pixel painting, and undo functionality.
+/// </summary>
 using UnityEngine;
 
 public class DrawingCanvas : MonoBehaviour
@@ -16,6 +19,9 @@ public class DrawingCanvas : MonoBehaviour
     private Color[] undoBuffer;
     private bool hasChange;
 
+    /// <summary>
+    /// Initializes the canvas texture and assigns it to the sprite renderer.
+    /// </summary>
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -24,6 +30,9 @@ public class DrawingCanvas : MonoBehaviour
         spriteRenderer.sprite = Sprite.Create(canvasTexture, new Rect(0, 0, canvasWidth, canvasHeight), Vector2.one * 0.5f);
     }
 
+    /// <summary>
+    /// Fills the canvas with the background color.
+    /// </summary>
     private void ClearCanvas()
     {
         Color[] pixels = new Color[canvasWidth * canvasHeight];
@@ -33,6 +42,10 @@ public class DrawingCanvas : MonoBehaviour
         canvasTexture.Apply();
     }
 
+    /// <summary>
+    /// Draws at the given world position using the current brush color and size.
+    /// Converts world coordinates to texture coordinates and paints a circular brush stroke.
+    /// </summary>
     public void DrawAt(Vector2 worldPos)
     {
         Vector2 localPos = worldPos - (Vector2)transform.position;
@@ -49,6 +62,7 @@ public class DrawingCanvas : MonoBehaviour
         if (texCoord.x < 0 || texCoord.x >= canvasWidth || texCoord.y < 0 || texCoord.y >= canvasHeight)
             return;
 
+        // Save state for undo before making changes
         SaveUndo();
         for (int x = -brushSize / 2; x <= brushSize / 2; x++)
         {
@@ -59,6 +73,7 @@ public class DrawingCanvas : MonoBehaviour
                 if (px >= 0 && px < canvasWidth && py >= 0 && py < canvasHeight)
                 {
                     float dist = Mathf.Sqrt(x * x + y * y);
+                    // Apply pixel only if within circular brush radius
                     if (dist <= brushSize / 2f)
                         canvasTexture.SetPixel(px, py, brushColor);
                 }
@@ -68,12 +83,18 @@ public class DrawingCanvas : MonoBehaviour
         hasChange = true;
     }
 
+    /// <summary>
+    /// Clears the entire canvas, saving the current state for undo.
+    /// </summary>
     public void ClearAll()
     {
         SaveUndo();
         ClearCanvas();
     }
 
+    /// <summary>
+    /// Reverts the canvas to the last saved undo buffer.
+    /// </summary>
     public void Undo()
     {
         if (undoBuffer == null) return;
@@ -82,17 +103,26 @@ public class DrawingCanvas : MonoBehaviour
         undoBuffer = null;
     }
 
+    /// <summary>
+    /// Saves the current canvas pixels into the undo buffer if no changes have been made yet.
+    /// </summary>
     private void SaveUndo()
     {
         if (!hasChange)
             undoBuffer = canvasTexture.GetPixels();
     }
 
+    /// <summary>
+    /// Sets the active brush color.
+    /// </summary>
     public void SetBrushColor(Color color)
     {
         brushColor = color;
     }
 
+    /// <summary>
+    /// Sets the brush size, clamped between 1 and 50.
+    /// </summary>
     public void SetBrushSize(int size)
     {
         brushSize = Mathf.Clamp(size, 1, 50);

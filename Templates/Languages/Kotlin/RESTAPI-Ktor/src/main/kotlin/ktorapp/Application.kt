@@ -1,3 +1,7 @@
+/**
+ * Ktor server application exposing a simple REST API for items.
+ * Uses Exposed ORM with an in-memory H2 database and JSON serialization.
+ */
 package ktorapp
 
 import io.ktor.server.engine.*
@@ -14,31 +18,38 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.dao.*
 import org.jetbrains.exposed.dao.id.*
 
+/** Serializable response DTO for an item. */
 @Serializable
 data class ItemResponse(val id: Int, val name: String, val value: String?)
 
+/** Exposed table definition for the items table with id, name, and nullable value columns. */
 object Items : IntIdTable() {
     val name = varchar("name", 255)
     val value = varchar("value", 255).nullable()
 }
 
+/** Exposed entity class wrapping the Items table. */
 class Item(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<Item>(Items)
     var name by Items.name
     var value by Items.value
 }
 
+/** Configures the Ktor application module: database, JSON plugin, and routes. */
 fun Application.module() {
+    // Connect to an in-memory H2 database and create the schema with a seed row
     Database.connect("jdbc:h2:mem:ktorapi", driver = "org.h2.Driver")
     transaction {
         SchemaUtils.create(Items)
         Item.new { name = "Beispiel"; value = "Initial" }
     }
 
+    // Enable JSON content negotiation
     install(ContentNegotiation) {
         json()
     }
 
+    // Define REST endpoints for listing, fetching, and creating items
     routing {
         get("/api/items") {
             val items = transaction {
@@ -64,6 +75,7 @@ fun Application.module() {
     }
 }
 
+/** Starts the embedded Netty server on port 8080. */
 fun main() {
     embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
 }

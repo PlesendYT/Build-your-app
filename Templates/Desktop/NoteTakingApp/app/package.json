@@ -1,0 +1,12 @@
+{
+  "name": "note-taking-app",
+  "version": "1.0.0",
+  "description": "Electron note taking app with folders and search",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^28.0.0"
+  }
+}

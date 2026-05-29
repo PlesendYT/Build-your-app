@@ -1,3 +1,4 @@
+# Drag-and-drop puzzle piece with type matching and position tracking
 extends Area2D
 
 @export var piece_type: String = "blue"

@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages the match-three board: grid generation, tile selection, swapping, match detection, cascading, and refilling.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -16,12 +19,18 @@ public class BoardManager : MonoBehaviour
     private Tile selectedTile;
     private bool isProcessing;
 
+    /// <summary>
+    /// Initializes the grid and generates the board.
+    /// </summary>
     private void Start()
     {
         grid = new Tile[width, height];
         GenerateBoard();
     }
 
+    /// <summary>
+    /// Fills the board with random tiles and resolves any initial matches to ensure no pre-existing matches.
+    /// </summary>
     private void GenerateBoard()
     {
         for (int x = 0; x < width; x++)
@@ -38,11 +47,17 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns a random tile type index.
+    /// </summary>
     private int GetRandomType()
     {
         return Random.Range(0, tilePrefabs.Length);
     }
 
+    /// <summary>
+    /// Creates a tile at the specified grid position.
+    /// </summary>
     private void SpawnTile(int x, int y, int type)
     {
         Vector3 pos = new Vector3(x * cellSize, y * cellSize, 0f) + boardParent.position;
@@ -52,6 +67,9 @@ public class BoardManager : MonoBehaviour
         grid[x, y] = tile;
     }
 
+    /// <summary>
+    /// Checks if the board has any matches of three or more in a row.
+    /// </summary>
     private bool HasInitialMatches()
     {
         for (int x = 0; x < width; x++)
@@ -67,6 +85,9 @@ public class BoardManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Replaces tiles that are part of initial matches with a different random type.
+    /// </summary>
     private void ResolveInitialMatches()
     {
         for (int x = 0; x < width; x++)
@@ -89,6 +110,9 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles tile selection: select first tile, select adjacent tile to swap, or deselect.
+    /// </summary>
     public void SelectTile(Tile tile)
     {
         if (isProcessing) return;
@@ -115,6 +139,9 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks if two tiles are adjacent horizontally or vertically.
+    /// </summary>
     private bool IsAdjacent(Tile a, Tile b)
     {
         int dx = Mathf.Abs(a.x - b.x);
@@ -122,6 +149,9 @@ public class BoardManager : MonoBehaviour
         return (dx == 1 && dy == 0) || (dx == 0 && dy == 1);
     }
 
+    /// <summary>
+    /// Swaps two tiles, checks for matches, and reverts the swap if no match is found.
+    /// </summary>
     private System.Collections.IEnumerator SwapTiles(Tile a, Tile b)
     {
         isProcessing = true;
@@ -145,6 +175,7 @@ public class BoardManager : MonoBehaviour
         }
         else
         {
+            // Swap back if no match
             grid[ax, ay] = a;
             grid[bx, by] = b;
             a.MoveTo(ax, ay);
@@ -154,6 +185,9 @@ public class BoardManager : MonoBehaviour
         isProcessing = false;
     }
 
+    /// <summary>
+    /// Scans the board for horizontal and vertical matches of three or more.
+    /// </summary>
     private List<Tile> FindMatches()
     {
         List<Tile> matches = new List<Tile>();
@@ -190,6 +224,9 @@ public class BoardManager : MonoBehaviour
         return matches;
     }
 
+    /// <summary>
+    /// Destroys matched tiles, collapses the board, fills empty spaces, and recursively processes chain matches.
+    /// </summary>
     private System.Collections.IEnumerator ProcessMatches(List<Tile> matches)
     {
         foreach (Tile t in matches)
@@ -209,6 +246,9 @@ public class BoardManager : MonoBehaviour
             yield return StartCoroutine(ProcessMatches(newMatches));
     }
 
+    /// <summary>
+    /// Shifts tiles downward to fill gaps left by destroyed tiles.
+    /// </summary>
     private void CollapseBoard()
     {
         for (int x = 0; x < width; x++)
@@ -230,6 +270,9 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Spawns new random tiles in any remaining empty grid cells.
+    /// </summary>
     private void FillEmptySpaces()
     {
         for (int x = 0; x < width; x++)

@@ -1,9 +1,12 @@
+//! A modern CLI tool template with subcommands, config file support, and verbose logging.
+
 use anyhow::{Context, Result};
 use chrono::Local;
 use clap::Parser;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
+/// CLI arguments and subcommands.
 #[derive(Parser)]
 #[command(name = "cli-tool", version, about = "A modern CLI tool template")]
 struct Cli {
@@ -17,6 +20,7 @@ struct Cli {
     command: Option<Command>,
 }
 
+/// Available subcommands.
 #[derive(clap::Subcommand)]
 enum Command {
     #[command(about = "Process input data")]
@@ -30,6 +34,7 @@ enum Command {
     Status,
 }
 
+/// Top-level configuration file schema.
 #[derive(Serialize, Deserialize)]
 struct Config {
     name: String,
@@ -37,12 +42,14 @@ struct Config {
     settings: Settings,
 }
 
+/// Nested settings within the config.
 #[derive(Serialize, Deserialize)]
 struct Settings {
     threads: usize,
     timeout: u64,
 }
 
+/// Reads and parses a JSON config file.
 fn load_config(path: &PathBuf) -> Result<Config> {
     let content = std::fs::read_to_string(path)
         .with_context(|| format!("Failed to read config: {}", path.display()))?;
@@ -51,6 +58,7 @@ fn load_config(path: &PathBuf) -> Result<Config> {
     Ok(config)
 }
 
+/// Reads an input file, logs its size, and optionally writes the result to an output file.
 fn process(input: &PathBuf, output: Option<&PathBuf>) -> Result<()> {
     let data = std::fs::read_to_string(input)
         .with_context(|| format!("Cannot read input: {}", input.display()))?;
@@ -70,6 +78,7 @@ fn process(input: &PathBuf, output: Option<&PathBuf>) -> Result<()> {
     Ok(())
 }
 
+/// Prints version, host arch, OS, and current time.
 fn status() -> Result<()> {
     println!("cli-tool v{}", env!("CARGO_PKG_VERSION"));
     println!("Host: {}", std::env::consts::ARCH);
@@ -78,6 +87,7 @@ fn status() -> Result<()> {
     Ok(())
 }
 
+/// Entry point: parse CLI args, optionally load config, then dispatch to subcommand.
 fn main() -> Result<()> {
     let cli = Cli::parse();
 

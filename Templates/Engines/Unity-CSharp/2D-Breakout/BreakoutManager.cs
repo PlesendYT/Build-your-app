@@ -1,8 +1,14 @@
+/// <summary>
+/// Central manager for the Breakout game: tracks score, lives, blocks, ball spawning, and game state.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
 public class BreakoutManager : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance for global access.
+    /// </summary>
     public static BreakoutManager Instance { get; private set; }
     public TMPro.TextMeshProUGUI scoreText;
     public TMPro.TextMeshProUGUI livesText;
@@ -15,12 +21,18 @@ public class BreakoutManager : MonoBehaviour
     private int totalBlocks;
     private GameObject currentBall;
 
+    /// <summary>
+    /// Initializes the singleton instance.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Counts total blocks, spawns the first ball, and updates UI.
+    /// </summary>
     private void Start()
     {
         totalBlocks = FindObjectsOfType<Block>().Length;
@@ -28,6 +40,9 @@ public class BreakoutManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Destroys the current ball and spawns a new one at the spawn point, then launches it.
+    /// </summary>
     public void SpawnBall()
     {
         if (currentBall != null) Destroy(currentBall);
@@ -37,6 +52,9 @@ public class BreakoutManager : MonoBehaviour
             ballScript.Launch();
     }
 
+    /// <summary>
+    /// Called when a block is destroyed: adds score, decrements block count, and checks for level completion.
+    /// </summary>
     public void BlockDestroyed(int points)
     {
         score += points;
@@ -47,6 +65,9 @@ public class BreakoutManager : MonoBehaviour
             Debug.Log("Level Complete! Score: " + score);
     }
 
+    /// <summary>
+    /// Called when a ball is lost: decrements lives, checks for game over, or spawns a new ball.
+    /// </summary>
     public void BallLost()
     {
         lives--;
@@ -61,6 +82,9 @@ public class BreakoutManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Refreshes the score and lives text displays.
+    /// </summary>
     public void UpdateUI()
     {
         if (scoreText != null) scoreText.text = "Score: " + score;

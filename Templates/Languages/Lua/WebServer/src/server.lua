@@ -3,12 +3,14 @@
 local socket = require("socket")
 local lfs = require("lfs")
 
+-- TCP server listening on port 8080
 local server = socket.tcp()
 server:settimeout(0)
 server:bind("*", 8080)
 server:listen(10)
 print("Server läuft auf http://localhost:8080")
 
+-- Parse an HTTP request into method, path, version, and headers
 local function parseRequest(data)
     local method, path, version = data:match("^(%w+)%s+(%S+)%s+(HTTP/%d%.%d)")
     local headers = {}
@@ -18,6 +20,7 @@ local function parseRequest(data)
     return method, path, version, headers
 end
 
+-- Build a raw HTTP response string from status code, headers table, and body
 local function buildResponse(status, headers, body)
     local response = "HTTP/1.1 " .. status .. "\r\n"
     for k, v in pairs(headers) do
@@ -27,18 +30,22 @@ local function buildResponse(status, headers, body)
     return response
 end
 
+-- Return a 200 JSON response
 local function jsonResponse(data)
     return buildResponse("200 OK", {["Content-Type"] = "application/json"}, data)
 end
 
+-- Return a 200 HTML response with UTF-8 charset
 local function htmlResponse(body)
     return buildResponse("200 OK", {["Content-Type"] = "text/html; charset=utf-8"}, body)
 end
 
+-- Return an error response with the given HTTP code and plain text body
 local function errorResponse(code, msg)
     return buildResponse(code, {["Content-Type"] = "text/plain"}, msg)
 end
 
+-- Serve a static file from the current directory with MIME type detection
 local function serveStatic(path)
     if path == "/" then path = "/index.html" end
     local filepath = "." .. path
@@ -63,6 +70,7 @@ local function serveStatic(path)
     return nil
 end
 
+-- Route API requests: /api/hello, /api/time, /api/echo
 local function handleAPI(method, path, body)
     if path == "/api/hello" and method == "GET" then
         return jsonResponse('{"message": "Hallo, Welt!", "language": "Lua"}')
@@ -77,6 +85,7 @@ local function handleAPI(method, path, body)
     return nil
 end
 
+-- Read a full HTTP request from a client, route it, and send the response
 local function handleClient(client)
     client:settimeout(5)
     local data, err = client:receive("*l")
@@ -114,6 +123,7 @@ local function handleClient(client)
     client:close()
 end
 
+-- Infinite loop: accept connections and spawn client handling
 local function acceptLoop()
     while true do
         local client = server:accept()

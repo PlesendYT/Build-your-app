@@ -1,4 +1,5 @@
 ## Characters for Dating Visual Novel
+# Defines romanceable characters, affection tracking, day counter, and image placeholders
 
 define mc = Character("You", color="#ffffff")
 define alex = Character("Alex", color="#ff6b6b")

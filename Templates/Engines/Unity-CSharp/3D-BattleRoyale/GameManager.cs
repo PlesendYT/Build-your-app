@@ -1,3 +1,6 @@
+/// <summary>
+/// Battle royale match state: player count, kill feed, zone, and plane drop logic.
+/// </summary>
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

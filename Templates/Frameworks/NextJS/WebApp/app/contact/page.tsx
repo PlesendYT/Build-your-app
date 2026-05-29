@@ -1,9 +1,11 @@
+// Contact page — simple form that shows a success message after submission
 'use client'
 import { useState } from 'react'
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
 
+  // Handle form submit: prevent reload and show the success message
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setSent(true)

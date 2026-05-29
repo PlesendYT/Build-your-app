@@ -1,0 +1,12 @@
+{
+  "name": "mongodb-app",
+  "version": "1.0.0",
+  "description": "Node.js app using Mongoose with MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "mongoose": "^8.8.0"
+  }
+}

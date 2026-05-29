@@ -1,3 +1,5 @@
+// Package main implements a Discord bot with slash commands
+// (ping, roll, say) and a text-based !uptime command.
 package main
 
 import (
@@ -14,7 +16,9 @@ import (
 )
 
 var (
+	// token is the Discord bot token, read from flag or BOT_TOKEN env var.
 	token    string
+	// commands defines the slash commands registered on startup.
 	commands = []*discordgo.ApplicationCommand{
 		{Name: "ping", Description: "Pong!"},
 		{Name: "roll", Description: "Würfeln (1-100)"},
@@ -26,6 +30,8 @@ var (
 	}
 )
 
+// main initializes the bot session, registers handlers and slash commands,
+// then blocks until SIGINT/SIGTERM.
 func main() {
 	flag.StringVar(&token, "token", os.Getenv("BOT_TOKEN"), "Bot token")
 	flag.Parse()
@@ -104,4 +110,5 @@ func main() {
 	log.Println("Bot wird heruntergefahren...")
 }
 
+// startTime records when the bot started, used by the !uptime command.
 var startTime = time.Now()

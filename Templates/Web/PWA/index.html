@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+<!-- PWA Notes - a Progressive Web App for taking notes offline -->
 <html lang="en">
 <head>
+  <!-- Document metadata and PWA manifest -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PWA Notes</title>
@@ -10,11 +12,13 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Header with app title and install button -->
   <header>
     <h1>📝 PWA Notes</h1>
     <button id="installBtn" class="hidden btn">Install App</button>
   </header>
 
+  <!-- Main content: note form and note list -->
   <main>
     <form id="noteForm">
       <input type="text" id="noteInput" placeholder="Enter a note..." required>
@@ -23,10 +27,12 @@
     <ul id="noteList"></ul>
   </main>
 
+  <!-- Footer with app description -->
   <footer>
     <p>Offline-ready Progressive Web App</p>
   </footer>
 
+  <!-- Application scripts -->
   <script src="db.js"></script>
   <script src="app.js"></script>
 </body>

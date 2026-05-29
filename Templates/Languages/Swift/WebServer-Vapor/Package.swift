@@ -1,4 +1,6 @@
 // swift-tools-version: 5.9
+/// Package definition for the Vapor web server executable.
+/// Depends on Vapor for HTTP handling and Leaf for templating.
 import PackageDescription
 
 let package = Package(

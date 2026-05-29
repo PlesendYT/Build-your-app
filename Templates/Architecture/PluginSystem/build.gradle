@@ -1,0 +1,32 @@
+// Gradle build configuration for the Plugin System template
+// Demonstrates dynamic class loading with a modular plugin architecture
+
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.example'
+version = '1.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+}
+
+application {
+    mainClass = 'com.example.app.Application'
+}
+
+test {
+    useJUnitPlatform()
+}

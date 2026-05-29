@@ -1,3 +1,6 @@
+/// <summary>
+/// TPS character with movement, sprint, dodge roll, cover, and weapon switching.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

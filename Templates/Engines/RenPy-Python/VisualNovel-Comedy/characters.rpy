@@ -1,4 +1,5 @@
 ## Characters for Comedy Visual Novel
+# Defines characters and tracks chaos level and joke count for branching endings
 
 define player = Character("Charlie", color="#ffffff")
 define ben = Character("Ben", color="#e74c3c")

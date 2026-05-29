@@ -1,10 +1,13 @@
+// E-Commerce shop page — product grid with an add-to-cart feature and live total
 'use client'
 import { useState } from 'react'
 import { products } from '@/lib/products'
 
 export default function Home() {
+  // Shopping cart state: array of { id, qty }
   const [cart, setCart] = useState<{id: number, qty: number}[]>([])
 
+  // Add one unit of a product to the cart (or increment if already present)
   const addToCart = (id: number) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === id)
@@ -13,6 +16,7 @@ export default function Home() {
     })
   }
 
+  // Calculate the total price of all items in the cart
   const total = cart.reduce((sum, item) => {
     const product = products.find(p => p.id === item.id)
     return sum + (product?.price || 0) * item.qty

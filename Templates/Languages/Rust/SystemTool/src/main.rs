@@ -1,8 +1,12 @@
+//! System monitoring CLI tool.
+//! Reports CPU, memory, and disk information using the `sysinfo` crate.
+
 use anyhow::Result;
 use clap::Parser;
 use serde::Serialize;
 use sysinfo::{Disks, System};
 
+/// CLI arguments for the system monitoring tool.
 #[derive(Parser)]
 #[command(name = "system-tool", about = "System monitoring tool")]
 struct Cli {
@@ -12,6 +16,7 @@ struct Cli {
     command: Option<Command>,
 }
 
+/// Subcommands to select which system information to display.
 #[derive(clap::Subcommand)]
 enum Command {
     #[command(about = "Show CPU information")]
@@ -24,6 +29,7 @@ enum Command {
     All,
 }
 
+/// Serializable CPU information.
 #[derive(Serialize)]
 struct CpuInfo {
     name: String,
@@ -31,6 +37,7 @@ struct CpuInfo {
     usage: f32,
 }
 
+/// Serializable memory information.
 #[derive(Serialize)]
 struct MemoryInfo {
     total: u64,
@@ -38,6 +45,7 @@ struct MemoryInfo {
     free: u64,
 }
 
+/// Serializable disk information.
 #[derive(Serialize)]
 struct DiskInfo {
     name: String,
@@ -46,6 +54,7 @@ struct DiskInfo {
     mount: String,
 }
 
+/// Aggregated system information for JSON output.
 #[derive(Serialize)]
 struct SystemInfo {
     hostname: String,
@@ -56,6 +65,7 @@ struct SystemInfo {
     disks: Vec<DiskInfo>,
 }
 
+/// Gathers CPU usage data by refreshing twice (with the minimum interval in between).
 fn get_cpu_info(sys: &mut System) -> Vec<CpuInfo> {
     sys.refresh_cpu();
     std::thread::sleep(System::MINIMUM_CPU_UPDATE_INTERVAL);
@@ -71,6 +81,7 @@ fn get_cpu_info(sys: &mut System) -> Vec<CpuInfo> {
         .collect()
 }
 
+/// Reads total / used / free memory from the system.
 fn get_memory_info(sys: &System) -> MemoryInfo {
     MemoryInfo {
         total: sys.total_memory(),
@@ -79,6 +90,7 @@ fn get_memory_info(sys: &System) -> MemoryInfo {
     }
 }
 
+/// Lists all mounted disks and their space usage.
 fn get_disk_info() -> Vec<DiskInfo> {
     let disks = Disks::new_with_refreshed_list();
     disks
@@ -92,6 +104,7 @@ fn get_disk_info() -> Vec<DiskInfo> {
         .collect()
 }
 
+/// Converts a byte count into a human-readable string (e.g. "1.23 GB").
 fn format_bytes(bytes: u64) -> String {
     const UNITS: &[&str] = &["B", "KB", "MB", "GB", "TB"];
     let mut size = bytes as f64;
@@ -103,6 +116,7 @@ fn format_bytes(bytes: u64) -> String {
     format!("{:.2} {}", size, UNITS[unit_idx])
 }
 
+/// Prints CPU info for each core.
 fn print_cpu(sys: &mut System) {
     let cpus = get_cpu_info(sys);
     println!("=== CPU Information ===");
@@ -111,6 +125,7 @@ fn print_cpu(sys: &mut System) {
     }
 }
 
+/// Prints total / used / free memory in human-readable form.
 fn print_memory(sys: &System) {
     let mem = get_memory_info(sys);
     println!("=== Memory ===");
@@ -119,6 +134,7 @@ fn print_memory(sys: &System) {
     println!("Free:  {}", format_bytes(mem.free));
 }
 
+/// Prints disk name, mount point, and available space for each disk.
 fn print_disk() {
     let disks = get_disk_info();
     println!("=== Disks ===");
@@ -129,6 +145,7 @@ fn print_disk() {
     }
 }
 
+/// Parse CLI args and dispatch to the requested subcommand.
 fn main() -> Result<()> {
     let cli = Cli::parse();
     let mut sys = System::new_all();

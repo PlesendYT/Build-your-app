@@ -1,3 +1,4 @@
+// System information tool (C++) - CPU cores, model, and memory stats.
 #include <algorithm>
 #include <chrono>
 #include <csignal>
@@ -15,6 +16,7 @@
 #include <dirent.h>
 #endif
 
+// Read entire text file into a string.
 auto read_file(const std::string& path) -> std::string {
     std::ifstream file{path};
     if (!file) return {};
@@ -25,6 +27,7 @@ auto read_file(const std::string& path) -> std::string {
     return content;
 }
 
+// Get number of CPU cores via sysconf.
 auto get_cpu_count() -> long {
 #ifdef _SC_NPROCESSORS_ONLN
     return sysconf(_SC_NPROCESSORS_ONLN);
@@ -33,6 +36,7 @@ auto get_cpu_count() -> long {
 #endif
 }
 
+// Read total and available memory from /proc/meminfo.
 auto get_memory_info() -> std::pair<unsigned long long, unsigned long long> {
     std::ifstream meminfo{"/proc/meminfo"};
     if (!meminfo) return {0, 0};
@@ -49,6 +53,7 @@ auto get_memory_info() -> std::pair<unsigned long long, unsigned long long> {
     return {total, available};
 }
 
+// Format byte count to human-readable string (B/KB/MB/GB/TB).
 auto format_bytes(double bytes) -> std::string {
     const char* units[] = {"B", "KB", "MB", "GB", "TB"};
     int unit = 0;
@@ -61,6 +66,7 @@ auto format_bytes(double bytes) -> std::string {
     return {buf};
 }
 
+// Print CPU core count and model name.
 auto print_cpu_info() -> void {
     std::cout << "=== CPU ===\n";
     std::cout << "Cores: " << get_cpu_count() << "\n";
@@ -80,6 +86,7 @@ auto print_cpu_info() -> void {
     }
 }
 
+// Print total and available memory.
 auto print_memory_info() -> void {
     auto [total, available] = get_memory_info();
     std::cout << "=== Memory ===\n";
@@ -87,6 +94,7 @@ auto print_memory_info() -> void {
     std::cout << "Available: " << format_bytes(static_cast<double>(available) * 1024) << "\n";
 }
 
+// Entry point: display CPU and memory info.
 auto main() -> int {
     std::cout << "System Tool v1.0\n\n";
     print_cpu_info();

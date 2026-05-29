@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls enemy turn-based behavior: takes damage, moves toward player, and attacks when in range.
+/// </summary>
 using UnityEngine;
 
 public class EnemyCrawler : MonoBehaviour
@@ -9,11 +12,17 @@ public class EnemyCrawler : MonoBehaviour
     public int moveRange = 3;
     private PlayerCrawler player;
 
+    /// <summary>
+    /// Finds the player instance on awake.
+    /// </summary>
     private void Awake()
     {
         player = FindObjectOfType<PlayerCrawler>();
     }
 
+    /// <summary>
+    /// Reduces health by damage amount and deactivates the enemy if health reaches zero.
+    /// </summary>
     public void TakeDamage(int damage)
     {
         health -= damage;
@@ -24,6 +33,9 @@ public class EnemyCrawler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Enemy turn: attacks if adjacent to player, moves toward player if within move range.
+    /// </summary>
     public void EnemyTurn()
     {
         if (player == null || !gameObject.activeInHierarchy) return;

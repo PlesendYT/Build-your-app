@@ -1,3 +1,4 @@
+// Number guessing game (C++) - guess a number in a limited number of tries.
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -5,8 +6,10 @@
 #include <random>
 #include <string>
 
+// Number guessing game: generates a random secret, player tries to guess it.
 class NumberGuessingGame {
 public:
+    // Constructor: picks a random secret between lower and upper.
     NumberGuessingGame(int lower, int upper, int max_attempts)
         : lower_{lower}
         , upper_{upper}
@@ -17,6 +20,7 @@ public:
         secret_ = dist(gen);
     }
 
+    // Main game loop: prompt, read guesses, give hints.
     auto play() -> void {
         std::cout << "Guess a number between " << lower_ << " and " << upper_
                   << "! You have " << max_attempts_ << " attempts.\n";
@@ -56,6 +60,7 @@ private:
     int attempts_{0};
 };
 
+// Entry point: create game and run.
 auto main() -> int {
     NumberGuessingGame game{1, 100, 7};
     game.play();

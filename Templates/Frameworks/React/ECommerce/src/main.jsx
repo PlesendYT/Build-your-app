@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import './index.css'
 
+// Shared cart context used across components
 const CartContext = createContext()
 
+/** Reducer function managing cart state: add, remove, and update quantity. */
 function cartReducer(state, action) {
   switch (action.type) {
     case 'ADD':
@@ -28,6 +30,7 @@ function cartReducer(state, action) {
   }
 }
 
+// Static product catalog displayed on the shop page
 const products = [
   { id: 1, name: 'Laptop Pro', price: 1299, category: 'Elektronik', image: '💻' },
   { id: 2, name: 'Wireless Maus', price: 49, category: 'Zubehör', image: '🖱️' },
@@ -37,6 +40,7 @@ const products = [
   { id: 6, name: 'Webcam HD', price: 79, category: 'Zubehör', image: '📷' },
 ]
 
+/** Shop home page showing a hero section and product grid. */
 function Home() {
   const { dispatch } = useContext(CartContext)
 
@@ -65,8 +69,10 @@ function Home() {
   )
 }
 
+/** Shopping cart page displaying items, quantities, and total price. */
 function Cart() {
   const { state, dispatch } = useContext(CartContext)
+  // Calculate the total cost of all items in the cart
   const total = state.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   if (state.length === 0) {
@@ -102,8 +108,10 @@ function Cart() {
   )
 }
 
+/** Root application component providing cart context and routing. */
 function App() {
   const [state, dispatch] = useReducer(cartReducer, [])
+  // Total number of items across all cart entries
   const itemCount = state.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
@@ -129,6 +137,7 @@ function App() {
   )
 }
 
+// Mount the React app into the DOM with routing enabled
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>

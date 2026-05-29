@@ -1,3 +1,4 @@
+// Application entry point — bootstraps the NestJS server with a global /api prefix
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 

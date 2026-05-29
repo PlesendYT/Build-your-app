@@ -1,3 +1,6 @@
+/// <summary>
+/// ScriptableObject defining a visual novel character's name, expressions, and voice lines.
+/// </summary>
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NewCharacter", menuName = "Visual Novel/Character")]
@@ -13,6 +16,9 @@ public class Character : ScriptableObject
     public AudioClip[] voiceLines;
 }
 
+/// <summary>
+/// Controls the in-game display of a character portrait with expression switching.
+/// </summary>
 public class CharacterController : MonoBehaviour
 {
     [Header("Character")]
@@ -20,6 +26,9 @@ public class CharacterController : MonoBehaviour
     public UnityEngine.UI.Image characterImage;
     public Animator animator;
 
+    /// <summary>
+    /// Sets the character portrait to the specified expression sprite.
+    /// </summary>
     public void SetExpression(ExpressionType type)
     {
         Sprite expression = type switch

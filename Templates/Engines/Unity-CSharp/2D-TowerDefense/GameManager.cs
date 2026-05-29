@@ -1,8 +1,14 @@
+/// <summary>
+/// Manages tower defense game state: money, lives, wave display, game over, and victory.
+/// </summary>
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance for global access.
+    /// </summary>
     public static GameManager Instance { get; private set; }
 
     [Header("Resources")]
@@ -18,6 +24,9 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject victoryPanel;
 
+    /// <summary>
+    /// Initializes the singleton instance.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -31,6 +40,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initializes resources, UI, and hides panels.
+    /// </summary>
     private void Start()
     {
         money = startMoney;
@@ -40,6 +52,9 @@ public class GameManager : MonoBehaviour
         if (victoryPanel != null) victoryPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Attempts to spend money, returns false if insufficient funds.
+    /// </summary>
     public bool SpendMoney(int amount)
     {
         if (money >= amount)
@@ -51,12 +66,18 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Adds money and updates the display.
+    /// </summary>
     public void AddMoney(int amount)
     {
         money += amount;
         UpdateUI();
     }
 
+    /// <summary>
+    /// Reduces lives and triggers game over if lives reach zero.
+    /// </summary>
     public void TakeDamage(int amount)
     {
         lives -= amount;
@@ -67,12 +88,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the wave counter text.
+    /// </summary>
     public void UpdateWaveText(int wave, int total)
     {
         if (waveText != null)
             waveText.text = "Wave " + wave + "/" + total;
     }
 
+    /// <summary>
+    /// Shows the game over panel and pauses the game.
+    /// </summary>
     public void GameOver()
     {
         if (gameOverPanel != null)
@@ -80,6 +107,9 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    /// <summary>
+    /// Shows the victory panel and pauses the game.
+    /// </summary>
     public void Victory()
     {
         if (victoryPanel != null)
@@ -87,12 +117,18 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    /// <summary>
+    /// Resumes time and reloads the current scene.
+    /// </summary>
     public void RestartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    /// <summary>
+    /// Updates the money and lives display.
+    /// </summary>
     private void UpdateUI()
     {
         if (moneyText != null) moneyText.text = money.ToString();
@@ -100,18 +136,27 @@ public class GameManager : MonoBehaviour
     }
 }
 
+/// <summary>
+/// A projectile that travels toward a target enemy and deals damage on impact.
+/// </summary>
 public class Projectile : MonoBehaviour
 {
     private Transform target;
     private int damage;
     public float speed = 10f;
 
+    /// <summary>
+    /// Sets the target and damage values for this projectile.
+    /// </summary>
     public void Initialize(Transform target, int damage)
     {
         this.target = target;
         this.damage = damage;
     }
 
+    /// <summary>
+    /// Moves toward the target and destroys itself upon impact.
+    /// </summary>
     private void Update()
     {
         if (target == null)

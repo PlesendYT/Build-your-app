@@ -1,9 +1,12 @@
+/// A Flutter app using the BLoC pattern for counter state management.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/counter_bloc.dart';
 
+/// Application entry point.
 void main() => runApp(const MyApp());
 
+/// Root widget that provides the [CounterBloc] to the widget tree.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -20,6 +23,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Page displaying the current count with increment and decrement buttons.
 class CounterPage extends StatelessWidget {
   const CounterPage({super.key});
 

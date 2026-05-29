@@ -1,3 +1,4 @@
+# Top-down enemy with patrol waypoints, chase AI, and directional animation
 extends CharacterBody2D
 
 @export var patrol_points: Array[Vector2] = []

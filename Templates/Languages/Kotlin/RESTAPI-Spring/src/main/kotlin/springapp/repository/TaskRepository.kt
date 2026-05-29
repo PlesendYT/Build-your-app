@@ -1,3 +1,7 @@
+/**
+ * Spring Data repository for Task entities.
+ * Extends CoroutineCrudRepository to provide non-blocking CRUD operations.
+ */
 package springapp.repository
 
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository

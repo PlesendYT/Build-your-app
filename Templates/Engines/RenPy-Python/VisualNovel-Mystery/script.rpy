@@ -1,4 +1,5 @@
 ## Script for Mystery Visual Novel
+# Detective mystery: gather clues, interview four suspects, and make the correct accusation
 
 label start:
     scene bg manor

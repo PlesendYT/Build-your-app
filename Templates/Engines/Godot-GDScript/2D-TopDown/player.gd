@@ -1,3 +1,4 @@
+# Top-down player with directional movement, dash, interaction ray, and inventory
 extends CharacterBody2D
 
 @export var speed: float = 200.0

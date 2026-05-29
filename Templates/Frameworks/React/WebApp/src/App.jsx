@@ -5,6 +5,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
 
+/** Root application component defining top-level routes with a shared layout. */
 function App() {
   return (
     <Routes>

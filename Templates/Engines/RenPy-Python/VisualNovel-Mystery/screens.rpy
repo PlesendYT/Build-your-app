@@ -1,4 +1,5 @@
 ## Screens for Mystery Visual Novel
+# Case notebook, interrogation choices, and accusation screen
 
 screen notebook():
     frame:

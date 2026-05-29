@@ -1,3 +1,4 @@
+# Beat-em-up enemy with aggro detection, attack, health bar, and death sequence
 extends CharacterBody2D
 
 @export var health: int = 30

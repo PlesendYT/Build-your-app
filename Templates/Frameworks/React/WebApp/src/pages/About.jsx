@@ -1,3 +1,4 @@
+/** About page describing the application and its technology stack. */
 function About() {
   return (
     <div className="about-page">

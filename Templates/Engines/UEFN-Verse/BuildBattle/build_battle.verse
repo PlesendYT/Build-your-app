@@ -6,6 +6,7 @@ using { /Verse.org/Time }
 using { /Verse.org/Random }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 
+# Build Battle game mode - players build themed creations and vote for the best
 build_battle := class(creative_device):
     @editable
     BuildTime : float = 180.0
@@ -21,9 +22,10 @@ build_battle := class(creative_device):
     var VotingPhase : logic = false
     var PlayerBuilds : [agent]string = map{}
     var VoteCounts : [agent]int = map{}
-    var Themes : []string = array{"House", "Castle", "Animal", "Spaceship", "Treehouse", "Volcano", "Bridge", "Statue"}
-    var RoundNumber : int = 1
+    var Themes : []string = array{"House", "Castle", "Animal", "Spaceship", "Treehouse", "Volcano", "Bridge", "Statue"} # Available building themes
+    var RoundNumber : int = 1 # Current round number
     
+    # Starts the main game loop
     OnBegin<override>()<suspends>() : void =
         spawn { GameLoop[] }
     

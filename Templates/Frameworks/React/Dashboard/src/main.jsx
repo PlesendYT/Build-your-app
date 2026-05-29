@@ -4,18 +4,22 @@ import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router-dom'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import './index.css'
 
+// Chart data for the monthly overview bar chart
 const data = [
   { name: 'Jan', value: 400 }, { name: 'Feb', value: 300 }, { name: 'Mär', value: 600 },
   { name: 'Apr', value: 800 }, { name: 'Mai', value: 500 }, { name: 'Jun', value: 900 }
 ]
 
+// Static sample data for the recent orders table
 const recentOrders = [
   { id: 1, customer: 'Max Mustermann', product: 'Laptop', status: 'Versandt', date: '2024-01-15' },
   { id: 2, customer: 'Anna Schmidt', product: 'Monitor', status: 'Bearbeitung', date: '2024-01-14' },
   { id: 3, customer: 'Tom Weber', product: 'Tastatur', status: 'Ausgeliefert', date: '2024-01-13' },
 ]
 
+/** Main dashboard overview page with stats cards, chart, and recent orders table. */
 function DashboardHome() {
+  // KPI stat cards displayed at the top of the dashboard
   const stats = [
     { label: 'Umsatz', value: '€12,430', change: '+12%' },
     { label: 'Bestellungen', value: '156', change: '+8%' },
@@ -26,6 +30,7 @@ function DashboardHome() {
   return (
     <div className="dashboard-content">
       <h2>Dashboard</h2>
+      {/* Stat cards grid */}
       <div className="stats-grid">
         {stats.map(s => (
           <div key={s.label} className="stat-card">
@@ -35,6 +40,7 @@ function DashboardHome() {
           </div>
         ))}
       </div>
+      {/* Monthly revenue bar chart */}
       <div className="chart-section">
         <h3>Monatsübersicht</h3>
         <ResponsiveContainer width="100%" height={300}>
@@ -47,6 +53,7 @@ function DashboardHome() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+      {/* Recent orders table */}
       <div className="table-section">
         <h3>Letzte Bestellungen</h3>
         <table className="data-table">
@@ -69,15 +76,19 @@ function DashboardHome() {
   )
 }
 
+/** Settings page placeholder. */
 function Settings() {
   return <div className="dashboard-content"><h2>Einstellungen</h2><p>Konfigurieren Sie Ihre Dashboard-Einstellungen.</p></div>
 }
 
+/** User management page placeholder. */
 function Users() {
   return <div className="dashboard-content"><h2>Benutzerverwaltung</h2><p>Verwalten Sie Ihre Benutzer und Berechtigungen.</p></div>
 }
 
+/** Root application component wrapping sidebar, topbar, and routes. */
 function App() {
+  // Tracks whether the sidebar is open or collapsed
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   return (
@@ -109,6 +120,7 @@ function App() {
   )
 }
 
+// Mount the React app into the DOM with routing enabled
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>

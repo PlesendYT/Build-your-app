@@ -1,3 +1,6 @@
+/// <summary>
+/// Procedurally generates a dungeon with rooms, corridors, player start, and enemy placement.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -20,13 +23,22 @@ public class DungeonGenerator : MonoBehaviour
 
     private TileType[,] grid;
 
+    /// <summary>
+    /// Types of tiles in the dungeon.
+    /// </summary>
     public enum TileType { Wall, Floor, Door }
 
+    /// <summary>
+    /// Represents a rectangular room with position, size, and overlap checking.
+    /// </summary>
     public class Room
     {
         public int x, y, width, height;
         public Vector2Int Center => new Vector2Int(x + width / 2, y + height / 2);
 
+        /// <summary>
+        /// Checks if this room overlaps with another, including a 1-tile margin.
+        /// </summary>
         public bool Overlaps(Room other)
         {
             return x < other.x + other.width + 1 && x + width + 1 > other.x &&
@@ -36,6 +48,9 @@ public class DungeonGenerator : MonoBehaviour
 
     private List<Room> rooms = new List<Room>();
 
+    /// <summary>
+    /// Generates the dungeon: fills with walls, creates rooms, connects with corridors, and spawns entities.
+    /// </summary>
     private void Start()
     {
         grid = new TileType[gridWidth, gridHeight];
@@ -47,6 +62,9 @@ public class DungeonGenerator : MonoBehaviour
         SpawnEnemies();
     }
 
+    /// <summary>
+    /// Fills the entire grid with wall tiles.
+    /// </summary>
     private void InitializeGrid()
     {
         for (int x = 0; x < gridWidth; x++)
@@ -54,6 +72,9 @@ public class DungeonGenerator : MonoBehaviour
                 grid[x, y] = TileType.Wall;
     }
 
+    /// <summary>
+    /// Randomly places non-overlapping rooms up to the maximum count.
+    /// </summary>
     private void GenerateRooms()
     {
         for (int i = 0; i < maxRooms * 10; i++)
@@ -85,6 +106,9 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Converts the room area from walls to floor tiles.
+    /// </summary>
     private void CarveRoom(Room room)
     {
         for (int x = room.x; x < room.x + room.width; x++)
@@ -92,6 +116,9 @@ public class DungeonGenerator : MonoBehaviour
                 grid[x, y] = TileType.Floor;
     }
 
+    /// <summary>
+    /// Connects rooms sequentially with L-shaped corridors from center to center.
+    /// </summary>
     private void ConnectRooms()
     {
         for (int i = 1; i < rooms.Count; i++)
@@ -102,6 +129,9 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Carves an L-shaped corridor (horizontal then vertical) between two points.
+    /// </summary>
     private void CarveCorridor(int x1, int y1, int x2, int y2)
     {
         int x = x1;
@@ -120,6 +150,9 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instantiates tile prefabs for every cell in the grid.
+    /// </summary>
     private void RenderGrid()
     {
         for (int x = 0; x < gridWidth; x++)
@@ -139,6 +172,9 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Places the player in the center of the first room.
+    /// </summary>
     private void SpawnPlayer()
     {
         if (playerPrefab != null && rooms.Count > 0)
@@ -148,6 +184,9 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Spawns enemies randomly in rooms (excluding the first room).
+    /// </summary>
     private void SpawnEnemies()
     {
         if (enemyPrefabs.Length == 0) return;
@@ -161,6 +200,9 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the tile type at the given grid position (Wall if out of bounds).
+    /// </summary>
     public TileType GetTile(int x, int y)
     {
         if (x < 0 || x >= gridWidth || y < 0 || y >= gridHeight)

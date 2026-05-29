@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages the memory card board: generates shuffled card pairs, handles selection, and checks for matches.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -17,16 +20,23 @@ public class MemoryBoard : MonoBehaviour
     private bool isProcessing;
     private int matchedPairs;
 
+    /// <summary>
+    /// Generates the shuffled card grid on start.
+    /// </summary>
     private void Start()
     {
         GenerateBoard();
     }
 
+    /// <summary>
+    /// Creates a grid of paired cards with shuffled sprite assignments.
+    /// </summary>
     private void GenerateBoard()
     {
         int totalCards = rows * cols;
         if (totalCards % 2 != 0) totalCards++;
 
+        // Create pairs of sprite indices
         List<int> spriteIndexes = new List<int>();
         for (int i = 0; i < totalCards / 2; i++)
         {
@@ -34,6 +44,7 @@ public class MemoryBoard : MonoBehaviour
             spriteIndexes.Add(i % cardSprites.Length);
         }
 
+        // Shuffle the sprite indices
         for (int i = spriteIndexes.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
@@ -61,6 +72,9 @@ public class MemoryBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles card click: reveals the card, and checks for a match if two cards are selected.
+    /// </summary>
     public void CardClicked(Card card)
     {
         if (isProcessing || card.IsRevealed || card.IsMatched) return;
@@ -79,6 +93,9 @@ public class MemoryBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Compares the two selected cards: marks as matched if same, or hides them after a delay.
+    /// </summary>
     private void CheckMatch()
     {
         if (firstSelected.SpriteIndex == secondSelected.SpriteIndex)

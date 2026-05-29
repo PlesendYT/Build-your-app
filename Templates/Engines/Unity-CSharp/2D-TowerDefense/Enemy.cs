@@ -1,3 +1,6 @@
+/// <summary>
+/// An enemy that follows waypoints toward the base, taking damage and rewarding money on death.
+/// </summary>
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -12,11 +15,17 @@ public class Enemy : MonoBehaviour
     private int currentWaypoint;
     private SpriteRenderer spriteRenderer;
 
+    /// <summary>
+    /// Caches the sprite renderer component.
+    /// </summary>
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Finds and caches the waypoint path from the scene.
+    /// </summary>
     private void Start()
     {
         GameObject wpParent = GameObject.Find("Waypoints");
@@ -30,6 +39,9 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves toward the current waypoint and progresses along the path.
+    /// </summary>
     private void Update()
     {
         if (waypoints == null || waypoints.Length == 0) return;
@@ -48,12 +60,18 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Damages the base and destroys the enemy when it reaches the end of the path.
+    /// </summary>
     private void ReachedEnd()
     {
         GameManager.Instance.TakeDamage(damageToBase);
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Reduces health and kills the enemy if health reaches zero.
+    /// </summary>
     public void TakeDamage(int amount)
     {
         health -= amount;
@@ -63,6 +81,9 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Awards money and destroys the enemy upon death.
+    /// </summary>
     private void Die()
     {
         GameManager.Instance.AddMoney(reward);

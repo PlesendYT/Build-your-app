@@ -1,7 +1,9 @@
+// Puzzle block with activation/toggle, pressure plate support, and chained blocks.
 #include "PuzzleBlock.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 
+// Set up collision box and visual mesh.
 APuzzleBlock::APuzzleBlock()
 {
     CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));

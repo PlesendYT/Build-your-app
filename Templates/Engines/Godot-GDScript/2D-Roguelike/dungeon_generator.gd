@@ -1,3 +1,4 @@
+# Roguelike dungeon generator using BSP-like room placement with corridors
 extends Node2D
 
 @export var map_width: int = 40

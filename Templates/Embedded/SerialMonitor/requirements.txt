@@ -1,0 +1,2 @@
+# Serial port communication library
+pyserial>=3.5

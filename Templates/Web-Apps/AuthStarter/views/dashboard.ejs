@@ -1,0 +1,38 @@
+<!-- Protected dashboard page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Auth Starter</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f0f4f8; }
+    nav { background: #1e293b; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    nav a { color: white; text-decoration: none; }
+    .container { max-width: 800px; margin: 4rem auto; padding: 0 1rem; }
+    .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+    .btn { background: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; display: inline-block; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <!-- Dashboard - only accessible when authenticated -->
+  <nav>
+    <a href="/">Auth Starter</a>
+    <div>
+      <span><%= user.username %></span>
+      <a href="/auth/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h1>Dashboard</h1>
+      <p>Welcome, <strong><%= user.username %></strong>!</p>
+      <p>Email: <%= user.email %></p>
+      <p>This is a protected page. You can only see this when logged in.</p>
+      <a href="/" class="btn">Home</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,3 +1,4 @@
+# Endless runner obstacle that scrolls left and kills the player on contact
 extends Area2D
 
 @export var speed: float = 400.0

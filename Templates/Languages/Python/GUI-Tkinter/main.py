@@ -17,19 +17,23 @@ class Application(ttk.Frame):
 
     def create_widgets(self) -> None:
         """Create and arrange UI widgets."""
+        # Welcome label
         self.label = ttk.Label(self, text="Welcome to Tkinter!")
         self.label.pack(pady=20)
 
+        # Name entry field
         self.name_var = tk.StringVar()
         self.entry = ttk.Entry(self, textvariable=self.name_var)
         self.entry.pack(pady=5)
         self.entry.insert(0, "Enter your name")
 
+        # Greet button wired to on_greet handler
         self.button = ttk.Button(
             self, text="Greet", command=self.on_greet
         )
         self.button.pack(pady=10)
 
+        # Result label showing the greeting
         self.result = ttk.Label(self, text="")
         self.result.pack(pady=10)
 

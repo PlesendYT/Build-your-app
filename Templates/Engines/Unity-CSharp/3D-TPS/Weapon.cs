@@ -1,3 +1,6 @@
+/// <summary>
+/// TPS weapon with auto-fire, ammo, recoil, reload, and muzzle effects.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

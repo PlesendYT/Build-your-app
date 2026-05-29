@@ -1,3 +1,4 @@
+# 3D RPG player with stats, inventory, quest tracking, XP/leveling, and NPC interaction
 extends CharacterBody3D
 
 @export var walk_speed: float = 5.0

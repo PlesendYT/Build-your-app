@@ -1,4 +1,5 @@
 ## Script for Comedy Visual Novel
+# Comedy story: chaos_level and joke_counter determine the ending (Maximum Chaos, Comedy Gold, or normal)
 
 label start:
     scene bg campus

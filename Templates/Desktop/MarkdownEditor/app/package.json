@@ -1,0 +1,12 @@
+{
+  "name": "markdown-editor",
+  "version": "1.0.0",
+  "description": "Electron markdown editor with live preview",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^28.0.0"
+  }
+}

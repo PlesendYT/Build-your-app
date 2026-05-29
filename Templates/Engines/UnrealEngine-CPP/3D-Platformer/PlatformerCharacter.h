@@ -1,3 +1,4 @@
+// Header for a 3D platformer character with collectibles and double jump.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -15,12 +16,15 @@ public:
     UPROPERTY(BlueprintReadOnly) bool bHasDoubleJump = false;
     UPROPERTY(BlueprintReadOnly) int32 CheckpointIndex = 0;
 
+    // Add coins (server authoritative).
     UFUNCTION(BlueprintCallable)
     void AddCoin(int32 Amount);
 
+    // Add keys.
     UFUNCTION(BlueprintCallable)
     void AddKey(int32 Amount);
 
+    // Enable double jump ability.
     UFUNCTION(BlueprintCallable)
     void ActivateDoubleJump();
 

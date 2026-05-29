@@ -1,3 +1,4 @@
+# Card game logic manager: deck, hand, discard, mana, shields, damage, and effects
 extends Node
 
 @export var starting_deck: Array[Card] = []

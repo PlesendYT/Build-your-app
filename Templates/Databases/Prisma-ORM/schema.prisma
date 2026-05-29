@@ -1,0 +1,31 @@
+// Prisma schema with User and Post models using SQLite
+// Run: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// User model with a one-to-many relation to Post
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique // Email must be unique across all users
+  name      String
+  posts     Post[]   // Relation: a user can have many posts
+  createdAt DateTime @default(now())
+}
+
+// Post model with a required foreign key to User
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int      // Foreign key referencing User.id
+  createdAt DateTime @default(now())
+}

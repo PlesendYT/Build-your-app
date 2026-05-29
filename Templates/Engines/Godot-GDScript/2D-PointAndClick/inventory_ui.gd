@@ -1,3 +1,4 @@
+# Point-and-click inventory UI with toggle visibility and item selection
 extends CanvasLayer
 
 @onready var inventory_grid: GridContainer = $InventoryGrid

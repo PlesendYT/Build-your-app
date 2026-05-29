@@ -1,0 +1,36 @@
+# PostgreSQL + pgAdmin starter stack
+# Run: docker compose up -d
+
+version: "3.8"
+
+services:
+  # PostgreSQL relational database server
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432" # Default PostgreSQL port
+    environment:
+      POSTGRES_USER: admin        # Database admin user
+      POSTGRES_PASSWORD: secret   # Database admin password
+      POSTGRES_DB: myapp          # Default database name
+    volumes:
+      - postgres-data:/var/lib/postgresql/data # Persistent storage
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # Schema init
+
+  # pgAdmin web interface for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin-ui
+    restart: unless-stopped
+    ports:
+      - "5050:80" # Access at http://localhost:5050
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:

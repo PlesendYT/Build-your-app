@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages the Tetris board grid: piece placement, line clearing, and row shifting.
+/// </summary>
 using UnityEngine;
 
 public class TetrisBoard : MonoBehaviour
@@ -11,11 +14,17 @@ public class TetrisBoard : MonoBehaviour
 
     private Transform[,] grid;
 
+    /// <summary>
+    /// Initializes the grid array.
+    /// </summary>
     private void Awake()
     {
         grid = new Transform[width, height];
     }
 
+    /// <summary>
+    /// Checks if a grid position is valid (empty and within bounds).
+    /// </summary>
     public bool IsValidPosition(Vector2Int pos)
     {
         if (pos.x < 0 || pos.x >= width || pos.y < 0) return false;
@@ -23,6 +32,9 @@ public class TetrisBoard : MonoBehaviour
         return grid[pos.x, pos.y] == null;
     }
 
+    /// <summary>
+    /// Places a piece's blocks into the grid, clears full lines, and spawns the next piece.
+    /// </summary>
     public void PlacePiece(Transform pieceTransform)
     {
         foreach (Transform child in pieceTransform)
@@ -35,6 +47,9 @@ public class TetrisBoard : MonoBehaviour
         FindObjectOfType<TetrominoSpawner>()?.SpawnPiece();
     }
 
+    /// <summary>
+    /// Checks all rows for completeness and clears them, shifting rows down.
+    /// </summary>
     private void ClearLines()
     {
         for (int y = 0; y < height; y++)
@@ -49,6 +64,9 @@ public class TetrisBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns true if every cell in the row is occupied.
+    /// </summary>
     private bool IsLineFull(int y)
     {
         for (int x = 0; x < width; x++)
@@ -58,6 +76,9 @@ public class TetrisBoard : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Destroys all blocks in the specified row.
+    /// </summary>
     private void ClearLine(int y)
     {
         for (int x = 0; x < width; x++)
@@ -70,6 +91,9 @@ public class TetrisBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Shifts all rows above the cleared line down by one.
+    /// </summary>
     private void ShiftLinesDown(int clearedY)
     {
         for (int y = clearedY; y < height - 1; y++)
@@ -83,6 +107,9 @@ public class TetrisBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Converts a world position to the nearest grid coordinate relative to the board parent.
+    /// </summary>
     public Vector2Int RoundToGrid(Vector3 position)
     {
         int x = Mathf.RoundToInt(position.x - boardParent.position.x);

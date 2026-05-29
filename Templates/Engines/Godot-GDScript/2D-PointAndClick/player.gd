@@ -1,3 +1,4 @@
+# Point-and-click player with navigation-based click-to-move and hotspot interaction
 extends CharacterBody2D
 
 @export var walk_speed: float = 200.0

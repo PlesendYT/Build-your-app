@@ -1,5 +1,7 @@
+/// TCP server/client networking application in Zig
 const std = @import("std");
 
+/// Main entry point — parses args and dispatches to server or client mode
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
@@ -31,6 +33,7 @@ pub fn main() !void {
     }
 }
 
+/// Print usage instructions
 fn printUsage() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print(
@@ -43,6 +46,7 @@ fn printUsage() !void {
     , .{});
 }
 
+/// Start a TCP server that accepts and handles multiple clients concurrently
 fn runServer(allocator: std.mem.Allocator, port: u16) !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("Starting server on port {d}...\n", .{port});
@@ -70,6 +74,7 @@ fn runServer(allocator: std.mem.Allocator, port: u16) !void {
     }
 }
 
+/// Handle a single client connection — echoes messages back
 fn handleClient(allocator: std.mem.Allocator, connection: std.net.Server.Connection, client_id: usize) !void {
     defer connection.stream.close();
 
@@ -105,6 +110,7 @@ fn handleClient(allocator: std.mem.Allocator, connection: std.net.Server.Connect
     }
 }
 
+/// Connect to a TCP server as a client, send messages, and print responses
 fn runClient(allocator: std.mem.Allocator, host: []const u8, port: u16) !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("Connecting to {s}:{d}...\n", .{ host, port });

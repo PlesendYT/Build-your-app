@@ -8,6 +8,7 @@ from pathlib import Path
 
 def create_project_structure(base: Path) -> None:
     """Create a sample project directory structure."""
+    # Define folder hierarchy and create each directory
     folders = ["src", "tests", "docs", "data/raw", "data/processed"]
     for folder in folders:
         (base / folder).mkdir(parents=True, exist_ok=True)
@@ -17,6 +18,7 @@ def create_project_structure(base: Path) -> None:
 def create_sample_files(base: Path) -> None:
     """Create sample files with timestamps."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Map of relative paths to file contents with generated timestamps
     files = {
         "src/main.py": f"# Main module - generated {timestamp}\ndef main() -> None:\n    print('Hello from automation!')\n",
         "src/utils.py": f"# Utilities - generated {timestamp}\n",

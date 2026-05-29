@@ -1,5 +1,6 @@
 ## Script for Kinetic Novel
 ## A linear story - no choices, pure narrative
+# Linear narrative following Iris and Leo meeting on a train across three chapters
 
 label start:
     scene bg night_sky

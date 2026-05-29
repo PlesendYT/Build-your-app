@@ -1,3 +1,6 @@
+/// <summary>
+/// Survival player with hunger/thirst/stamina, inventory, building, and tool use.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

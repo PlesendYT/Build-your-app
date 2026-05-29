@@ -3,16 +3,19 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import './index.css'
 
+// Initial seed posts displayed in the feed
 const initialPosts = [
   { id: 1, author: 'Max M.', avatar: '👤', content: 'Gerade die neue React-Version ausprobiert! 🚀', likes: 12, comments: 3, time: '2h' },
   { id: 2, author: 'Anna S.', avatar: '👩', content: 'Schöner Sonnenuntergang heute 🌅', likes: 24, comments: 5, time: '4h' },
   { id: 3, author: 'Tom W.', avatar: '👨', content: 'Toller Artikel über Webentwicklung 📖', likes: 8, comments: 1, time: '6h' },
 ]
 
+/** Main feed page with post creation and a list of posts. */
 function Feed() {
   const [posts, setPosts] = useState(initialPosts)
   const [newPost, setNewPost] = useState('')
 
+  // Create a new post and prepend it to the feed
   const handlePost = () => {
     if (!newPost.trim()) return
     const post = {
@@ -28,6 +31,7 @@ function Feed() {
     setNewPost('')
   }
 
+  // Increment the like count for a given post
   const handleLike = (id) => {
     setPosts(posts.map(p => p.id === id ? { ...p, likes: p.likes + 1 } : p))
   }
@@ -68,6 +72,7 @@ function Feed() {
   )
 }
 
+/** User profile page showing avatar, bio, and follower stats. */
 function Profile() {
   return (
     <div className="profile">
@@ -85,6 +90,7 @@ function Profile() {
   )
 }
 
+/** Root application component with header navigation and route definitions. */
 function App() {
   return (
     <div className="app">
@@ -105,6 +111,7 @@ function App() {
   )
 }
 
+// Mount the React app into the DOM with routing enabled
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>

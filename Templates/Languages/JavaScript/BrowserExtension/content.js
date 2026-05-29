@@ -1,15 +1,16 @@
-// Content Script — läuft auf jeder besuchten Seite
+// Content script — injected into every page the user visits
+// Sends page info to the background script and highlights all links
 
 console.log('BrowserExtension content script loaded');
 
-// Aktuelle URL an Background senden
+// Send current page URL and title to the background service worker
 chrome.runtime.sendMessage({
   type: 'PAGE_INFO',
   url: window.location.href,
   title: document.title,
 });
 
-// Beispiel: alle Links hervorheben
+// Highlight all anchor elements with a subtle blue outline
 document.querySelectorAll('a').forEach(link => {
   link.style.outline = '2px solid rgba(74, 144, 217, 0.3)';
 });

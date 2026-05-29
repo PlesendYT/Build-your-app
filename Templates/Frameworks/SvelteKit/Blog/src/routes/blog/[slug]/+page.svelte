@@ -1,6 +1,8 @@
 <script lang="ts">
+  // Import SvelteKit page store and blog posts data
   import { page } from '$app/stores'
   import { posts } from '$lib/posts'
+  // Find the current post by matching the slug route parameter
   const post = posts.find(p => p.slug === $page.params.slug)
 </script>
 

@@ -1,3 +1,6 @@
+/// <summary>
+/// Crafting system with recipes, ingredient validation, and inventory integration.
+/// </summary>
 using System.Collections.Generic;
 using UnityEngine;
 

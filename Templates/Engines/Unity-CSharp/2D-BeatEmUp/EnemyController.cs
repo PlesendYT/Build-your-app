@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls enemy behavior including chasing the player, attacking, and taking damage.
+/// </summary>
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -17,6 +20,9 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
+    /// <summary>
+    /// Caches component references and finds the player transform.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -24,6 +30,9 @@ public class EnemyController : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
     }
 
+    /// <summary>
+    /// Moves toward the player if within chase range, attacks if within attack range, or idles otherwise.
+    /// </summary>
     private void FixedUpdate()
     {
         if (player == null) return;
@@ -47,6 +56,9 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Attacks the player if the cooldown has elapsed.
+    /// </summary>
     private void TryAttack()
     {
         if (Time.time >= lastAttackTime + attackCooldown)
@@ -56,6 +68,9 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reduces health by the given damage amount and destroys the enemy if health reaches zero.
+    /// </summary>
     public void TakeDamage(int amount)
     {
         health -= amount;
@@ -65,6 +80,9 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Destroys the enemy game object.
+    /// </summary>
     private void Die()
     {
         Destroy(gameObject);

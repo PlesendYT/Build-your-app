@@ -1,4 +1,5 @@
 ## Characters for Choice Game
+# Defines player/narrator characters and stat tracking variables
 
 define player = Character("You", color="#ffffff")
 define narrator = Character(None, kind=nvl)

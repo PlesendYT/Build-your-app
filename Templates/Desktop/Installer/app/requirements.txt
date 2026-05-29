@@ -1,0 +1,4 @@
+# Core requirements for the installer script
+# No external dependencies needed for the base installer
+# Add project-specific packages below
+# requests>=2.28.0

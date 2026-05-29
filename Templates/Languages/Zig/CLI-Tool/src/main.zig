@@ -1,10 +1,13 @@
+/// CLI tool with status, file processing, and directory analysis commands
 const std = @import("std");
 
+/// Configuration for command options
 const Config = struct {
     verbose: bool = false,
     output: ?[]const u8 = null,
 };
 
+/// Main entry point — parses command and options, dispatches to the appropriate handler
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
@@ -67,6 +70,7 @@ pub fn main() !void {
     }
 }
 
+/// Print usage instructions
 fn printUsage() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print(
@@ -83,6 +87,7 @@ fn printUsage() !void {
     , .{});
 }
 
+/// Show basic system status (version and Zig compiler info)
 fn cmdStatus() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("CLI-Tool v1.0.0\n", .{});
@@ -93,6 +98,7 @@ fn cmdStatus() !void {
     });
 }
 
+/// Read a file, process its contents, and optionally write output
 fn cmdProcess(allocator: std.mem.Allocator, path: []const u8, config: Config) !void {
     const file = std.fs.cwd().openFile(path, .{}) catch |err| {
         std.log.err("Failed to open {s}: {any}", .{ path, err });
@@ -123,6 +129,7 @@ fn cmdProcess(allocator: std.mem.Allocator, path: []const u8, config: Config) !v
     }
 }
 
+/// Recursively walk a directory and print file/directory statistics
 fn cmdAnalyze(allocator: std.mem.Allocator, dir_path: []const u8, config: Config) !void {
     var dir = try std.fs.cwd().openDir(dir_path, .{ .iterate = true });
     defer dir.close();

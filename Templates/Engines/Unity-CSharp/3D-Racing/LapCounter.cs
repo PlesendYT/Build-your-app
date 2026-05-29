@@ -1,3 +1,6 @@
+/// <summary>
+/// Tracks laps, waypoints, and triggers race completion events.
+/// </summary>
 using UnityEngine;
 
 public class LapCounter : MonoBehaviour

@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Interaction.Toolkit;
 
+/// <summary>
+/// Handles VR movement (continuous and teleport) and turning via controller input.
+/// </summary>
 public class VRInput : MonoBehaviour
 {
     [Header("References")]
@@ -31,10 +34,14 @@ public class VRInput : MonoBehaviour
         HandleTurning();
     }
 
+    /// <summary>
+    /// Moves the player continuously if continuous movement mode is active.
+    /// </summary>
     private void HandleMovement()
     {
         if (!useContinuousMovement) return;
 
+        // Read movement input from the right controller joystick
         Vector2 input = rightController.moveAction.action.ReadValue<Vector2>();
         Vector3 direction = new Vector3(input.x, 0, input.y);
         direction = xrOrigin.Camera.transform.TransformDirection(direction);
@@ -44,6 +51,9 @@ public class VRInput : MonoBehaviour
         characterController.Move(direction * continuousMoveSpeed * Time.deltaTime);
     }
 
+    /// <summary>
+    /// Rotates the player using the left controller joystick horizontal input.
+    /// </summary>
     private void HandleTurning()
     {
         Vector2 input = leftController.moveAction.action.ReadValue<Vector2>();
@@ -53,6 +63,9 @@ public class VRInput : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Queues a teleport request to the specified position and rotation.
+    /// </summary>
     public void Teleport(Vector3 position, Quaternion rotation)
     {
         if (teleportProvider != null)
@@ -67,6 +80,9 @@ public class VRInput : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles between teleport and continuous movement modes.
+    /// </summary>
     public void ToggleMovementMode()
     {
         useContinuousMovement = !useContinuousMovement;

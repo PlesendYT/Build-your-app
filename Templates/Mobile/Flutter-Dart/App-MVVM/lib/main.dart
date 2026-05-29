@@ -1,8 +1,11 @@
+/// A Flutter app following the MVVM pattern with Riverpod for state management.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// Application entry point wrapped in a [ProviderScope] for Riverpod.
 void main() => runApp(const ProviderScope(child: MyApp()));
 
+/// Root widget of the MVVM todo app.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -16,6 +19,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Main page displaying a todo list with checkboxes and an add button.
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 

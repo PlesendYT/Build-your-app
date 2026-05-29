@@ -1,3 +1,6 @@
+/// <summary>
+/// FPS game state manager handling health, scoring, respawn, and scene reload.
+/// </summary>
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

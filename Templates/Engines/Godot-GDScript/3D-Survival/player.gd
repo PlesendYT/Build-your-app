@@ -1,3 +1,5 @@
+# 3D survival game player controller
+# Manages movement, vitals (health/hunger/thirst/temperature), inventory, crafting, and interactions
 extends CharacterBody3D
 
 @export var walk_speed: float = 4.0

@@ -1,6 +1,13 @@
+// File: Player.cs
+// Turn-based roguelike player with tile-based movement, combat stats, XP/leveling, and turn management.
+
 using Godot;
 using System;
 
+/// <summary>
+/// Controls the roguelike player on a tile map. Moves one tile per turn with a cooldown timer,
+/// supports damage/defense calculations, XP-based leveling, and turn-based enemy activation.
+/// </summary>
 public partial class Player : Node2D
 {
     [Export] public float MoveDelay = 0.15f;
@@ -28,6 +35,7 @@ public partial class Player : Node2D
     {
         if (!_canMove) return;
 
+        // Read directional input for tile movement
         Vector2I direction = Vector2I.Zero;
         if (@event.IsActionPressed("move_up")) direction = new Vector2I(0, -1);
         else if (@event.IsActionPressed("move_down")) direction = new Vector2I(0, 1);
@@ -38,6 +46,10 @@ public partial class Player : Node2D
             TryMove(direction);
     }
 
+    /// <summary>
+    /// Attempts to move the player one tile in the given direction. Only walkable tiles are allowed.
+    /// Movement is animated via a tween; after movement the turn advances.
+    /// </summary>
     private async void TryMove(Vector2I direction)
     {
         Vector2I targetCell = _tileMap.LocalToMap(GlobalPosition) + direction;
@@ -54,6 +66,9 @@ public partial class Player : Node2D
         }
     }
 
+    /// <summary>
+    /// Ends the current turn: signals enemies to act and starts the cooldown for the next player move.
+    /// </summary>
     private void AdvanceTurn()
     {
         _canMove = false;
@@ -61,6 +76,9 @@ public partial class Player : Node2D
         _turnTimer.Start(MoveDelay);
     }
 
+    /// <summary>
+    /// Reduces health by damage minus defense (minimum 1 damage).
+    /// </summary>
     public void TakeDamage(int amount)
     {
         int actual = Mathf.Max(1, amount - Defense);
@@ -68,6 +86,9 @@ public partial class Player : Node2D
         if (Health <= 0) Die();
     }
 
+    /// <summary>
+    /// Adds XP and handles level-up logic (increased stats, scaling XP requirement).
+    /// </summary>
     public void AddXP(int amount)
     {
         XP += amount;
@@ -82,6 +103,9 @@ public partial class Player : Node2D
         }
     }
 
+    /// <summary>
+    /// Reloads the scene when the player dies.
+    /// </summary>
     private void Die()
     {
         GetTree().ReloadCurrentScene();

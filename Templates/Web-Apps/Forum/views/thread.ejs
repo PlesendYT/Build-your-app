@@ -1,0 +1,66 @@
+<!-- Single thread view - shows thread content and posts -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= thread.title %> - Forum</title>
+</head>
+<body>
+  <nav>
+    <a href="/threads">Forum</a>
+    <div>
+      <% if (typeof user !== 'undefined' && user) { %>
+        <span><%= user.username %></span>
+        <a href="/auth/logout">Logout</a>
+      <% } else { %>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Register</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Thread header with title and author -->
+    <div class="thread-header">
+      <h1><%= thread.title %></h1>
+      <p class="meta">by <%= thread.username %> | <%= new Date(thread.createdAt).toLocaleDateString() %></p>
+      <div class="content"><%= thread.content %></div>
+    </div>
+
+    <!-- List of replies / posts -->
+    <h2>Posts (<%= posts.length %>)</h2>
+    <div class="posts">
+      <% posts.forEach(post => { %>
+        <div class="post">
+          <p class="meta"><strong><%= post.username %></strong> - <%= new Date(post.createdAt).toLocaleDateString() %></p>
+          <p><%= post.content %></p>
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Reply form for logged-in users -->
+    <% if (typeof user !== 'undefined' && user) { %>
+      <form action="/threads/<%= thread.id %>/posts" method="POST" class="reply-form">
+        <textarea name="content" placeholder="Write a reply..." rows="4" required></textarea>
+        <button type="submit">Reply</button>
+      </form>
+    <% } else { %>
+      <p><a href="/auth/login">Login</a> to reply.</p>
+    <% } %>
+  </div>
+
+  <style>
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    .thread-header { background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+    .post { background: white; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .meta { color: #6b7280; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .content { margin-top: 1rem; line-height: 1.6; }
+    .reply-form { margin-top: 1rem; }
+    textarea { display: block; width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 4px; margin-bottom: 0.5rem; }
+    button { background: #2563eb; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
+    nav { background: #1f2937; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    nav a { color: white; text-decoration: none; margin-left: 1rem; }
+  </style>
+</body>
+</html>

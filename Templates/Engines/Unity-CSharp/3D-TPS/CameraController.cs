@@ -1,3 +1,6 @@
+/// <summary>
+/// Third-person camera with orbit, zoom, collision avoidance, and mouse look.
+/// </summary>
 using UnityEngine;
 
 public class CameraController : MonoBehaviour

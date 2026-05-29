@@ -1,6 +1,12 @@
+// File: Enemy.cs
+// Patrol enemy for a 2D platformer. Moves left and right within a set patrol distance.
+
 using Godot;
 using System;
 
+/// <summary>
+/// An enemy that patrols horizontally between two points, flipping direction at each boundary.
+/// </summary>
 public partial class Enemy : CharacterBody2D
 {
     [Export] public float PatrolSpeed = 100.0f;
@@ -19,6 +25,7 @@ public partial class Enemy : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
+        // Reverse direction when the patrol distance limit is reached
         float distanceTraveled = Mathf.Abs(Position.X - _startPosition.X);
         if (distanceTraveled >= PatrolDistance)
             _movingRight = !_movingRight;

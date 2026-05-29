@@ -1,0 +1,43 @@
+/* Styles for the File Explorer directory browser */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f9fafb;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navigation bar with path and action buttons */
+#navBar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #2563eb;
+  color: white;
+}
+
+/* Nav buttons */
+#navBar button {
+  background: white;
+  color: #2563eb;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Current path display */
+#currentPath { flex: 1; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* File listing table */
+#fileList { flex: 1; padding: 1rem; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 0.5rem; background: #f1f5f9; border-bottom: 2px solid #e5e7eb; }
+td { padding: 0.5rem; border-bottom: 1px solid #eee; }
+.dir { cursor: pointer; font-weight: 500; }
+.dir:hover { color: #2563eb; }
+.danger { background: #dc2626; color: white; border: none; padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; }

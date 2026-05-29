@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!-- Firefox extension popup rendered when the toolbar button is clicked -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Firefox Extension</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Application header -->
+  <div id="app">
+    <h1>Firefox Extension</h1>
+
+    <!-- Display selected text from the current page -->
+    <section>
+      <h2>Page Selection</h2>
+      <p id="selectionDisplay">No text selected.</p>
+      <button id="getSelectionBtn">Get Selection</button>
+    </section>
+
+    <!-- Extension toggle control -->
+    <section>
+      <h2>Extension Controls</h2>
+      <button id="toggleBtn">Toggle Extension</button>
+      <button id="highlightBtn">Highlight Paragraphs</button>
+    </section>
+  </div>
+
+  <!-- Popup logic script -->
+  <script src="popup.js"></script>
+</body>
+</html>

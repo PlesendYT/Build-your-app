@@ -1,3 +1,4 @@
+# Beat-em-up player with combo system, special attacks, knockback, and health
 extends CharacterBody2D
 
 @export var speed: float = 250.0

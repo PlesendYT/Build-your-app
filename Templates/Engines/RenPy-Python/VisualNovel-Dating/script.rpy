@@ -1,4 +1,5 @@
 ## Script for Dating Visual Novel
+# Dating sim: visit locations over 14 days to build affection with one of four characters
 
 label start:
     show screen affection_display

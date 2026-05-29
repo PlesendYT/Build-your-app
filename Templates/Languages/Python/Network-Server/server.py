@@ -11,6 +11,7 @@ def handle_client(conn: socket.socket, addr: tuple[str, int]) -> None:
     """Handle a single TCP client connection."""
     print(f"Connected by {addr}")
     with conn:
+        # Echo received data back to client until connection closes
         while True:
             data = conn.recv(1024)
             if not data:
@@ -28,6 +29,7 @@ def run_tcp_server(host: str = "127.0.0.1", port: int = 8888) -> None:
         print(f"TCP server listening on {host}:{port}")
 
         try:
+            # Accept connections indefinitely, handle each in a new thread
             while True:
                 conn, addr = server.accept()
                 thread = threading.Thread(

@@ -1,4 +1,5 @@
--- Solar2D Puzzle Game
+-- Solar2D Puzzle Game (Sokoban-style)
+-- Main game controller: loads levels, moves player, pushes blocks onto goals
 display.setStatusBar(display.HiddenStatusBar)
 
 local TILE_SIZE = 64
@@ -9,7 +10,7 @@ local goals = {}
 local currentLevel = 0
 local moveCount = 0
 
--- Level data (0=empty, 1=wall, 2=player, 3=block, 4=goal)
+-- Level data: 0=empty, 1=wall, 2=player start, 3=pushable block, 4=goal
 local levels = {
     {
         {1, 1, 1, 1, 1},
@@ -162,7 +163,7 @@ function resetLevel()
     loadLevel(currentLevel)
 end
 
--- Input
+-- Handles WASD/arrow keys for movement and R to reset the current level
 function handleKey(event)
     if event.phase == "down" then
         if event.keyName == "up" or event.keyName == "w" then movePlayer(0, -1)

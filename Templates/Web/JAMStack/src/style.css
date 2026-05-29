@@ -1,11 +1,14 @@
+/* CSS custom properties for the JAMStack template theme */
 :root {
   --primary: #2563eb;
   --bg: #ffffff;
   --text: #1f2937;
 }
 
+/* Global reset */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Page body styling */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
@@ -16,25 +19,33 @@ body {
   padding: 2rem;
 }
 
+/* Header spacing */
 header { margin-bottom: 2rem; }
 
+/* Navigation bar */
 nav {
   display: flex;
   gap: 1rem;
 }
 
+/* Navigation link styling */
 nav a {
   color: var(--primary);
   text-decoration: none;
   font-weight: 500;
 }
 
+/* Navigation link hover state */
 nav a:hover { text-decoration: underline; }
 
+/* Heading styles */
 h1 { font-size: 2.5rem; margin-bottom: 1rem; }
 h2 { font-size: 1.8rem; margin: 2rem 0 0.5rem; }
+
+/* Paragraph spacing */
 p { margin-bottom: 1rem; }
 
+/* Blockquote with left accent border */
 blockquote {
   border-left: 4px solid var(--primary);
   padding-left: 1rem;
@@ -42,4 +53,5 @@ blockquote {
   font-style: italic;
 }
 
+/* Footer styling */
 footer { margin-top: 4rem; color: #6b7280; text-align: center; }

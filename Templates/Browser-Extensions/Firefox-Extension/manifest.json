@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "Firefox Extension",
+  "version": "1.0.0",
+  "description": "A browser extension for Firefox (Manifest V2)",
+  "permissions": ["storage", "activeTab", "<all_urls>"],
+  "browser_action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Open popup",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,3 +1,4 @@
+# Team Deathmatch mode: two teams battle to reach the score limit first with wave respawns.
 using { /Fortnite.com/Devices }
 using { /Fortnite.com/Game }
 using { /Fortnite.com/Characters }
@@ -5,6 +6,7 @@ using { /Verse.org/Simulation }
 using { /Verse.org/Time }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 
+# Main Team Deathmatch device class managing teams, scores, and wave respawns.
 tdm_game_mode := class(creative_device):
     @editable
     ScoreLimit : int = 50
@@ -22,10 +24,12 @@ tdm_game_mode := class(creative_device):
     var TeamAssignments : [agent]team_device = map{}
     var DeadPlayers : [agent]logic = map{}
     
+    # Subscribes to player join events and starts the respawn wave loop.
     OnBegin<override>()<suspends>() : void =
         GetPlayspace().PlayerAddedEvent.Subscribe(OnPlayerJoined)
         spawn { RespawnWaveLoop[] }
     
+    # Assigns a joining player to the team with fewer members to balance teams.
     OnPlayerJoined(Agent : agent) : void =
         if (GetTeamCount(BlueTeamDevice) <= GetTeamCount(RedTeamDevice)):
             set TeamAssignments[Agent] = BlueTeamDevice
@@ -34,6 +38,7 @@ tdm_game_mode := class(creative_device):
             set TeamAssignments[Agent] = RedTeamDevice
             RedTeamDevice.AddToTeam(Agent)
     
+    # Marks a player as dead and awards a point to the eliminator's team; checks score limit.
     OnPlayerEliminated(Eliminated : agent, Eliminator : agent) : void =
         set DeadPlayers[Eliminated] = true
         if (Eliminator <> Eliminated):
@@ -46,6 +51,7 @@ tdm_game_mode := class(creative_device):
             else if (RedScore >= ScoreLimit):
                 EndGame(RedTeamDevice)
     
+    # Periodically respawns all dead players in waves.
     RespawnWaveLoop()<suspends>() : void =
         loop:
             Sleep(RespawnWaveTime)
@@ -54,9 +60,11 @@ tdm_game_mode := class(creative_device):
                     RespawnDevice.Spawn(Agent)
                     set DeadPlayers[Agent] = false
     
+    # Announces the winning team.
     EndGame(WinningTeam : team_device) : void =
         Print("Team {WinningTeam} wins!")
     
+    # Counts how many players are assigned to a given team.
     GetTeamCount(TargetTeam : team_device) : int =
         var Count : int = 0
         for (Agent : TeamAssignments, AssignedTeam : TeamAssignments[Agent]):

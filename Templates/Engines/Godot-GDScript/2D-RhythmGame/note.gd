@@ -1,3 +1,4 @@
+# Rhythm game note that scrolls downward and responds to hits with accuracy animations
 extends Node2D
 
 @export var speed: float = 400.0

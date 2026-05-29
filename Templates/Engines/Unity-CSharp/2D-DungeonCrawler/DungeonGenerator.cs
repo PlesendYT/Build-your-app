@@ -1,3 +1,6 @@
+/// <summary>
+/// Procedurally generates a dungeon with rooms, corridors, enemies, and treasure using a tile-based grid.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -18,19 +21,27 @@ public class DungeonGenerator : MonoBehaviour
 
     public enum TileType { Wall, Floor }
 
+    /// <summary>
+    /// Generates the dungeon on start.
+    /// </summary>
     private void Start()
     {
         GenerateDungeon();
     }
 
+    /// <summary>
+    /// Creates rooms with corridors, places the player, enemies, and treasure.
+    /// </summary>
     private void GenerateDungeon()
     {
         dungeon = new TileType[width, height];
 
+        // Fill the entire dungeon with walls initially
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
                 dungeon[x, y] = TileType.Wall;
 
+        // Generate random non-overlapping rooms
         int rooms = Random.Range(5, 10);
         List<Rect> roomRects = new List<Rect>();
 
@@ -55,11 +66,13 @@ public class DungeonGenerator : MonoBehaviour
 
             roomRects.Add(room);
 
+            // Carve out the room floor
             for (int x = roomX; x < roomX + roomW; x++)
                 for (int y = roomY; y < roomY + roomH; y++)
                     dungeon[x, y] = TileType.Floor;
         }
 
+        // Connect rooms with L-shaped corridors
         for (int i = 1; i < roomRects.Count; i++)
         {
             Vector2Int centerA = new Vector2Int(
@@ -88,6 +101,7 @@ public class DungeonGenerator : MonoBehaviour
 
         RenderDungeon();
 
+        // Place player in the first room
         playerStart = new Vector2Int(
             Mathf.RoundToInt(roomRects[0].center.x),
             Mathf.RoundToInt(roomRects[0].center.y)
@@ -95,6 +109,7 @@ public class DungeonGenerator : MonoBehaviour
 
         Instantiate(playerPrefab, new Vector3(playerStart.x, playerStart.y, 0f), Quaternion.identity);
 
+        // Place enemies randomly in other rooms
         for (int i = 1; i < roomRects.Count; i++)
         {
             if (Random.value < 0.5f)
@@ -108,6 +123,7 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
 
+        // Place treasure in the last room
         Vector2Int treasurePos = new Vector2Int(
             Mathf.RoundToInt(roomRects[roomRects.Count - 1].center.x),
             Mathf.RoundToInt(roomRects[roomRects.Count - 1].center.y)
@@ -115,6 +131,9 @@ public class DungeonGenerator : MonoBehaviour
         Instantiate(treasurePrefab, new Vector3(treasurePos.x, treasurePos.y, 0f), Quaternion.identity);
     }
 
+    /// <summary>
+    /// Instantiates floor or wall tiles based on the dungeon grid.
+    /// </summary>
     private void RenderDungeon()
     {
         for (int x = 0; x < width; x++)
@@ -127,5 +146,8 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the starting position for the player.
+    /// </summary>
     public Vector2Int GetPlayerStart() => playerStart;
 }

@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "releaseDate": "2026-05-29",
+  "downloadUrl": "https://example.com/app/downloads/1.0.0.zip",
+  "changelog": [
+    "Initial release",
+    "Core application features",
+    "Bug fixes and improvements"
+  ]
+}

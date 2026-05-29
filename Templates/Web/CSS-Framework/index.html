@@ -1,10 +1,14 @@
 <!DOCTYPE html>
+<!-- Tailwind CSS framework template with dark mode toggle and responsive layout -->
 <html lang="en">
 <head>
+  <!-- Document metadata -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CSS Framework Template</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Tailwind configuration for dark mode and primary color -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -13,6 +17,7 @@
   </script>
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors">
+  <!-- Sticky navigation header with dark mode toggle button -->
   <header class="sticky top-0 bg-white dark:bg-gray-900 shadow z-50">
     <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
       <span class="text-xl font-bold">MyApp</span>
@@ -20,6 +25,7 @@
         <a href="#features" class="hover:text-primary">Features</a>
         <a href="#team" class="hover:text-primary">Team</a>
         <a href="#pricing" class="hover:text-primary">Pricing</a>
+        <!-- Dark mode toggle button -->
         <button id="themeToggle" class="p-2 rounded bg-gray-200 dark:bg-gray-700">
           <span id="themeIcon">🌙</span>
         </button>
@@ -27,12 +33,14 @@
     </nav>
   </header>
 
+  <!-- Hero section with gradient background and call-to-action -->
   <section class="hero min-h-screen flex flex-col items-center justify-center text-center px-4 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900">
     <h1 class="text-5xl md:text-6xl font-bold mb-4">Build Your App</h1>
     <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-xl">Modern, responsive templates powered by Tailwind CSS.</p>
     <button class="bg-primary text-white px-8 py-3 rounded-lg text-lg hover:bg-blue-700 transition">Get Started</button>
   </section>
 
+  <!-- Features section with three-column grid -->
   <section id="features" class="max-w-6xl mx-auto px-4 py-20">
     <h2 class="text-3xl font-bold text-center mb-12">Features</h2>
     <div class="grid md:grid-cols-3 gap-8">
@@ -54,6 +62,7 @@
     </div>
   </section>
 
+  <!-- Team section with avatar placeholders -->
   <section id="team" class="bg-gray-50 dark:bg-gray-800 py-20">
     <div class="max-w-6xl mx-auto px-4">
       <h2 class="text-3xl font-bold text-center mb-12">Our Team</h2>
@@ -77,6 +86,7 @@
     </div>
   </section>
 
+  <!-- Pricing section with three-tier card layout -->
   <section id="pricing" class="max-w-6xl mx-auto px-4 py-20">
     <h2 class="text-3xl font-bold text-center mb-12">Pricing</h2>
     <div class="grid md:grid-cols-3 gap-8">
@@ -111,10 +121,12 @@
     </div>
   </section>
 
+  <!-- Footer with copyright -->
   <footer class="text-center py-8 text-gray-500 dark:text-gray-400">
     <p>&copy; 2026 Build Your App. All rights reserved.</p>
   </footer>
 
+  <!-- Dark mode toggle script -->
   <script>
     document.getElementById('themeToggle')?.addEventListener('click', () => {
       document.documentElement.classList.toggle('dark');

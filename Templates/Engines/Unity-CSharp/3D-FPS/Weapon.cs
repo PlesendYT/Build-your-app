@@ -1,3 +1,6 @@
+/// <summary>
+/// Weapon with raycast firing, recoil, ammo, and reload mechanics.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

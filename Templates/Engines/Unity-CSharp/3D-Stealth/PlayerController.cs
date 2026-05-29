@@ -1,3 +1,6 @@
+/// <summary>
+/// Stealth player with walk/sneak/run speeds, stamina, and noise emission.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

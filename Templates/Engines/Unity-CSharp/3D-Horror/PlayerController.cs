@@ -1,3 +1,6 @@
+/// <summary>
+/// Horror player with stamina, sprint, crouch, and limited visibility mechanics.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

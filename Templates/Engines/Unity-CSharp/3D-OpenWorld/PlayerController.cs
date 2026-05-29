@@ -1,3 +1,6 @@
+/// <summary>
+/// Open world player with movement, fast travel, mounting, and interaction prompts.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

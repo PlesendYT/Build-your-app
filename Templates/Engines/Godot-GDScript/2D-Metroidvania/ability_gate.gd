@@ -1,3 +1,4 @@
+# Metroidvania ability gate that checks player abilities (double-jump, dash, wall-climb) to unlock
 extends Area2D
 
 @export var required_ability: String = "double_jump"

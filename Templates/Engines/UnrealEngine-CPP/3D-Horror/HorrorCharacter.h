@@ -1,3 +1,4 @@
+// Header for a horror character with flashlight, tension, and notes.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -15,12 +16,15 @@ public:
     UPROPERTY(BlueprintReadOnly) float TensionLevel = 0.0f;
     UPROPERTY(BlueprintReadOnly) TArray<FString> CollectedNotes;
 
+    // Toggle the flashlight on/off.
     UFUNCTION(BlueprintCallable)
     void ToggleFlashlight();
 
+    // Add tension (clamped to max).
     UFUNCTION(BlueprintCallable)
     void AddTension(float Amount);
 
+    // Collect a note by its ID.
     UFUNCTION(BlueprintCallable)
     void CollectNote(const FString& NoteID);
 

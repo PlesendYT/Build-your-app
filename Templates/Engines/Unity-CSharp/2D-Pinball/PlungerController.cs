@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls the pinball plunger that charges force while held and launches the ball on release.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,11 +13,17 @@ public class PlungerController : MonoBehaviour
     private bool charging;
     private SpringJoint2D springJoint;
 
+    /// <summary>
+    /// Caches the spring joint component.
+    /// </summary>
     private void Awake()
     {
         springJoint = GetComponent<SpringJoint2D>();
     }
 
+    /// <summary>
+    /// Starts charging on input start, launches on input release.
+    /// </summary>
     public void OnPlunger(InputAction.CallbackContext context)
     {
         if (context.started)
@@ -29,6 +38,9 @@ public class PlungerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Increases the charge force over time while charging, up to the maximum.
+    /// </summary>
     private void Update()
     {
         if (charging)
@@ -37,6 +49,9 @@ public class PlungerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Applies the accumulated force to launch the ball upward.
+    /// </summary>
     private void LaunchBall()
     {
         Rigidbody2D rb = GetComponent<Rigidbody2D>();

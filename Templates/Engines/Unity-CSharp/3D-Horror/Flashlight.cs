@@ -1,3 +1,6 @@
+/// <summary>
+/// Flashlight with battery drain/recharge, flicker, and toggle input.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

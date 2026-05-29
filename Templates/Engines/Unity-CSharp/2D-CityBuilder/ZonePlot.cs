@@ -1,5 +1,7 @@
+/// <summary>
+/// Represents a buildable zone plot that can be developed with a building on click.
+/// </summary>
 using UnityEngine;
-using TMPro;
 
 public class ZonePlot : MonoBehaviour
 {
@@ -13,11 +15,17 @@ public class ZonePlot : MonoBehaviour
     private GameObject building;
     private bool isBuilt;
 
+    /// <summary>
+    /// Caches the sprite renderer component.
+    /// </summary>
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    /// <summary>
+    /// Constructs a building on this plot if not already built and enough money is available.
+    /// </summary>
     public bool Build()
     {
         if (isBuilt) return false;
@@ -35,6 +43,9 @@ public class ZonePlot : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Builds on this plot when clicked.
+    /// </summary>
     private void OnMouseDown()
     {
         Build();

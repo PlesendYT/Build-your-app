@@ -1,4 +1,5 @@
 -- Solar2D Shoot-em-up
+-- Main game controller: manages player, enemies, bullets, collisions, and game state
 display.setStatusBar(display.HiddenStatusBar)
 
 local physics = require("physics")
@@ -19,7 +20,7 @@ local fireRate = 0.2
 local fireTimer = 0
 local powerLevel = 1
 
--- Player
+-- Creates the player ship with physics body at the bottom center of the screen
 function createPlayer()
     player = display.newImageRect("ship.png", 32, 32)
     player.x = display.contentCenterX
@@ -35,7 +36,7 @@ function createPlayer()
     player.moveY = 0
 end
 
--- Starfield
+-- Generates a scrolling starfield background for visual depth
 function createStars()
     for i = 1, 50 do
         local star = display.newCircle(math.random(display.contentWidth), math.random(display.contentHeight), math.random(1, 3))
@@ -45,7 +46,7 @@ function createStars()
     end
 end
 
--- Bullets
+-- Fires bullets from player position based on current power level (1-3 spread patterns)
 function fireBullet()
     if gameOver then return end
 
@@ -81,7 +82,7 @@ function fireBullet()
     end
 end
 
--- Enemies
+-- Spawns a wave of enemies with increasing count and HP based on current wave number
 function spawnEnemyWave()
     wave = wave + 1
     local count = 3 + wave
@@ -106,7 +107,7 @@ function spawnEnemyWave()
     end)
 end
 
--- Collision
+-- Handles collision events between bullets/enemies and enemies/player
 function onCollision(event)
     if event.phase == "began" then
         -- Bullet hits enemy
@@ -178,7 +179,7 @@ function showGameOver()
     display.newText("Press SPACE to restart", display.contentCenterX, display.contentCenterY + 90, nil, 16)
 end
 
--- Input
+-- Handles keyboard input for player movement, restart, and game over flow
 function handleKey(event)
     if gameOver then
         if event.keyName == "space" and event.phase == "down" then
@@ -223,7 +224,7 @@ function restartGame()
     initGame()
 end
 
--- Game loop
+-- Main game loop: updates player position, auto-fires, moves bullets/enemies, scrolls stars, and updates HUD
 function gameLoop()
     if gameOver then return end
 

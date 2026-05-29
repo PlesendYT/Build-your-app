@@ -1,3 +1,6 @@
+/// <summary>
+/// Inventory system with add/remove, slot limits, and UI refresh events.
+/// </summary>
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,13 +8,62 @@ using UnityEngine;
 public class Item
 {
     public string itemName;
-    public string description;
-    public int value;
-    public ItemType type;
-    public Sprite icon;
     public int quantity;
+    public Sprite icon;
+}
 
-    public enum ItemType { Weapon, Armor, Consumable, Quest, Material }
+public class Inventory : MonoBehaviour
+{
+    public List<Item> items = new List<Item>();
+    public int maxSlots = 20;
+
+    public TMPro.TextMeshProUGUI inventoryText;
+
+    public event System.Action OnInventoryChanged;
+
+    public bool AddItem(Item item)
+    {
+        Item existing = items.Find(i => i.itemName == item.itemName);
+        if (existing != null)
+        {
+            existing.quantity += item.quantity;
+        }
+        else if (items.Count < maxSlots)
+        {
+            items.Add(item);
+        }
+        else
+        {
+            Debug.Log("Inventory full!");
+            return false;
+        }
+
+        OnInventoryChanged?.Invoke();
+        UpdateUI();
+        return true;
+    }
+
+    public void RemoveItem(string itemName, int quantity)
+    {
+        Item item = items.Find(i => i.itemName == itemName);
+        if (item != null)
+        {
+            item.quantity -= quantity;
+            if (item.quantity <= 0) items.Remove(item);
+            OnInventoryChanged?.Invoke();
+            UpdateUI();
+        }
+    }
+
+    private void UpdateUI()
+    {
+        if (inventoryText != null)
+        {
+            inventoryText.text = "Inventory:\n";
+            foreach (var item in items)
+                inventoryText.text += item.itemName + " x" + item.quantity + "\n";
+        }
+    }
 }
 
 public class Inventory : MonoBehaviour

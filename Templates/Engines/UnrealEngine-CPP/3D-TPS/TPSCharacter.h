@@ -1,3 +1,4 @@
+// Header for a third-person shooter character with aiming, cover, and weapons.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"

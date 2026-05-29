@@ -1,3 +1,4 @@
+// Stealth character with crouching, noise, and enemy distraction mechanics.
 #include "StealthCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
@@ -6,6 +7,7 @@
 
 AStealthCharacter::AStealthCharacter() {}
 
+// Register enhanced input mapping context at start.
 void AStealthCharacter::BeginPlay()
 {
     Super::BeginPlay();
@@ -14,6 +16,7 @@ void AStealthCharacter::BeginPlay()
             S->AddMappingContext(InputMapping, 0);
 }
 
+// Bind enhanced input actions for movement, crouch, interact, and distract.
 void AStealthCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
 {
     if (auto* EIC = Cast<UEnhancedInputComponent>(PIC))
@@ -40,6 +43,7 @@ void AStealthCharacter::Look(const FInputActionValue& V)
     AddControllerPitchInput(Vec.Y);
 }
 
+// Generate noise at the character's location.
 void AStealthCharacter::MakeNoise(float Loudness)
 {
     NoiseLevel = Loudness;
@@ -49,6 +53,7 @@ void AStealthCharacter::MakeNoise(float Loudness)
     }
 }
 
+// Toggle character crouch state and adjust walk speed.
 void AStealthCharacter::ToggleCrouch()
 {
     bIsCrouching = !bIsCrouching;

@@ -1,10 +1,13 @@
+// Register the service worker if the browser supports it
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js');
 }
 
+// Deferred prompt and install button for PWA install banner
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
 
+// Listen for the beforeinstallprompt event to show the install button
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -17,10 +20,12 @@ window.addEventListener('beforeinstallprompt', (e) => {
   });
 });
 
+// DOM references for the note form, input, and list
 const form = document.getElementById('noteForm');
 const input = document.getElementById('noteInput');
 const list = document.getElementById('noteList');
 
+/** Fetch all notes from IndexedDB and render them as a list with delete buttons */
 async function renderNotes() {
   const notes = await getNotes();
   list.innerHTML = notes.reverse().map(n =>
@@ -30,6 +35,7 @@ async function renderNotes() {
     </li>`
   ).join('');
 
+  // Attach click handlers to each delete button
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       await deleteNote(Number(btn.dataset.id));
@@ -38,6 +44,7 @@ async function renderNotes() {
   });
 }
 
+// Handle form submission to add a new note
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = input.value.trim();
@@ -48,4 +55,5 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
+// Initial render of notes on page load
 renderNotes();

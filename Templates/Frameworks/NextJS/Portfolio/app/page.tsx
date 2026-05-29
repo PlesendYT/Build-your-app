@@ -1,3 +1,4 @@
+// Portfolio homepage — displays a profile header and a grid of project cards
 const projects = [
   { title: 'Projekt 1', description: 'Eine Webanwendung mit React', tech: 'React, Node.js' },
   { title: 'Projekt 2', description: 'Mobile App mit Flutter', tech: 'Flutter, Dart' },

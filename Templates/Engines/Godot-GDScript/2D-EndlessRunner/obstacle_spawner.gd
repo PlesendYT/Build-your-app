@@ -1,3 +1,4 @@
+# Endless runner obstacle spawner with random intervals and difficulty scaling
 extends Node2D
 
 @export var obstacle_scenes: Array[PackedScene] = []

@@ -1,3 +1,6 @@
+/// <summary>
+/// Represents a purchasable upgrade that boosts click power, generator production, or applies a multiplier.
+/// </summary>
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +20,9 @@ public class Upgrade : MonoBehaviour
 
     private int level;
 
+    /// <summary>
+    /// Subscribes the purchase method to the button click and updates UI.
+    /// </summary>
     private void Start()
     {
         if (upgradeButton != null)
@@ -24,17 +30,26 @@ public class Upgrade : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Enables or disables the upgrade button based on affordability.
+    /// </summary>
     private void Update()
     {
         if (upgradeButton != null)
             upgradeButton.interactable = GameManager.Instance.CanAfford(GetCost());
     }
 
+    /// <summary>
+    /// Returns the current cost of this upgrade, scaling with level.
+    /// </summary>
     public float GetCost()
     {
         return baseCost * Mathf.Pow(costScaling, level);
     }
 
+    /// <summary>
+    /// Purchases the upgrade, applies its effect (click power, generator boost, or multiplier).
+    /// </summary>
     public void Purchase()
     {
         float cost = GetCost();
@@ -62,12 +77,18 @@ public class Upgrade : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Updates the cost display text.
+    /// </summary>
     private void UpdateUI()
     {
         if (costText != null)
             costText.text = FormatNumber(GetCost());
     }
 
+    /// <summary>
+    /// Formats the cost value with K/M suffixes.
+    /// </summary>
     private string FormatNumber(float value)
     {
         if (value >= 1_000_000) return (value / 1_000_000).ToString("F1") + "M";

@@ -1,3 +1,6 @@
+/// <summary>
+/// An upgradeable item that can be leveled up to improve income, satisfaction, or capacity.
+/// </summary>
 using UnityEngine;
 
 public class Upgradeable : MonoBehaviour
@@ -17,32 +20,47 @@ public class Upgradeable : MonoBehaviour
 
     private TycoonManager tycoon;
 
+    /// <summary>
+    /// Caches the sprite renderer and finds the tycoon manager.
+    /// </summary>
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         tycoon = FindObjectOfType<TycoonManager>();
     }
 
+    /// <summary>
+    /// Updates the visual to match the starting level.
+    /// </summary>
     private void Start()
     {
         UpdateVisual();
     }
 
+    /// <summary>
+    /// Returns the current cost based on level and cost multiplier.
+    /// </summary>
     public float GetCurrentCost()
     {
         return baseCost * Mathf.Pow(costMultiplier, level);
     }
 
+    /// <summary>
+    /// Returns true if the item can be upgraded (not max level and has enough money).
+    /// </summary>
     public bool CanUpgrade()
     {
         return level < maxLevel && tycoon != null && tycoon.SpendMoney(GetCurrentCost());
     }
 
+    /// <summary>
+    /// Performs the upgrade: deducts cost, increases level, applies effect, and updates visual.
+    /// </summary>
     public void PerformUpgrade()
     {
         if (!CanUpgrade()) return;
 
-        money_Sufficient:
+        // Deduct cost again with validation
         if (!tycoon.SpendMoney(GetCurrentCost())) return;
 
         level++;
@@ -63,12 +81,18 @@ public class Upgradeable : MonoBehaviour
         UpdateVisual();
     }
 
+    /// <summary>
+    /// Updates the sprite to match the current upgrade level.
+    /// </summary>
     private void UpdateVisual()
     {
         if (levelSprites != null && level < levelSprites.Length && levelSprites[level] != null)
             spriteRenderer.sprite = levelSprites[level];
     }
 
+    /// <summary>
+    /// Upgrades on mouse click.
+    /// </summary>
     private void OnMouseDown()
     {
         PerformUpgrade();

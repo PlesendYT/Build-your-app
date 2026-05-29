@@ -1,3 +1,4 @@
+{{-- Home page view displaying hero section and items grid --}}
 @extends('layouts.app')
 @section('title', 'Home')
 @section('content')

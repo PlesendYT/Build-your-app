@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages in-game clock with day/hour/minute display, supports pause and speed controls.
+/// </summary>
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour

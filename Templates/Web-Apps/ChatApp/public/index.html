@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!-- ChatApp UI - a simple chat interface with room support -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatApp</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Chat container with header, message area, and input -->
+  <div id="chat-container">
+    <header>
+      <h1>ChatApp</h1>
+      <!-- Room name displayed dynamically -->
+      <span id="room-label">Lobby</span>
+    </header>
+
+    <!-- Message list area -->
+    <div id="messages"></div>
+
+    <!-- Input area with message field and send button -->
+    <div id="input-area">
+      <input type="text" id="username-input" placeholder="Username" value="Anonymous">
+      <input type="text" id="room-input" placeholder="Room name" value="Lobby">
+      <input type="text" id="message-input" placeholder="Type a message..." autofocus>
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

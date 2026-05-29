@@ -1,3 +1,6 @@
+//! Axum web server with health, info, and item-creation endpoints.
+//! Includes CORS support and structured logging via `tracing`.
+
 use axum::{
     extract::State,
     http::StatusCode,
@@ -11,29 +14,34 @@ use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 use tracing_subscriber;
 
+/// Shared application state with an atomic request counter.
 #[derive(Clone)]
 struct AppState {
     counter: Arc<AtomicU64>,
 }
 
+/// Health-check response body.
 #[derive(Serialize)]
 struct Health {
     status: String,
     version: String,
 }
 
+/// Info endpoint response body.
 #[derive(Serialize)]
 struct Info {
     message: String,
     counter: u64,
 }
 
+/// Request body for creating a new item.
 #[derive(Deserialize)]
 struct CreateItem {
     name: String,
     value: String,
 }
 
+/// Response body after creating an item.
 #[derive(Serialize)]
 struct ItemResponse {
     id: String,
@@ -41,6 +49,7 @@ struct ItemResponse {
     value: String,
 }
 
+/// Returns a health check with the current package version.
 async fn health() -> Json<Health> {
     Json(Health {
         status: "ok".into(),
@@ -48,6 +57,7 @@ async fn health() -> Json<Health> {
     })
 }
 
+/// Returns a greeting and an incrementing request counter.
 async fn info(State(state): State<AppState>) -> Json<Info> {
     let counter = state.counter.fetch_add(1, Ordering::SeqCst) + 1;
     Json(Info {
@@ -56,6 +66,7 @@ async fn info(State(state): State<AppState>) -> Json<Info> {
     })
 }
 
+/// Creates a new item from JSON input and returns it with a generated UUID.
 async fn create_item(Json(body): Json<CreateItem>) -> impl IntoResponse {
     let id = uuid::Uuid::new_v4();
     (
@@ -68,6 +79,7 @@ async fn create_item(Json(body): Json<CreateItem>) -> impl IntoResponse {
     )
 }
 
+/// 404 catch-all handler.
 async fn fallback() -> impl IntoResponse {
     (
         StatusCode::NOT_FOUND,
@@ -75,6 +87,7 @@ async fn fallback() -> impl IntoResponse {
     )
 }
 
+/// Entry point: initialises tracing, builds the router, and starts the server.
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     tracing_subscriber::fmt::init();

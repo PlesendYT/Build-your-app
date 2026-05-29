@@ -1,3 +1,4 @@
+# Turn-based strategy unit with type-specific stats, movement, and combat
 extends Node2D
 
 @export var unit_type: String = "warrior"

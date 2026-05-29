@@ -1,8 +1,10 @@
+// Header for racing game state with racer info and leaderboard.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
 #include "RacingGameState.generated.h"
 
+// Information about a single racer in the race.
 USTRUCT()
 struct FRacerInfo
 {
@@ -25,11 +27,14 @@ public:
     UFUNCTION()
     void OnRep_Racers();
 
+    // Update a racer's lap/checkpoint/time and re-sort positions.
     void UpdateRacerPosition(APlayerState* PS, int32 Lap, int32 Checkpoint, float Time, bool Finished);
 
+    // Get the sorted leaderboard.
     UFUNCTION(BlueprintPure)
     TArray<FRacerInfo> GetLeaderboard() const;
 
+    // Get a player's current position.
     UFUNCTION(BlueprintPure)
     int32 GetPlayerPosition(APlayerState* PS) const;
 };

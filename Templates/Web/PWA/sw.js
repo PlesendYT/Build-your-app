@@ -1,3 +1,4 @@
+// Name of the cache and list of assets to precache
 const CACHE_NAME = 'pwa-notes-v1';
 const ASSETS = [
   '/',
@@ -10,6 +11,7 @@ const ASSETS = [
   '/icon-512.png'
 ];
 
+// On install, cache all static assets and activate immediately
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
@@ -17,6 +19,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
+// On activate, delete old caches and claim all clients
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -26,6 +29,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+// On fetch, serve from cache first, update cache from network, fall back to cache
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cached) => {

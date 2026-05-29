@@ -1,3 +1,6 @@
+/// <summary>
+/// A pushable block that slides on the grid, tracks target tiles, and notifies the PuzzleManager.
+/// </summary>
 using UnityEngine;
 
 public class PushableBlock : MonoBehaviour
@@ -13,6 +16,9 @@ public class PushableBlock : MonoBehaviour
     private bool onTarget;
     private Rigidbody2D rb;
 
+    /// <summary>
+    /// Caches component references and finds the grid and puzzle managers.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -20,17 +26,26 @@ public class PushableBlock : MonoBehaviour
         puzzleManager = FindAnyObjectByType<PuzzleManager>();
     }
 
+    /// <summary>
+    /// Calculates the grid position and snaps to the grid.
+    /// </summary>
     private void Start()
     {
         gridPos = gridManager.WorldToGrid(transform.position);
         AlignToGrid();
     }
 
+    /// <summary>
+    /// Snaps the block position to the grid.
+    /// </summary>
     private void AlignToGrid()
     {
         transform.position = gridManager.GridToWorld(gridPos.x, gridPos.y);
     }
 
+    /// <summary>
+    /// Attempts to push the block in the given direction if valid and not already moving.
+    /// </summary>
     public bool TryPush(Vector2Int direction)
     {
         if (isMoving) return false;
@@ -48,6 +63,9 @@ public class PushableBlock : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Smoothly moves the block to the new grid position and checks if it lands on a target tile.
+    /// </summary>
     private System.Collections.IEnumerator MoveTo(Vector2Int newPos)
     {
         isMoving = true;

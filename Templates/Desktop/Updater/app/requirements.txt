@@ -1,0 +1,4 @@
+# Requirements for the updater script
+# No external dependencies beyond Python standard library
+# Add HTTP client libraries if needed:
+# requests>=2.28.0

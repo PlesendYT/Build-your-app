@@ -1,5 +1,6 @@
 ## Script for Choice Game
 ## Every choice matters
+# Main branching story: player choices affect stats (courage/kindness/cunning) and determine the ending
 
 label start:
     scene bg crossroads

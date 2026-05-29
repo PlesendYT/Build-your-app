@@ -1,0 +1,70 @@
+/* Popup reset and base layout */
+html, body {
+  width: 300px;
+  min-height: 240px;
+  margin: 0;
+  padding: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+/* Flex container for popup sections */
+#app {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Extension title */
+h1 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: #2563eb;
+}
+
+/* Section heading */
+h2 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: #374151;
+}
+
+/* Bookmark list */
+#bookmarkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#bookmarkList li {
+  padding: 4px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+#bookmarkList a {
+  color: #2563eb;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+#bookmarkList a:hover {
+  text-decoration: underline;
+}
+
+/* Generic button styling */
+button {
+  padding: 6px 14px;
+  font-size: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #f3f4f6;
+}

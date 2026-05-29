@@ -1,3 +1,5 @@
+// Package main implements a system monitoring CLI tool that displays
+// system info, process lists, and disk usage in JSON format.
 package main
 
 import (
@@ -14,6 +16,7 @@ import (
 	"github.com/shirou/gopsutil/v3/process"
 )
 
+// main dispatches to the requested subcommand: info, ps, or disk.
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Verwendung: system-tool <command>")
@@ -35,11 +38,13 @@ func main() {
 	}
 }
 
+// printJSON marshals a value to indented JSON and prints it to stdout.
 func printJSON(v interface{}) {
 	data, _ := json.MarshalIndent(v, "", "  ")
 	fmt.Println(string(data))
 }
 
+// printSysInfo gathers CPU, memory, and load information and prints it as JSON.
 func printSysInfo() {
 	cpuPercent, _ := cpu.Percent(time.Second, false)
 	memInfo, _ := mem.VirtualMemory()
@@ -59,6 +64,8 @@ func printSysInfo() {
 	printJSON(info)
 }
 
+// printProcesses lists up to 20 active processes (with CPU or memory usage)
+// and prints them as a JSON array.
 func printProcesses() {
 	procs, err := process.Processes()
 	if err != nil {
@@ -88,6 +95,7 @@ func printProcesses() {
 	printJSON(list)
 }
 
+// printDiskInfo retrieves partition and usage information and prints it as JSON.
 func printDiskInfo() {
 	parts, _ := disk.Partitions(false)
 	var infos []map[string]interface{}

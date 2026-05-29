@@ -1,9 +1,11 @@
+// 2D platformer character with double jump, facing direction, coins/gems, and lives.
 #include "TwoDPlatformerCharacter.h"
 #include "PaperFlipbookComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+// Set up sprite, enable tick, configure move speed.
 ATwoDPlatformerCharacter::ATwoDPlatformerCharacter()
 {
     Sprite = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
@@ -12,6 +14,7 @@ ATwoDPlatformerCharacter::ATwoDPlatformerCharacter()
     GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
 }
 
+// Store respawn point and register input mapping context.
 void ATwoDPlatformerCharacter::BeginPlay()
 {
     Super::BeginPlay();
@@ -21,6 +24,7 @@ void ATwoDPlatformerCharacter::BeginPlay()
             S->AddMappingContext(InputMapping, 0);
 }
 
+// Face movement direction by rotating the sprite.
 void ATwoDPlatformerCharacter::Tick(float DT)
 {
     Super::Tick(DT);
@@ -32,6 +36,7 @@ void ATwoDPlatformerCharacter::Tick(float DT)
     }
 }
 
+// Bind enhanced input actions for horizontal movement and jump.
 void ATwoDPlatformerCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
 {
     if (auto* EIC = Cast<UEnhancedInputComponent>(PIC))
@@ -41,11 +46,13 @@ void ATwoDPlatformerCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
     }
 }
 
+// Move horizontally.
 void ATwoDPlatformerCharacter::MoveHorizontal(const FInputActionValue& V)
 {
     AddMovementInput(FVector::RightVector, V.Get<float>());
 }
 
+// Perform a jump (supports double jump).
 void ATwoDPlatformerCharacter::PlayerJump()
 {
     if (JumpCount < MaxJumps)
@@ -56,15 +63,19 @@ void ATwoDPlatformerCharacter::PlayerJump()
     }
 }
 
+// Reset jump count on landing.
 void ATwoDPlatformerCharacter::Landed(const FHitResult& Hit)
 {
     Super::Landed(Hit);
     JumpCount = 0;
 }
 
+// Add coins collected.
 void ATwoDPlatformerCharacter::AddCoin(int32 Amount) { CoinCount += Amount; }
+// Add gems collected.
 void ATwoDPlatformerCharacter::AddGem(int32 Amount) { GemCount += Amount; }
 
+// Handle death: decrement lives, respawn or destroy.
 void ATwoDPlatformerCharacter::Die()
 {
     Lives--;
@@ -72,6 +83,7 @@ void ATwoDPlatformerCharacter::Die()
     else Destroy();
 }
 
+// Move character back to respawn location.
 void ATwoDPlatformerCharacter::Respawn()
 {
     SetActorLocation(RespawnLocation);

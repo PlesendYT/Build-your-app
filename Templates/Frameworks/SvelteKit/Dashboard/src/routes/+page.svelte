@@ -1,4 +1,5 @@
 <script lang="ts">
+  // Dashboard statistics data: label, current value, change indicator
   const stats = [
     { label: 'Umsatz', value: '€12,430', change: '+12%', positive: true },
     { label: 'Bestellungen', value: '156', change: '+8%', positive: true },

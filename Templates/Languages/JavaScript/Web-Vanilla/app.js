@@ -1,4 +1,5 @@
-// Web-Vanilla — Hauptapplikation
+// Web-Vanilla — main application
+// Demonstrates a counter and a weather fetch API demo using vanilla DOM manipulation
 
 /* ── Counter ── */
 
@@ -9,6 +10,7 @@ const btnReset = document.getElementById('btn-reset');
 
 let count = 0;
 
+/** Updates the counter display in the DOM */
 function updateCounter() {
   counterValue.textContent = count;
 }
@@ -33,20 +35,21 @@ btnReset.addEventListener('click', () => {
 const btnFetch = document.getElementById('btn-fetch');
 const weatherOutput = document.getElementById('weather-output');
 
+/** Fetches current weather data from the Open-Meteo API and displays it */
 async function fetchWeather() {
   try {
-    weatherOutput.textContent = 'Lade… / Loading…';
+    weatherOutput.textContent = 'Loading…';
     const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     weatherOutput.textContent = JSON.stringify(data, null, 2);
   } catch (err) {
-    weatherOutput.textContent = `Fehler / Error: ${err.message}`;
+    weatherOutput.textContent = `Error: ${err.message}`;
   }
 }
 
 btnFetch.addEventListener('click', fetchWeather);
 
-/* ── Initialisieren ── */
+/* ── Initialize ── */
 
 updateCounter();

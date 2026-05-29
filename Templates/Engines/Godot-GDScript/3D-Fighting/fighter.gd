@@ -1,3 +1,5 @@
+# 3D fighting game fighter controller
+# Supports two-player movement, combo attack system, hit detection, and damage
 extends CharacterBody3D
 
 @export var speed: float = 8.0

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!-- Chromium extension popup opened from the toolbar icon -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chromium Extension</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Main popup container -->
+  <div id="app">
+    <h1>Chromium Extension</h1>
+
+    <!-- Bookmark list section -->
+    <section>
+      <h2>Saved Bookmarks</h2>
+      <ul id="bookmarkList">
+        <li>No bookmarks yet.</li>
+      </ul>
+      <button id="refreshBtn">Refresh</button>
+    </section>
+
+    <!-- Quick actions -->
+    <section>
+      <h2>Quick Actions</h2>
+      <button id="highlightLinksBtn">Highlight Links</button>
+    </section>
+  </div>
+
+  <!-- Popup logic -->
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,3 +1,4 @@
+# Turn-based strategy game manager: turns, unit spawning, movement, combat, and win conditions
 extends Node
 
 @export var map_width: int = 20

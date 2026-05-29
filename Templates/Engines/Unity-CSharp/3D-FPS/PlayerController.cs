@@ -1,3 +1,6 @@
+/// <summary>
+/// FPS player with movement, mouse look, jumping, and gravity.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

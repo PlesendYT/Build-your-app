@@ -1,3 +1,4 @@
+// Main gameplay scene — player movement, enemy spawning, and coin collection with scoring
 import Phaser from 'phaser';
 
 export class GameScene extends Phaser.Scene {
@@ -12,6 +13,7 @@ export class GameScene extends Phaser.Scene {
     super('Game');
   }
 
+  // Initialise scene objects, physics, and timed spawners
   create(): void {
     this.score = 0;
     this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '24px', color: '#fff' });
@@ -24,6 +26,7 @@ export class GameScene extends Phaser.Scene {
     this.enemies = this.physics.add.group();
     this.coins = this.physics.add.group();
 
+    // Spawn enemies every 1.5 seconds
     this.time.addEvent({
       delay: 1500,
       callback: this.spawnEnemy,
@@ -31,6 +34,7 @@ export class GameScene extends Phaser.Scene {
       loop: true,
     });
 
+    // Spawn coins every 0.8 seconds
     this.time.addEvent({
       delay: 800,
       callback: this.spawnCoin,
@@ -38,10 +42,12 @@ export class GameScene extends Phaser.Scene {
       loop: true,
     });
 
+    // Register overlap callbacks for collisions
     this.physics.add.overlap(this.player, this.enemies, this.hitEnemy, undefined, this);
     this.physics.add.overlap(this.player, this.coins, this.collectCoin, undefined, this);
   }
 
+  // Per-frame update — handle player movement via cursor keys
   update(): void {
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     body.setVelocity(0);
@@ -52,6 +58,7 @@ export class GameScene extends Phaser.Scene {
     if (this.cursors.down.isDown)  body.setVelocityY(200);
   }
 
+  // Spawn a red enemy rectangle at a random X position, falling downward
   private spawnEnemy(): void {
     const x = Phaser.Math.Between(20, 780);
     const enemy = this.add.rectangle(x, -20, 24, 24, 0xff4444);
@@ -60,6 +67,7 @@ export class GameScene extends Phaser.Scene {
     this.enemies.add(enemy);
   }
 
+  // Spawn a gold coin rectangle at a random position
   private spawnCoin(): void {
     const x = Phaser.Math.Between(20, 780);
     const coin = this.add.rectangle(x, Phaser.Math.Between(20, 580), 16, 16, 0xffd700);
@@ -67,6 +75,7 @@ export class GameScene extends Phaser.Scene {
     this.coins.add(coin);
   }
 
+  // Called when the player overlaps an enemy — restart the scene
   private hitEnemy(
     _player: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile,
     _enemy: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile
@@ -74,6 +83,7 @@ export class GameScene extends Phaser.Scene {
     this.scene.start('Game');
   }
 
+  // Called when the player overlaps a coin — destroy it and increase score
   private collectCoin(
     _player: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile,
     coin: Phaser.Types.Physics.Arcade.GameObjectWithBody | Phaser.Tilemaps.Tile

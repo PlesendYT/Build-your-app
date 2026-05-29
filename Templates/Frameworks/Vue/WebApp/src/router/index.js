@@ -1,3 +1,7 @@
+/**
+ * Vue Router configuration for the WebApp.
+ * Defines routes for Home, About, and Contact pages with lazy loading.
+ */
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 

@@ -1,3 +1,6 @@
+/// <summary>
+/// Creates a parallax scrolling background effect with multiple layers that loop.
+/// </summary>
 using UnityEngine;
 
 public class ScrollingBackground : MonoBehaviour
@@ -10,6 +13,9 @@ public class ScrollingBackground : MonoBehaviour
     private float[] parallaxScales;
     private Vector3[] startPositions;
 
+    /// <summary>
+    /// Records start positions and calculates parallax scales (closer layers scroll faster).
+    /// </summary>
     private void Start()
     {
         startPositions = new Vector3[backgrounds.Length];
@@ -22,6 +28,9 @@ public class ScrollingBackground : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves each background layer leftward at different speeds and loops them when off-screen.
+    /// </summary>
     private void Update()
     {
         for (int i = 0; i < backgrounds.Length; i++)

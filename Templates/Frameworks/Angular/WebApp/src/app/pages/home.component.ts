@@ -1,3 +1,4 @@
+// Home page component — hero section + data grid loaded from the API
 import { Component, OnInit, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { RouterLink } from '@angular/router'
@@ -39,6 +40,7 @@ export class HomeComponent implements OnInit {
   items: any[] = []
   loading = true
 
+  // Fetch items from the API on component initialisation
   ngOnInit() {
     this.http.get('/api/items').subscribe({
       next: (data: any) => this.items = data,

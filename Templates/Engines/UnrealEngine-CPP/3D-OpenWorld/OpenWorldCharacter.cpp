@@ -1,3 +1,4 @@
+// Open world character with quests, location discovery, and save/load.
 #include "OpenWorldCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -6,6 +7,7 @@
 
 AOpenWorldCharacter::AOpenWorldCharacter() {}
 
+// Register the enhanced input mapping context at start.
 void AOpenWorldCharacter::BeginPlay()
 {
     Super::BeginPlay();
@@ -14,6 +16,7 @@ void AOpenWorldCharacter::BeginPlay()
             S->AddMappingContext(InputMapping, 0);
 }
 
+// Bind enhanced input actions.
 void AOpenWorldCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
 {
     if (auto* EIC = Cast<UEnhancedInputComponent>(PIC))
@@ -25,6 +28,7 @@ void AOpenWorldCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
     }
 }
 
+// Handle movement input.
 void AOpenWorldCharacter::Move(const FInputActionValue& V)
 {
     FVector2D Vec = V.Get<FVector2D>();
@@ -32,6 +36,7 @@ void AOpenWorldCharacter::Move(const FInputActionValue& V)
     AddMovementInput(GetActorRightVector(), Vec.X);
 }
 
+// Handle mouse look input.
 void AOpenWorldCharacter::Look(const FInputActionValue& V)
 {
     FVector2D Vec = V.Get<FVector2D>();
@@ -42,22 +47,26 @@ void AOpenWorldCharacter::Look(const FInputActionValue& V)
 void AOpenWorldCharacter::Interact() {}
 void AOpenWorldCharacter::OpenMap() {}
 
+// Add a new quest to the character's quest log.
 void AOpenWorldCharacter::AddQuest(FWorldQuest Quest)
 {
     Quests.Add(Quest);
 }
 
+// Mark a quest as completed.
 void AOpenWorldCharacter::CompleteQuest(FName QuestID)
 {
     for (auto& Q : Quests)
         if (Q.QuestID == QuestID) Q.bIsCompleted = true;
 }
 
+// Add a discovered location to the list.
 void AOpenWorldCharacter::DiscoverLocation(FVector2D Location)
 {
     DiscoveredLocations.AddUnique(Location);
 }
 
+// Save game data to a slot.
 void AOpenWorldCharacter::SaveGame(FString SlotName)
 {
     if (auto* SG = UGameplayStatics::CreateSaveGameObject(USaveGame::StaticClass()))
@@ -66,6 +75,7 @@ void AOpenWorldCharacter::SaveGame(FString SlotName)
     }
 }
 
+// Load game data from a slot.
 void AOpenWorldCharacter::LoadGame(FString SlotName)
 {
     if (UGameplayStatics::DoesSaveGameExist(SlotName, 0))

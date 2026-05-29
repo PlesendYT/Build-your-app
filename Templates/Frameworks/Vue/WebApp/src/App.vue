@@ -1,7 +1,9 @@
 <script setup>
+// Import router components for layout navigation and view rendering
 import { RouterView, RouterLink } from 'vue-router'
 </script>
 
+<!-- Root layout with header navigation, main router view, and footer -->
 <template>
   <div class="app-layout">
     <header class="app-header">

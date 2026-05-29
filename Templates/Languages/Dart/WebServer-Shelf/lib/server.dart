@@ -1,9 +1,11 @@
+/// Library providing an ApiServer class with REST endpoints and a main function to start the server.
 import 'dart:io';
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
 
+/// A Shelf-based web server with CORS support and CRUD routes for items.
 class ApiServer {
   late final Router _router;
   final List<Map<String, dynamic>> _items = [
@@ -19,6 +21,7 @@ class ApiServer {
       ..post('/api/items', _handleCreateItem);
   }
 
+  /// Returns the middleware pipeline with request logging and CORS headers.
   Middleware get middleware {
     final middlewares = Pipeline()
       .addMiddleware(logRequests())
@@ -45,6 +48,7 @@ class ApiServer {
     };
   }
 
+  /// Serves an HTML index page at the root URL.
   Future<Response> _handleIndex(Request request) async {
     return Response.ok(
       '<h1>Dart Shelf Server</h1>',
@@ -52,11 +56,13 @@ class ApiServer {
     );
   }
 
+  /// Returns a JSON array of all items.
   Future<Response> _handleGetItems(Request request) async {
     final body = jsonEncode(_items);
     return Response.ok(body, headers: {'content-type': 'application/json'});
   }
 
+  /// Returns a single item by [id], or 404 if not found.
   Future<Response> _handleGetItem(Request request, String id) async {
     final itemId = int.tryParse(id);
     if (itemId == null) {
@@ -70,6 +76,7 @@ class ApiServer {
         headers: {'content-type': 'application/json'});
   }
 
+  /// Creates a new item from the JSON request body and returns it with status 201.
   Future<Response> _handleCreateItem(Request request) async {
     final body = await request.readAsString();
     final data = jsonDecode(body) as Map<String, dynamic>;
@@ -84,6 +91,7 @@ class ApiServer {
   }
 }
 
+/// Starts the server on localhost:8080 with the ApiServer middleware pipeline.
 Future<void> main() async {
   final server = ApiServer();
   final handler = server.middleware;

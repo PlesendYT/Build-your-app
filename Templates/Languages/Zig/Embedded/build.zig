@@ -1,3 +1,4 @@
+/// Build configuration for the embedded simulation project
 const std = @import("std");
 
 pub fn build(b: *std.Build) void {

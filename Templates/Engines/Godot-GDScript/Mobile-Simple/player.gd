@@ -1,3 +1,4 @@
+# Mobile player controller with tap-to-move and swipe-to-dash mechanics
 extends CharacterBody2D
 
 @export var move_speed: float = 300.0

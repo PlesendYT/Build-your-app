@@ -1,13 +1,16 @@
+// Entry point for the Angular Enterprise template — bootsraps a standalone app with routing and auth guard
 import { bootstrapApplication } from '@angular/platform-browser'
 import { provideRouter, CanActivateFn } from '@angular/router'
 import { inject } from '@angular/core'
 import { Component } from '@angular/core'
 import { RouterOutlet, RouterLink, Routes } from '@angular/router'
 
+// Route guard that checks for a token in localStorage
 const authGuard: CanActivateFn = () => {
   return !!localStorage.getItem('token')
 }
 
+// Root layout component with navigation header
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -24,6 +27,7 @@ const authGuard: CanActivateFn = () => {
 })
 export class AppComponent {}
 
+// Public home page component
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -31,6 +35,7 @@ export class AppComponent {}
 })
 export class HomeComponent {}
 
+// Protected dashboard component (requires authGuard)
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -38,6 +43,7 @@ export class HomeComponent {}
 })
 export class DashboardComponent {}
 
+// Protected admin component (requires authGuard)
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -45,10 +51,12 @@ export class DashboardComponent {}
 })
 export class AdminComponent {}
 
+// Application route definitions
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard] },
 ]
 
+// Bootstrap the standalone app with routing providers
 bootstrapApplication(AppComponent, { providers: [provideRouter(routes)] })

@@ -1,11 +1,15 @@
+/// A Flutter app using Riverpod for state management and go_router for navigation.
+/// Features a counter screen and a settings screen with dark mode toggle.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+/// Provider that exposes the current counter value and its notifier.
 final counterProvider = StateNotifierProvider<CounterNotifier, int>((ref) {
   return CounterNotifier();
 });
 
+/// Manages the counter state with increment, decrement, and reset actions.
 class CounterNotifier extends StateNotifier<int> {
   CounterNotifier() : super(0);
 
@@ -14,8 +18,10 @@ class CounterNotifier extends StateNotifier<int> {
   void reset() => state = 0;
 }
 
+/// Provider for the selected theme mode (system, light, or dark).
 final themeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
 
+/// The main home screen showing a counter with increment/decrement buttons and a settings link.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -63,6 +69,7 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+/// Settings screen with a dark mode toggle switch and a back button.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -94,6 +101,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+/// Provider that configures the GoRouter with routes for HomeScreen and SettingsScreen.
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     routes: [
@@ -103,6 +111,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
+/// Root app widget that sets up MaterialApp.router with theme support.
 class App extends ConsumerWidget {
   const App({super.key});
 
@@ -129,6 +138,7 @@ class App extends ConsumerWidget {
   }
 }
 
+/// Application entry point. Wraps the app in a ProviderScope for Riverpod.
 void main() {
   runApp(const ProviderScope(child: App()));
 }

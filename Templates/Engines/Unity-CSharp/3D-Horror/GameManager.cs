@@ -1,3 +1,6 @@
+/// <summary>
+/// Horror game state: fear level, sanity effects, jump scare triggers, and save system.
+/// </summary>
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

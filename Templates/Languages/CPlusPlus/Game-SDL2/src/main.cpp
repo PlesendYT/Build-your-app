@@ -1,3 +1,4 @@
+// SDL2 coin-collection game (C++) - collect coins with keyboard controls.
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <algorithm>
@@ -7,6 +8,7 @@
 #include <vector>
 #include <string>
 
+// Custom deleters for SDL unique_ptr wrappers.
 struct SDLDeleter {
     void operator()(SDL_Window* w) const { SDL_DestroyWindow(w); }
     void operator()(SDL_Renderer* r) const { SDL_DestroyRenderer(r); }
@@ -14,6 +16,7 @@ struct SDLDeleter {
 using WindowPtr = std::unique_ptr<SDL_Window, SDLDeleter>;
 using RendererPtr = std::unique_ptr<SDL_Renderer, SDLDeleter>;
 
+// Entry point: initialize, spawn coins, run game loop.
 int main(int argc, char* argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();

@@ -1,3 +1,7 @@
+/**
+ * Desktop-Tool sample: a Swing application with an embedded SQLite database
+ * for managing CRUD operations on items.
+ */
 package desktop.tool;
 
 import javax.swing.*;
@@ -6,6 +10,9 @@ import java.awt.*;
 import java.sql.*;
 import java.util.Vector;
 
+/**
+ * Application entry point. Launches the Swing UI on the EDT.
+ */
 public final class Main {
 
     public static void main(String... args) {
@@ -18,9 +25,13 @@ public final class Main {
     }
 }
 
+/**
+ * Wraps an SQLite connection with execute/query helpers and auto-closes.
+ */
 final class Database implements AutoCloseable {
     private final Connection conn;
 
+    /** Opens (or creates) the SQLite database at the given path. */
     Database(String path) {
         try {
             conn = DriverManager.getConnection("jdbc:sqlite:" + path);
@@ -29,6 +40,7 @@ final class Database implements AutoCloseable {
         }
     }
 
+    /** Creates the items table if it does not exist. */
     void initialize() {
         execute("CREATE TABLE IF NOT EXISTS items (" +
             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -36,6 +48,7 @@ final class Database implements AutoCloseable {
             "value TEXT)");
     }
 
+    /** Executes a parameterised write statement. */
     void execute(String sql, Object... params) {
         try (var stmt = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) stmt.setObject(i + 1, params[i]);
@@ -45,6 +58,7 @@ final class Database implements AutoCloseable {
         }
     }
 
+    /** Runs a parameterised SELECT and returns the result rows. */
     Vector<Vector<Object>> query(String sql, Object... params) {
         var rows = new Vector<Vector<Object>>();
         try (var stmt = conn.prepareStatement(sql)) {
@@ -65,6 +79,9 @@ final class Database implements AutoCloseable {
     @Override public void close() throws Exception { conn.close(); }
 }
 
+/**
+ * Main application window with a table, input fields, and add/delete buttons.
+ */
 final class MainFrame extends JFrame {
     private final Database db;
     private final DefaultTableModel tableModel = new DefaultTableModel();
@@ -72,6 +89,7 @@ final class MainFrame extends JFrame {
     private final JTextField nameField = new JTextField(20);
     private final JTextField valueField = new JTextField(20);
 
+    /** Constructs the frame, configures the UI, and populates the table. */
     MainFrame(Database db) {
         super("Desktop Tool");
         this.db = db;
@@ -80,6 +98,7 @@ final class MainFrame extends JFrame {
         setSize(800, 500);
         setLocationRelativeTo(null);
 
+        // Set up table columns and load existing data
         tableModel.addColumn("ID");
         tableModel.addColumn("Name");
         tableModel.addColumn("Wert");
@@ -87,12 +106,14 @@ final class MainFrame extends JFrame {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
+        // Input panel with name/value fields and action buttons
         var inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         inputPanel.add(new JLabel("Name:"));
         inputPanel.add(nameField);
         inputPanel.add(new JLabel("Wert:"));
         inputPanel.add(valueField);
 
+        // "Add" button inserts a new row into the database
         var addBtn = new JButton("Hinzufügen");
         addBtn.addActionListener(e -> {
             db.execute("INSERT INTO items (name, value) VALUES (?, ?)",
@@ -103,6 +124,7 @@ final class MainFrame extends JFrame {
         });
         inputPanel.add(addBtn);
 
+        // "Delete" button removes the selected row
         var deleteBtn = new JButton("Löschen");
         deleteBtn.addActionListener(e -> {
             var row = table.getSelectedRow();
@@ -117,6 +139,7 @@ final class MainFrame extends JFrame {
         add(inputPanel, BorderLayout.SOUTH);
     }
 
+    /** Reloads all rows from the database into the table model. */
     private void refreshTable() {
         tableModel.setRowCount(0);
         for (var row : db.query("SELECT * FROM items")) {

@@ -1,3 +1,4 @@
+// Entry point — creates a Phaser game instance with arcade physics and two scenes
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene.js';
 import { GameScene } from './scenes/GameScene.js';

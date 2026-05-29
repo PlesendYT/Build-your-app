@@ -1,3 +1,4 @@
+# Card game UI: displays hand cards, mana, health, and end-turn button
 extends Control
 
 @onready var hand_container: HBoxContainer = $HandContainer

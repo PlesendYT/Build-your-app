@@ -1,7 +1,13 @@
+/// <summary>
+/// Tracks rhythm game scoring with combo multiplier and rating categories (Perfect, Good, Bad, Miss).
+/// </summary>
 using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance for global access.
+    /// </summary>
     public static ScoreManager Instance { get; private set; }
 
     [Header("Scoring")]
@@ -18,6 +24,9 @@ public class ScoreManager : MonoBehaviour
     public TMPro.TextMeshProUGUI comboText;
     public TMPro.TextMeshProUGUI ratingText;
 
+    /// <summary>
+    /// Initializes the singleton instance.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -30,6 +39,9 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Adds points based on the rating, updates combo, and applies combo bonus.
+    /// </summary>
     public void AddScore(ScoreRating rating)
     {
         int baseScore = rating switch
@@ -57,6 +69,9 @@ public class ScoreManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Updates the score and combo text displays.
+    /// </summary>
     private void UpdateUI()
     {
         if (scoreText != null) scoreText.text = score.ToString("N0");

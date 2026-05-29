@@ -1,4 +1,5 @@
 ## Screens for Horror Visual Novel
+# Sanity/battery status display and safe room action menu
 
 screen survival_status():
     vbox:

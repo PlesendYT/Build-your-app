@@ -1,4 +1,5 @@
 ## Screens for Comedy Visual Novel
+# Chaos level display and comedy choice screen
 
 screen chaos_meter():
     vbox:

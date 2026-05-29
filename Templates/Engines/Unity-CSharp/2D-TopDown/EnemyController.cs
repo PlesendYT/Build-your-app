@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls a top-down enemy that chases the player and attacks when in range.
+/// </summary>
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -13,12 +16,18 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D rb;
     private float lastAttackTime;
 
+    /// <summary>
+    /// Caches references and finds the player transform.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
     }
 
+    /// <summary>
+    /// Evaluates distance to player and decides whether to chase or attack each physics frame.
+    /// </summary>
     private void FixedUpdate()
     {
         if (player == null) return;
@@ -40,12 +49,18 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves the enemy toward the player.
+    /// </summary>
     private void ChasePlayer()
     {
         Vector2 direction = (player.position - transform.position).normalized;
         rb.linearVelocity = direction * chaseSpeed;
     }
 
+    /// <summary>
+    /// Attacks the player if the cooldown has elapsed.
+    /// </summary>
     private void TryAttack()
     {
         if (Time.time >= lastAttackTime + attackCooldown)
@@ -55,6 +70,9 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Draws chase and attack range gizmos in the editor.
+    /// </summary>
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;

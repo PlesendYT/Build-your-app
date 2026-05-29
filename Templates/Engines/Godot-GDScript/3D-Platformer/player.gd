@@ -1,3 +1,4 @@
+# 3D platformer player controller with double-jump, checkpoint system, and coin collection
 extends CharacterBody3D
 
 @export var speed: float = 8.0

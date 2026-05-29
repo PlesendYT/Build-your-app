@@ -12,6 +12,7 @@ def greet(name: str) -> str:
 
 def main() -> None:
     """Main entry point."""
+    # Read first CLI argument or default to "World"
     args = sys.argv[1:]
     name = args[0] if args else "World"
     print(greet(name))

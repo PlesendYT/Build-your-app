@@ -1,3 +1,5 @@
+// Package main implements a CLI tool using the Cobra library,
+// providing greet and calc subcommands.
 package main
 
 import (
@@ -8,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// rootCmd is the base command that displays help when invoked without subcommands.
 var rootCmd = &cobra.Command{
 	Use:   "cli",
 	Short: "Go CLI-Tool",
@@ -17,6 +20,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// greetCmd prints a greeting message, optionally in uppercase.
 var greetCmd = &cobra.Command{
 	Use:   "greet [name]",
 	Short: "Begrüßung",
@@ -40,6 +44,7 @@ var greetCmd = &cobra.Command{
 	},
 }
 
+// calcCmd performs basic arithmetic (add, sub, mul, div) on two integers.
 var calcCmd = &cobra.Command{
 	Use:   "calc <op> <a> <b>",
 	Short: "Berechnung (add/sub/mul/div)",
@@ -75,12 +80,14 @@ var calcCmd = &cobra.Command{
 	},
 }
 
+// init registers the greet and calc subcommands with the root command.
 func init() {
 	greetCmd.Flags().Bool("upper", false, "Großbuchstaben")
 	rootCmd.AddCommand(greetCmd)
 	rootCmd.AddCommand(calcCmd)
 }
 
+// main executes the root Cobra command and exits on error.
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)

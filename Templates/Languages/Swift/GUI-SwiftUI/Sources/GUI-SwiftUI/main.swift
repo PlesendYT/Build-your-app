@@ -1,3 +1,4 @@
+/// SwiftUI-based macOS application with a navigation split view and item management.
 import SwiftUI
 
 @main
@@ -13,6 +14,7 @@ struct SwiftUIApp: App {
     }
 }
 
+/// Observable model holding the list of items and the currently selected item.
 @Observable
 final class AppModel {
     var items: [Item] = [
@@ -21,18 +23,21 @@ final class AppModel {
     ]
     var selectedItem: Item?
 
+    /// Creates a new item, appends it to the list, and selects it.
     func addItem() {
         let newItem = Item(title: "New Item \(items.count + 1)", note: "")
         items.append(newItem)
         selectedItem = newItem
     }
 
+    /// Removes items at the specified offsets and clears selection.
     func deleteItems(at offsets: IndexSet) {
         items.remove(atOffsets: offsets)
         selectedItem = nil
     }
 }
 
+/// A single item with a title and note, identifiable and codable.
 struct Item: Identifiable, Codable, Hashable {
     let id: UUID
     var title: String
@@ -45,6 +50,7 @@ struct Item: Identifiable, Codable, Hashable {
     }
 }
 
+/// Main view with a sidebar list and a detail panel for the selected item.
 struct ContentView: View {
     @Environment(AppModel.self) private var model
 
@@ -68,6 +74,7 @@ struct ContentView: View {
                 }
             }
         } detail: {
+            // Show item detail or placeholder when nothing is selected
             if let selectedItem = model.selectedItem {
                 ItemDetailView(item: selectedItem)
             } else {
@@ -81,6 +88,7 @@ struct ContentView: View {
     }
 }
 
+/// Form view for editing a single item's title and note.
 struct ItemDetailView: View {
     @Bindable var item: Item
 

@@ -1,4 +1,5 @@
 ## Characters for Horror Visual Novel
+# Defines characters and survival stats: sanity, battery, key items, and monster encounters
 
 define protagonist = Character("Alex", color="#95a5a6")
 define friend = Character("Morgan", color="#e74c3c")

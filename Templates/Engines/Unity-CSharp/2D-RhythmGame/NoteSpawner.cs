@@ -1,8 +1,14 @@
+/// <summary>
+/// Spawns rhythm game notes in time with the music, with multi-lane support and note data loading.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
 public class NoteSpawner : MonoBehaviour
 {
+    /// <summary>
+    /// Data for a single note event in the song.
+    /// </summary>
     [System.Serializable]
     public class NoteData
     {
@@ -33,12 +39,18 @@ public class NoteSpawner : MonoBehaviour
     private float songStartTime;
     private bool isPlaying;
 
+    /// <summary>
+    /// Loads song data into the note list on start.
+    /// </summary>
     private void Start()
     {
         noteDataList = new List<NoteData>();
         LoadSongData();
     }
 
+    /// <summary>
+    /// Spawns notes ahead of the current song time and detects song end.
+    /// </summary>
     private void Update()
     {
         if (!isPlaying) return;
@@ -59,6 +71,9 @@ public class NoteSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instantiates a note at the correct lane with travel data.
+    /// </summary>
     private void SpawnNote(NoteData data)
     {
         if (data.lane < 0 || data.lane >= laneCount) return;
@@ -76,6 +91,9 @@ public class NoteSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Starts music playback and begins spawning notes.
+    /// </summary>
     public void StartSong()
     {
         if (musicSource != null)
@@ -86,9 +104,11 @@ public class NoteSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Populates note data (example: procedural generation based on BPM).
+    /// </summary>
     private void LoadSongData()
     {
-        // Example: populate note data manually
         float beatDuration = 60f / bpm;
         for (int i = 0; i < 64; i++)
         {
@@ -101,6 +121,9 @@ public class NoteSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the song playback progress as a 0-1 value.
+    /// </summary>
     public float GetSongProgress()
     {
         if (musicSource == null || musicSource.clip == null) return 0f;

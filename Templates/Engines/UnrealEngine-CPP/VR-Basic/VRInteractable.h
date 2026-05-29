@@ -1,3 +1,4 @@
+// VR interactable actor header - supports interaction, grab, and release.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -12,12 +13,15 @@ class AVRInteractable : public AActor
 public:
     AVRInteractable();
 
+    // Called when the player interacts with this object.
     UFUNCTION(BlueprintNativeEvent)
     void OnInteract(AVRPawn* Interactor);
 
+    // Called when the player grabs this object.
     UFUNCTION(BlueprintNativeEvent)
     void OnGrab(AVRPawn* Interactor);
 
+    // Called when the player releases this object.
     UFUNCTION(BlueprintNativeEvent)
     void OnRelease(AVRPawn* Interactor);
 

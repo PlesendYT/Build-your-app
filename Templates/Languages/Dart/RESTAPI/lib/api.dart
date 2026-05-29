@@ -1,7 +1,9 @@
+/// REST API library providing a User model and UserController with CRUD endpoints.
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
+/// Represents a user with id, name, email, and creation timestamp.
 class User {
   final int id;
   final String name;
@@ -28,6 +30,7 @@ class User {
   }
 }
 
+/// Handles HTTP requests for user CRUD operations via a Shelf router.
 class UserController {
   final List<User> _users = [];
   int _nextId = 1;
@@ -37,11 +40,13 @@ class UserController {
     _users.add(User(id: _nextId++, name: 'Bob', email: 'bob@example.com'));
   }
 
+  /// Returns a JSON array of all users.
   Future<Response> getAll(Request request) async {
     final body = jsonEncode(_users.map((u) => u.toJson()).toList());
     return Response.ok(body, headers: {'content-type': 'application/json'});
   }
 
+  /// Returns a single user by [id] or a 404 if not found.
   Future<Response> getById(Request request, String id) async {
     final userId = int.tryParse(id);
     if (userId == null) return Response(400, body: 'Invalid ID');
@@ -51,6 +56,7 @@ class UserController {
         headers: {'content-type': 'application/json'});
   }
 
+  /// Creates a new user from the JSON request body and returns it with status 201.
   Future<Response> create(Request request) async {
     final body = await request.readAsString();
     final json = jsonDecode(body) as Map<String, dynamic>;
@@ -62,6 +68,7 @@ class UserController {
         headers: {'content-type': 'application/json'});
   }
 
+  /// Deletes the user with the given [id]. Returns 204 on success or 404 if not found.
   Future<Response> delete(Request request, String id) async {
     final userId = int.tryParse(id);
     if (userId == null) return Response(400, body: 'Invalid ID');
@@ -70,6 +77,7 @@ class UserController {
     return Response(204);
   }
 
+  /// Builds and returns the Shelf Router with all user CRUD routes.
   Router get router {
     final r = Router();
     r.get('/api/users', getAll);

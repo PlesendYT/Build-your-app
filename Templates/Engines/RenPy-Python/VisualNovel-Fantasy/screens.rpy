@@ -1,4 +1,5 @@
 ## Screens for Fantasy Visual Novel
+# Player stat display and companion selection menu
 
 screen stats_display():
     vbox:

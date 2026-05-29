@@ -1,0 +1,93 @@
+/* ChatApp styles - full-screen chat interface with light theme */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Full-height body with centered chat container */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f0f2f5;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Main chat container card */
+#chat-container {
+  width: 100%;
+  max-width: 600px;
+  height: 90vh;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header with room label */
+header {
+  background: #2563eb;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 { font-size: 1.2rem; }
+
+#room-label {
+  background: rgba(255,255,255,0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+/* Scrollable message area */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Individual message bubble */
+.message {
+  background: #f0f2f5;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.message .time { font-size: 0.75rem; color: #6b7280; margin-left: 0.5rem; }
+.message p { margin-top: 0.25rem; }
+
+/* Input area at the bottom */
+#input-area {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+#input-area input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+#username-input, #room-input { flex: 0 0 120px; }
+
+#send-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#send-btn:hover { background: #1d4ed8; }

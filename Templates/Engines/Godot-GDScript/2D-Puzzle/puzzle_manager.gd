@@ -1,3 +1,4 @@
+# Puzzle manager: handles drag-and-drop, snapping to zones, piece return, and completion
 extends Node2D
 
 @export var snap_distance: float = 30.0

@@ -1,6 +1,13 @@
+// File: Enemy.cs
+// Top-down enemy AI that patrols waypoints and chases the player when detected.
+
 using Godot;
 using System;
 
+/// <summary>
+/// Enemy that alternates between patrolling a set of waypoints and chasing the player
+/// when the player enters its detection area. Chasing speed is 1.5x patrol speed.
+/// </summary>
 public partial class Enemy : CharacterBody2D
 {
     [Export] public float MoveSpeed = 80.0f;
@@ -20,6 +27,7 @@ public partial class Enemy : CharacterBody2D
         _detectionArea.BodyEntered += OnBodyEntered;
         _detectionArea.BodyExited += OnBodyExited;
 
+        // Set up a rectangular patrol route around the spawn position
         _patrolPoints = new Vector2[]
         {
             Position,
@@ -40,6 +48,9 @@ public partial class Enemy : CharacterBody2D
         _animatedSprite.Play("walk");
     }
 
+    /// <summary>
+    /// Moves toward the current patrol waypoint; cycles to the next when close enough.
+    /// </summary>
     private void Patrol()
     {
         Vector2 targetPos = _patrolPoints[_currentPointIndex];
@@ -49,11 +60,17 @@ public partial class Enemy : CharacterBody2D
             _currentPointIndex = (_currentPointIndex + 1) % _patrolPoints.Length;
     }
 
+    /// <summary>
+    /// Moves directly toward the target (player) at an increased speed.
+    /// </summary>
     private void ChaseTarget()
     {
         Velocity = (_target.Position - Position).Normalized() * (MoveSpeed * 1.5f);
     }
 
+    /// <summary>
+    /// Starts chasing when the player enters the detection area.
+    /// </summary>
     private void OnBodyEntered(Node2D body)
     {
         if (body.IsInGroup("player"))
@@ -63,6 +80,9 @@ public partial class Enemy : CharacterBody2D
         }
     }
 
+    /// <summary>
+    /// Stops chasing when the player leaves the detection area.
+    /// </summary>
     private void OnBodyExited(Node2D body)
     {
         if (body == _target)

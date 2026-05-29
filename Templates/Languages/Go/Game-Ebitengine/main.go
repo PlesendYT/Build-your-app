@@ -1,3 +1,5 @@
+// Package main implements a simple 2D shooter game using the Ebitengine
+// game engine, featuring player movement, bullets, and enemies.
 package main
 
 import (
@@ -9,6 +11,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+// Game holds all game state: player position, bullets, enemies, and score.
 type Game struct {
 	playerX, playerY float64
 	playerSpeed      float64
@@ -17,15 +20,19 @@ type Game struct {
 	score            int
 }
 
+// Bullet represents a projectile fired by the player, moving upward.
 type Bullet struct {
 	X, Y   float64
 	SpeedY float64
 }
 
+// Enemy represents an enemy that descends from the top of the screen.
 type Enemy struct {
 	X, Y float64
 }
 
+// Update handles per-frame logic: player movement, shooting, bullet updates,
+// enemy spawning, and collision detection.
 func (g *Game) Update() error {
 	// Player movement
 	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
@@ -84,6 +91,7 @@ func (g *Game) Update() error {
 	return nil
 }
 
+// Draw renders the player, bullets, enemies, and score each frame.
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0x10, 0x10, 0x20, 0xff})
 
@@ -104,10 +112,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, "Score: "+itoa(g.score))
 }
 
+// Layout sets the fixed game window size to 800x600.
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return 800, 600
 }
 
+// abs returns the absolute value of a float64.
 func abs(x float64) float64 {
 	if x < 0 {
 		return -x
@@ -115,6 +125,8 @@ func abs(x float64) float64 {
 	return x
 }
 
+// itoa converts an integer to its decimal string representation
+// without requiring the strconv package.
 func itoa(n int) string {
 	if n == 0 {
 		return "0"
@@ -129,6 +141,7 @@ func itoa(n int) string {
 	return string(buf[i:])
 }
 
+// main configures the Ebitengine window and starts the game loop.
 func main() {
 	ebiten.SetWindowSize(800, 600)
 	ebiten.SetWindowTitle("Ebitengine Game")

@@ -1,0 +1,4 @@
+# MQTT client for subscribing to sensor data
+paho-mqtt>=1.6.1
+# Web framework for the REST API
+Flask>=2.3.0

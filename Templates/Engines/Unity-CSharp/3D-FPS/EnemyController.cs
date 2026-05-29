@@ -1,3 +1,6 @@
+/// <summary>
+/// Simple enemy AI with NavMesh chasing, attack, and death handling.
+/// </summary>
 using UnityEngine;
 using UnityEngine.AI;
 

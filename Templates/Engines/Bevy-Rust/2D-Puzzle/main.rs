@@ -1,5 +1,8 @@
+//! A drag-and-drop puzzle game where coloured pieces snap into matching drop zones.
+
 use bevy::prelude::*;
 
+/// Entry point: builds and runs the Bevy app.
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
@@ -8,6 +11,7 @@ fn main() {
         .run();
 }
 
+/// A draggable puzzle piece that snaps to its matching drop zone.
 #[derive(Component)]
 struct PuzzlePiece {
     piece_type: String,
@@ -16,12 +20,14 @@ struct PuzzlePiece {
     is_dragging: bool,
 }
 
+/// A target zone that accepts one piece of a matching type.
 #[derive(Component)]
 struct DropZone {
     piece_type: String,
     is_occupied: bool,
 }
 
+/// Tracks overall puzzle completion state.
 #[derive(Component)]
 struct PuzzleManager {
     placed_count: u32,
@@ -29,12 +35,15 @@ struct PuzzleManager {
     completed: bool,
 }
 
+/// Offset between the mouse cursor and the piece's centre while dragging.
 #[derive(Component)]
 struct DragOffset(Vec3);
 
+/// Spawns pieces, drop zones, camera, and the manager.
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
 
+    // Blue piece on the left.
     commands.spawn((
         SpriteBundle {
             sprite: Sprite {
@@ -53,6 +62,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
     ));
 
+    // Red piece on the left, lower down.
     commands.spawn((
         SpriteBundle {
             sprite: Sprite {
@@ -71,6 +81,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
     ));
 
+    // Blue drop zone on the right.
     commands.spawn((
         SpriteBundle {
             sprite: Sprite {
@@ -87,6 +98,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
     ));
 
+    // Red drop zone on the right, upper.
     commands.spawn((
         SpriteBundle {
             sprite: Sprite {
@@ -103,6 +115,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         },
     ));
 
+    // Puzzle manager (2 pieces total).
     commands.spawn(PuzzleManager {
         placed_count: 0,
         total_pieces: 2,
@@ -110,6 +123,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
+/// Handles mouse-based dragging of puzzle pieces.
 fn drag_pieces(
     mouse: Res<ButtonInput<MouseButton>>,
     windows: Query<&Window>,
@@ -126,11 +140,13 @@ fn drag_pieces(
             continue;
         }
 
+        // Build an AABB for click detection.
         let piece_rect = Rect::from_center_size(
             transform.translation.truncate(),
             sprite.custom_size.unwrap_or(Vec2::splat(50.0)),
         );
 
+        // Start dragging on click inside the piece.
         if mouse.just_pressed(MouseButton::Left) {
             if let Some(pos) = world_pos {
                 if piece_rect.contains(pos) {
@@ -140,6 +156,7 @@ fn drag_pieces(
             }
         }
 
+        // Stop dragging on release.
         if mouse.just_released(MouseButton::Left) {
             if piece.is_dragging {
                 piece.is_dragging = false;
@@ -147,6 +164,7 @@ fn drag_pieces(
             }
         }
 
+        // Follow the cursor while dragging.
         if piece.is_dragging {
             if let Some(pos) = world_pos {
                 transform.translation = pos.extend(10.0);
@@ -155,6 +173,7 @@ fn drag_pieces(
     }
 }
 
+/// After a piece is released, checks whether it is close enough to snap to its matching zone.
 fn snap_check(
     mut piece_query: Query<(&mut PuzzlePiece, &Transform)>,
     zone_query: Query<(&DropZone, &Transform, Entity)>,
@@ -183,6 +202,7 @@ fn snap_check(
     }
 }
 
+/// Prints a completion message once all pieces are placed.
 fn puzzle_complete(
     manager_query: Query<&PuzzleManager>,
 ) {

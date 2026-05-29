@@ -1,3 +1,4 @@
+// 2D top-down character with movement, mouse aiming, and projectile shooting.
 #include "TopDownCharacter.h"
 #include "TopDownProjectile.h"
 #include "PaperFlipbookComponent.h"
@@ -7,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
+// Set up sprite and movement speed.
 ATopDownCharacter::ATopDownCharacter()
 {
     Sprite = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));

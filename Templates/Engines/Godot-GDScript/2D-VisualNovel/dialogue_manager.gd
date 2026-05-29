@@ -1,3 +1,4 @@
+# Visual novel dialogue system with typewriter effect, character sprites, backgrounds, and branching choices
 extends CanvasLayer
 
 @export var text_speed: float = 0.03

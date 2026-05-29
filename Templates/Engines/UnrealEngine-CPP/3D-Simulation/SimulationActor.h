@@ -1,11 +1,14 @@
+// Header for a simulation actor with state machine and data logging.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "SimulationActor.generated.h"
 
+// States for the simulation state machine.
 UENUM()
 enum class ESimState : uint8 { Idle, Active, Processing, Complete, Error };
 
+// Delegate broadcast when simulation state changes.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStateChanged, ESimState, NewState);
 
 UCLASS()
@@ -21,12 +24,15 @@ public:
     UPROPERTY(BlueprintReadWrite) float TargetValue = 100.0f;
     UPROPERTY(BlueprintReadWrite) float Speed = 1.0f;
 
+    // Transition to a new state.
     UFUNCTION(BlueprintCallable)
     void SetState(ESimState NewState);
 
+    // Reset simulation value and state to Idle.
     UFUNCTION(BlueprintCallable)
     void ResetSimulation();
 
+    // Append a timestamped data point to the log.
     UFUNCTION(BlueprintCallable)
     void LogData(const FString& DataPoint);
 

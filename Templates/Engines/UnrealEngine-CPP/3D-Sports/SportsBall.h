@@ -1,3 +1,4 @@
+// Header for a sports ball with physics, launching, and hit tracking.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -16,9 +17,11 @@ public:
     UPROPERTY(BlueprintReadOnly) AActor* LastHitter = nullptr;
     UPROPERTY(BlueprintReadOnly) float LastHitTime = 0.0f;
 
+    // Launch the ball in a direction with a given force.
     UFUNCTION(BlueprintCallable)
     void LaunchBall(FVector Direction, float Force);
 
+    // Reset the ball to a specific location.
     UFUNCTION(BlueprintCallable)
     void ResetBall(FVector Location);
 

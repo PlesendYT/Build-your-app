@@ -22,6 +22,7 @@ class WebScraper:
     """Simple web scraper with error handling."""
 
     def __init__(self, user_agent: str | None = None) -> None:
+        # Create a requests session with a custom User-Agent header
         self.session = requests.Session()
         self.session.headers.update({
             "User-Agent": user_agent or (
@@ -31,20 +32,24 @@ class WebScraper:
 
     def scrape(self, url: str) -> ScraperResult:
         """Scrape a URL and return structured result."""
+        # Fetch the page content
         try:
             response = self.session.get(url, timeout=10)
             response.raise_for_status()
         except requests.RequestException as e:
             return ScraperResult(url=url, text_snippet=f"Error: {e}")
 
+        # Parse HTML with BeautifulSoup
         soup = BeautifulSoup(response.text, "html.parser")
         title = soup.title.string.strip() if soup.title else None
 
+        # Extract up to 20 links, resolving relative URLs
         links = []
         for a_tag in soup.find_all("a", href=True)[:20]:
             href = urljoin(url, a_tag["href"])
             links.append(href)
 
+        # Extract a text snippet (first 300 characters)
         text = soup.get_text(separator=" ", strip=True)
         text_snippet = text[:300] + "..." if len(text) > 300 else text
 

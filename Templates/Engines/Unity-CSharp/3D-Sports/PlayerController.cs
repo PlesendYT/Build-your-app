@@ -1,3 +1,6 @@
+/// <summary>
+/// Sports player with movement and kick input, interacts with BallController.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

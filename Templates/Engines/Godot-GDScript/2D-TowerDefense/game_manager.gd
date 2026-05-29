@@ -1,3 +1,4 @@
+# Tower defense game manager: waves, gold, lives, tower placement, and game over
 extends Node2D
 
 @export var starting_gold: int = 100

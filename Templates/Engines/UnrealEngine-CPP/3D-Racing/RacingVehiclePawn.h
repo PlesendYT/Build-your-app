@@ -1,3 +1,4 @@
+// Header for a racing vehicle pawn with boost and lap tracking.
 #pragma once
 #include "CoreMinimal.h"
 #include "WheeledVehiclePawn.h"
@@ -20,6 +21,7 @@ public:
     UPROPERTY(BlueprintReadOnly) float RaceTime = 0.0f;
     UPROPERTY(BlueprintReadOnly) bool bRaceFinished = false;
 
+    // Apply a boost force to the vehicle.
     UFUNCTION(BlueprintCallable)
     void ApplyBoost(float BoostAmount);
 

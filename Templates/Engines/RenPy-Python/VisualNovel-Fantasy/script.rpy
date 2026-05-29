@@ -1,4 +1,5 @@
 ## Script for Fantasy Visual Novel
+# Fantasy adventure: bravery, wisdom, and magic stats determine the final confrontation outcome
 
 label start:
     scene bg forest

@@ -1,3 +1,4 @@
+# Metroidvania player with double-jump, wall-slide, wall-jump, health, energy, and ability tracking
 extends CharacterBody2D
 
 @export var speed: float = 280.0

@@ -1,0 +1,42 @@
+/* Base popup dimensions and font family */
+html, body {
+  width: 320px;
+  min-height: 200px;
+  margin: 0;
+  padding: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  color: #1f2937;
+  background: #ffffff;
+}
+
+/* Main app container */
+#app {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Extension title */
+h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #2563eb;
+}
+
+/* Paragraph description */
+p {
+  margin: 0;
+  color: #6b7280;
+}
+
+/* Dynamic page info area */
+#pageInfo {
+  background: #f3f4f6;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  word-break: break-all;
+  line-height: 1.5;
+}

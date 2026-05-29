@@ -1,4 +1,5 @@
 -- Solar2D 2D Platformer - Main
+-- Main game controller: player movement, enemy patrol, coin collection, lives, and scoring
 display.setStatusBar(display.HiddenStatusBar)
 
 local physics = require("physics")
@@ -18,7 +19,7 @@ local GROUND_Y = display.contentHeight - 60
 local PLAYER_SPEED = 4
 local JUMP_FORCE = -12
 
--- Player setup
+-- Creates the player with physics body, double-jump capability, and grounded tracking
 function createPlayer()
     player = display.newImageRect("player.png", 32, 48)
     player.x = 80
@@ -36,7 +37,7 @@ function createPlayer()
     player.maxJumps = 2
 end
 
--- Platforms
+-- Creates the main ground surface spanning the full screen width
 function createGround()
     local ground = display.newImageRect("ground.png", display.contentWidth * 2, 60)
     ground.x = display.contentCenterX
@@ -62,7 +63,7 @@ function createPlatform(x, y, width, height)
     table.insert(platforms, plat)
 end
 
--- Enemy
+-- Creates an enemy with patrol range, direction tracking, and speed
 function createEnemy(x, y)
     local enemy = display.newImageRect("enemy.png", 32, 32)
     enemy.x = x
@@ -80,7 +81,7 @@ function createEnemy(x, y)
     table.insert(enemies, enemy)
 end
 
--- Coin
+-- Creates a collectible coin with a floating animation and score value
 function createCoin(x, y)
     local coin = display.newImageRect("coin.png", 20, 20)
     coin.x = x
@@ -100,7 +101,7 @@ function createCoin(x, y)
     })
 end
 
--- Input handling
+-- Handles keyboard input: movement (A/D/arrows), jump (W/Space/Up), and restart (Space when game over)
 function handleKey(event)
     if gameOver then
         if event.keyName == "space" and event.phase == "down" then
@@ -133,7 +134,7 @@ function handleKey(event)
 end
 Runtime:addEventListener("key", handleKey)
 
--- Collision detection
+-- Handles collision: coin pickup, enemy stomp (from above) or player hit, and ground detection
 function onCollision(event)
     if event.phase == "began" then
         if event.object1 == player or event.object2 == player then
@@ -221,7 +222,7 @@ function restartGame()
     initGame()
 end
 
--- Game loop
+-- Main game loop: updates player horizontal movement and enemy patrol behavior
 function gameLoop()
     if gameOver then return end
 
@@ -251,7 +252,7 @@ function gameLoop()
 end
 Runtime:addEventListener("enterFrame", gameLoop)
 
--- Init
+-- Initializes the game: creates ground, platforms, player, enemies, and coins
 function initGame()
     createGround()
     createPlatform(200, GROUND_Y - 120, 120, 16)

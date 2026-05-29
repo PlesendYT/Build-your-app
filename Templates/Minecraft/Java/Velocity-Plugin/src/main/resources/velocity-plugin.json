@@ -1,0 +1,8 @@
+{
+    "id": "velocityplugin",
+    "name": "VelocityPlugin",
+    "version": "1.0.0",
+    "authors": ["ExampleAuthor"],
+    "description": "An example Velocity proxy plugin",
+    "main": "com.example.proxy.VelocityPlugin"
+}

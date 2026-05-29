@@ -1,8 +1,10 @@
+// Shader class implementation - compiles and links OpenGL shaders.
 #include "shader.hpp"
 #include <fstream>
 #include <sstream>
 #include <vector>
 
+// Compile a single shader from source; returns shader ID or error.
 static auto compile(GLuint type, std::string_view source) -> std::expected<GLuint, ShaderError> {
     auto id = glCreateShader(type);
     auto* src = source.data();
@@ -23,6 +25,7 @@ static auto compile(GLuint type, std::string_view source) -> std::expected<GLuin
     return id;
 }
 
+// Read shader source from a file.
 static auto read_file(std::string_view path) -> std::expected<std::string, ShaderError> {
     std::ifstream file{path.data()};
     if (!file) return std::unexpected(ShaderError::FileNotFound);
@@ -31,6 +34,7 @@ static auto read_file(std::string_view path) -> std::expected<std::string, Shade
     return ss.str();
 }
 
+// Create a shader program from vertex and fragment shader files.
 auto Shader::from_files(std::string_view vertex_path, std::string_view fragment_path)
     -> std::expected<Shader, ShaderError> {
     auto vs_src = read_file(vertex_path);
@@ -66,14 +70,17 @@ auto Shader::from_files(std::string_view vertex_path, std::string_view fragment_
     return Shader{program};
 }
 
+// Destructor: delete the shader program.
 Shader::~Shader() {
     if (id_) glDeleteProgram(id_);
 }
 
+// Move constructor: transfer ownership.
 Shader::Shader(Shader&& other) noexcept : id_{other.id_} {
     other.id_ = 0;
 }
 
+// Move assignment: transfer ownership, clean up old program.
 auto Shader::operator=(Shader&& other) noexcept -> Shader& {
     if (this != &other) {
         if (id_) glDeleteProgram(id_);
@@ -83,6 +90,7 @@ auto Shader::operator=(Shader&& other) noexcept -> Shader& {
     return *this;
 }
 
+// Bind the shader program for use.
 auto Shader::use() const -> void {
     glUseProgram(id_);
 }

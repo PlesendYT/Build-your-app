@@ -5,6 +5,7 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /Fortnite.com/Game }
 using { /Fortnite.com/Characters }
 
+# Battle Royale storm manager - handles storm shrinking and damage over time
 br_storm_manager := class(creative_device):
     @editable
     StormDamagePerSecond : float = 5.0
@@ -21,10 +22,11 @@ br_storm_manager := class(creative_device):
     @editable
     DamageZoneDevice : zone_device = zone_device{}
     
-    CurrentRadius : float = InitialZoneRadius
-    CurrentPhase : int = 0
-    StormActive : logic = false
+    CurrentRadius : float = InitialZoneRadius # Current storm radius
+    CurrentPhase : int = 0 # Which phase of shrinking the storm is in
+    StormActive : logic = false # Whether the storm is active
     
+    # Initializes storm activity and starts the shrinking loop
     OnBegin<override>()<suspends> := :
         if:
             FortCharacter := GetPlayspace().GetFortCharacter[]
@@ -32,6 +34,7 @@ br_storm_manager := class(creative_device):
             StormActive = true
             SpawnStorm[]
     
+    # Periodic storm shrinking loop - reduces safe zone radius each interval
     SpawnStorm()<suspends> := :
         while StormActive:
             CurrentPhase += 1
@@ -42,6 +45,7 @@ br_storm_manager := class(creative_device):
                 DamageZoneDevice.SetZoneRadius(CurrentRadius + 200.0)
                 Print("Storm shrinks to {CurrentRadius}")
     
+    # Applies damage over time to a player if they are outside the safe zone
     ApplyStormDamage(Agent : agent) : void =
         if:
             FortChar := agent.GetFortCharacter[]
@@ -50,5 +54,6 @@ br_storm_manager := class(creative_device):
             if InStorm:
                 FortChar.ApplyDamage(StormDamagePerSecond * 0.1)
     
+    # Welcomes a new player to the Battle Royale match
     OnPlayerJoined(Agent : agent) : void =
         Print("Player joined Battle Royale!")

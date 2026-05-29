@@ -55,6 +55,7 @@ def sample_data() -> list[int]:
     return [1, 2, 3, 4, 5]
 
 
+# Fixture-based tests using sample_data
 def test_sample_data_sum(sample_data: list[int]) -> None:
     assert sum(sample_data) == 15
 

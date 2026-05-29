@@ -1,4 +1,5 @@
 -- Player module for Solar2D platformer
+-- Handles player physics, movement, jumping, double-jump, and stomp bounce
 local M = {}
 
 local player
@@ -8,6 +9,7 @@ local PLAYER_SPEED = 4
 local JUMP_FORCE = -12
 local GRAVITY = 25
 
+-- Creates the player at (x, y) with physics body and double-jump capability
 function M.create(x, y)
     player = display.newImageRect("player.png", 32, 48)
     player.x = x
@@ -29,6 +31,7 @@ function M.create(x, y)
     return player
 end
 
+-- Sets horizontal speed and flips sprite based on direction
 function M.move(dx)
     if player then
         player.speedX = dx * PLAYER_SPEED
@@ -37,6 +40,7 @@ function M.move(dx)
     end
 end
 
+-- Makes the player jump if jumps remain; returns true if jump occurred
 function M.jump()
     if player and player.jumps > 0 then
         player:setLinearVelocity(0, 0)
@@ -47,6 +51,7 @@ function M.jump()
     return false
 end
 
+-- Applies a smaller upward impulse after stomping an enemy
 function M.stompBounce()
     if player then
         player:setLinearVelocity(0, 0)
@@ -55,6 +60,7 @@ function M.stompBounce()
     end
 end
 
+-- Resets jump count to max and sets grounded flag
 function M.resetJumps()
     if player then
         player.jumps = player.maxJumps
@@ -62,6 +68,7 @@ function M.resetJumps()
     end
 end
 
+-- Returns current player position or (0, 0) if nil
 function M.getPosition()
     if player then
         return player.x, player.y
@@ -69,6 +76,7 @@ function M.getPosition()
     return 0, 0
 end
 
+-- Teleports player to (x, y) and resets velocity
 function M.setPosition(x, y)
     if player then
         player.x = x
@@ -77,6 +85,7 @@ function M.setPosition(x, y)
     end
 end
 
+-- Removes player display object and clears reference
 function M.destroy()
     if player then
         display.remove(player)

@@ -1,4 +1,5 @@
 ## Screens for Choice Game
+# Stats panel and multi-choice screen for branching narrative
 
 screen stats_panel():
     frame:
@@ -10,6 +11,7 @@ screen stats_panel():
             text "Kindness: [kindness]"
             text "Cunning: [cunning]"
 
+# Displays a title and four choice buttons, returning the selected letter
 screen multi_choice(title, a, b, c, d):
     frame:
         xalign 0.5

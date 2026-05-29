@@ -1,3 +1,6 @@
+/// <summary>
+/// Fires a circular spread pattern of bullets that can optionally rotate over time.
+/// </summary>
 using UnityEngine;
 
 public class BulletPattern : MonoBehaviour
@@ -13,6 +16,9 @@ public class BulletPattern : MonoBehaviour
     private float fireTimer;
     private float currentAngle;
 
+    /// <summary>
+    /// Rotates the pattern if enabled, and fires bullets on a timer.
+    /// </summary>
     private void Update()
     {
         if (rotateOverTime)
@@ -26,6 +32,9 @@ public class BulletPattern : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instantiates a spread of bullets evenly distributed across the spread angle.
+    /// </summary>
     private void Fire()
     {
         float angleStep = spreadAngle / bulletCount;

@@ -1,0 +1,38 @@
+<!-- Login page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Auth Starter</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f0f4f8; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    h1 { margin-bottom: 1rem; }
+    input { display: block; width: 100%; margin: 0.5rem 0; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px; }
+    button { width: 100%; background: #2563eb; color: white; border: none; padding: 0.6rem; border-radius: 6px; cursor: pointer; margin-top: 0.5rem; }
+    .error { color: #dc2626; margin-bottom: 0.5rem; font-size: 0.9rem; }
+    .links { margin-top: 1rem; text-align: center; }
+    .links a { color: #2563eb; text-decoration: none; font-size: 0.9rem; display: block; margin: 0.25rem 0; }
+  </style>
+</head>
+<body>
+  <!-- Login form -->
+  <div class="card">
+    <h1>Login</h1>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/auth/login" method="POST">
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+    <div class="links">
+      <a href="/auth/register">Create an account</a>
+      <a href="/auth/forgot">Forgot password?</a>
+    </div>
+  </div>
+</body>
+</html>

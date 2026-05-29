@@ -1,5 +1,6 @@
 #!/usr/bin/env lua
 
+-- Split a string by a single-character separator into an array
 local function split(str, sep)
     local result = {}
     for part in str:gmatch("[^" .. sep .. "]+") do
@@ -8,10 +9,12 @@ local function split(str, sep)
     return result
 end
 
+-- Strip leading and trailing whitespace from a string
 local function trim(s)
     return s:match("^%s*(.-)%s*$")
 end
 
+-- Read a CSV file and return headers array and data array of row-tables
 local function parseCSV(filename)
     local file = io.open(filename, "r")
     if not file then
@@ -41,6 +44,7 @@ local function parseCSV(filename)
     return headers, data
 end
 
+-- Serialise a Lua value (table, string, number, boolean, nil) to a JSON string
 local function toJSON(data, indent)
     indent = indent or 0
     local pad = string.rep("  ", indent)
@@ -85,6 +89,7 @@ local function toJSON(data, indent)
     end
 end
 
+-- CLI entry point: read CSV, convert to JSON, write output file
 local function main()
     local args = {...}
     if #args < 2 then

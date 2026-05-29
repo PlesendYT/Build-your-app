@@ -1,0 +1,16 @@
+# Minigame plugin configuration
+name: MinigamePlugin
+main: com.example.minigame.MinigamePlugin
+api-version: '1.20'
+version: 1.0.0
+author: ExampleAuthor
+description: A simple Bukkit minigame example
+
+# Register plugin commands
+commands:
+  start:
+    description: Starts the minigame
+    usage: /<command>
+  stop:
+    description: Stops the minigame
+    usage: /<command>

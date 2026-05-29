@@ -1,3 +1,4 @@
+/// iOS space-dodge game built with SwiftUI and SpriteKit.
 import SwiftUI
 import SpriteKit
 
@@ -11,10 +12,12 @@ struct iOSGame: App {
     }
 }
 
+/// Manages the game UI overlay, score display, and menu/game-over screens.
 struct GameView: View {
     @State private var score = 0
     @State private var gameState: GameState = .menu
 
+    /// Configures and returns the SpriteKit scene with callbacks for score and game-over.
     var scene: SKScene {
         let scene = GameScene(size: CGSize(width: 390, height: 844))
         scene.scaleMode = .aspectFill
@@ -25,9 +28,11 @@ struct GameView: View {
 
     var body: some View {
         ZStack {
+            // SpriteKit rendering layer
             SpriteView(scene: scene)
                 .ignoresSafeArea()
 
+            // Score display at top
             VStack {
                 HStack {
                     Text("Score: \(score)")
@@ -39,6 +44,7 @@ struct GameView: View {
                 Spacer()
             }
 
+            // Main menu overlay
             if gameState == .menu {
                 VStack(spacing: 20) {
                     Text("Space Dodge")
@@ -52,6 +58,7 @@ struct GameView: View {
                 }
             }
 
+            // Game-over overlay with final score
             if gameState == .gameOver {
                 VStack(spacing: 20) {
                     Text("Game Over")
@@ -72,10 +79,12 @@ struct GameView: View {
     }
 }
 
+/// Possible states of the game: menu, actively playing, or game-over.
 enum GameState {
     case menu, playing, gameOver
 }
 
+/// SpriteKit scene handling player movement, obstacle spawning, and collision detection.
 final class GameScene: SKScene, SKPhysicsContactDelegate {
     var onScoreUpdate: ((Int) -> Void)?
     var onGameOver: (() -> Void)?
@@ -87,11 +96,13 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
     private var score = 0
     private var spawnInterval: TimeInterval = 1.5
 
+    /// Sets up the player node and physics world when the scene is presented.
     override func didMove(to view: SKView) {
         backgroundColor = .black
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
 
+        // Create player rectangle with physics body
         let playerSize = CGSize(width: 40, height: 40)
         player = SKShapeNode(rectOf: playerSize, cornerRadius: 8)
         player.fillColor = .cyan
@@ -104,12 +115,14 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(player)
     }
 
+    /// Moves the player horizontally to follow the touch location.
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         player.position.x = location.x.clamped(to: 20...frame.width - 20)
     }
 
+    /// Gradually decreases spawn interval and triggers obstacle creation.
     override func update(_ currentTime: TimeInterval) {
         spawnInterval -= 0.01
         if spawnInterval <= 0 {
@@ -118,6 +131,7 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
+    /// Creates a red obstacle at a random x position and animates it downward.
     private func spawnObstacle() {
         let size = CGSize(width: 30, height: 30)
         let obstacle = SKShapeNode(rectOf: size, cornerRadius: 4)
@@ -131,17 +145,20 @@ final class GameScene: SKScene, SKPhysicsContactDelegate {
         obstacle.physicsBody?.isDynamic = false
         addChild(obstacle)
 
+        // Move obstacle down and remove it when off-screen
         let moveAction = SKAction.moveBy(x: 0, y: -frame.height - 60, duration: 3)
         let removeAction = SKAction.removeFromParent()
         obstacle.run(SKAction.sequence([moveAction, removeAction]))
     }
 
+    /// Called when the player collides with an obstacle; triggers game-over.
     func didBegin(_ contact: SKPhysicsContact) {
         onGameOver?()
         isPaused = true
     }
 }
 
+/// Utility to clamp a CGFloat within a closed range.
 extension CGFloat {
     func clamped(to range: ClosedRange<CGFloat>) -> CGFloat {
         return min(max(self, range.lowerBound), range.upperBound)

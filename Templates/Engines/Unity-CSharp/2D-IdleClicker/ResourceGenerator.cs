@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages automatic resource generators that produce resources over time, with purchase and upgrade mechanics.
+/// </summary>
 using UnityEngine;
 
 public class ResourceGenerator : MonoBehaviour
@@ -17,6 +20,20 @@ public class ResourceGenerator : MonoBehaviour
     [Header("Generators")]
     public Generator[] generators;
 
+    /// <summary>
+    /// Initializes all generators to their base production levels.
+    /// </summary>
+    private void Start()
+    {
+        foreach (Generator gen in generators)
+        {
+            gen.currentProduction = gen.baseProduction;
+        }
+    }
+
+    /// <summary>
+    /// Adds passive resource income each frame based on all active generators.
+    /// </summary>
     private void Update()
     {
         float totalProduction = 0f;
@@ -27,6 +44,9 @@ public class ResourceGenerator : MonoBehaviour
         GameManager.Instance.AddResource(totalProduction * Time.deltaTime);
     }
 
+    /// <summary>
+    /// Purchases an additional copy of the specified generator.
+    /// </summary>
     public bool PurchaseGenerator(int index)
     {
         if (index < 0 || index >= generators.Length) return false;
@@ -42,6 +62,9 @@ public class ResourceGenerator : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Upgrades the specified generator's production level.
+    /// </summary>
     public bool UpgradeGenerator(int index)
     {
         if (index < 0 || index >= generators.Length) return false;
@@ -58,6 +81,9 @@ public class ResourceGenerator : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Returns the current cost to purchase a generator, scaling with count owned.
+    /// </summary>
     public float GetCost(int index)
     {
         if (index < 0 || index >= generators.Length) return float.MaxValue;
@@ -65,6 +91,9 @@ public class ResourceGenerator : MonoBehaviour
         return gen.baseCost * Mathf.Pow(gen.costMultiplier, gen.count);
     }
 
+    /// <summary>
+    /// Returns the current cost to upgrade a generator, scaling with level.
+    /// </summary>
     public float GetUpgradeCost(int index)
     {
         if (index < 0 || index >= generators.Length) return float.MaxValue;
@@ -72,14 +101,9 @@ public class ResourceGenerator : MonoBehaviour
         return gen.baseCost * 5 * Mathf.Pow(2f, gen.level);
     }
 
-    private void Start()
-    {
-        foreach (Generator gen in generators)
-        {
-            gen.currentProduction = gen.baseProduction;
-        }
-    }
-
+    /// <summary>
+    /// Returns the total resources generated per second across all generators.
+    /// </summary>
     public float GetTotalProductionPerSecond()
     {
         float total = 0f;

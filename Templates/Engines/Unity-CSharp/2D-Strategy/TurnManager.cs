@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages turn-based gameplay: alternates between player and enemy turns, with simple enemy AI.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -13,6 +16,9 @@ public class TurnManager : MonoBehaviour
     private List<Unit> playerUnits;
     private List<Unit> enemyUnits;
 
+    /// <summary>
+    /// Finds all units in the scene and starts the first player turn.
+    /// </summary>
     private void Start()
     {
         playerUnits = new List<Unit>(FindObjectsByType<Unit>(FindObjectsSortMode.None));
@@ -21,6 +27,9 @@ public class TurnManager : MonoBehaviour
         StartPlayerTurn();
     }
 
+    /// <summary>
+    /// Resets all player units and grants income for the new turn.
+    /// </summary>
     public void StartPlayerTurn()
     {
         currentPhase = TurnPhase.Player;
@@ -31,12 +40,18 @@ public class TurnManager : MonoBehaviour
         GameManager.Instance.NextTurn();
     }
 
+    /// <summary>
+    /// Ends the player turn and begins the enemy turn.
+    /// </summary>
     public void EndPlayerTurn()
     {
         currentPhase = TurnPhase.Enemy;
         StartEnemyTurn();
     }
 
+    /// <summary>
+    /// Executes enemy AI: each enemy moves toward the nearest player unit and attacks.
+    /// </summary>
     private void StartEnemyTurn()
     {
         foreach (Unit unit in enemyUnits)
@@ -63,6 +78,9 @@ public class TurnManager : MonoBehaviour
         StartPlayerTurn();
     }
 
+    /// <summary>
+    /// Finds the nearest unit from a list to a source unit.
+    /// </summary>
     private Unit FindNearest(List<Unit> units, Unit source)
     {
         Unit nearest = null;
@@ -82,18 +100,27 @@ public class TurnManager : MonoBehaviour
         return nearest;
     }
 
+    /// <summary>
+    /// Registers a player unit in the turn list.
+    /// </summary>
     public void RegisterPlayerUnit(Unit unit)
     {
         if (!playerUnits.Contains(unit))
             playerUnits.Add(unit);
     }
 
+    /// <summary>
+    /// Registers an enemy unit in the turn list.
+    /// </summary>
     public void RegisterEnemyUnit(Unit unit)
     {
         if (!enemyUnits.Contains(unit))
             enemyUnits.Add(unit);
     }
 
+    /// <summary>
+    /// Removes a unit from both player and enemy lists.
+    /// </summary>
     public void RemoveUnit(Unit unit)
     {
         playerUnits.Remove(unit);

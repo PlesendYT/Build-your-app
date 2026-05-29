@@ -1,7 +1,13 @@
+// File: Card.cs
+// Defines the Card resource for the 2D card game. Each card has stats like cost, damage, and effects.
+
 using Godot;
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Represents a playable card in the card game, stored as a reusable Resource.
+/// </summary>
 public partial class Card : Resource
 {
     [Export] public string CardName { get; set; } = "Basic Attack";

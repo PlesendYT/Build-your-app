@@ -1,3 +1,6 @@
+/**
+ * JavaFX application entry point: loads the FXML layout and shows the stage.
+ */
 package javafx;
 
 import javafx.application.Application;
@@ -6,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/** Main Application class that bootstraps the JavaFX UI from an FXML file. */
 public final class Main extends Application {
 
     @Override

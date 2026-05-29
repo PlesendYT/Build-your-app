@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages the bubble shooter grid, bubble spawning, shooting, match detection, and removal of floating bubbles.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -18,12 +21,18 @@ public class BubbleShooterManager : MonoBehaviour
     private Dictionary<Vector2Int, Bubble> grid = new Dictionary<Vector2Int, Bubble>();
     private int currentColorIndex;
 
+    /// <summary>
+    /// Generates the initial grid and loads the first bubble to shoot.
+    /// </summary>
     private void Start()
     {
         GenerateGrid();
         LoadNextBubble();
     }
 
+    /// <summary>
+    /// Generates the hexagonal grid of bubbles with alternating row offsets and random colors.
+    /// </summary>
     private void GenerateGrid()
     {
         for (int y = 0; y < gridHeight; y++)
@@ -38,6 +47,9 @@ public class BubbleShooterManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Converts a world position into grid coordinates.
+    /// </summary>
     public Vector2Int WorldToGrid(Vector3 worldPos)
     {
         float localX = worldPos.x - boardParent.position.x;
@@ -47,6 +59,9 @@ public class BubbleShooterManager : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
+    /// <summary>
+    /// Converts grid coordinates to a world position.
+    /// </summary>
     public Vector3 GridToWorld(Vector2Int gridPos)
     {
         float offsetX = (gridPos.y % 2 == 0) ? 0f : cellSize * 0.5f;
@@ -55,6 +70,9 @@ public class BubbleShooterManager : MonoBehaviour
         return new Vector3(x, y, 0f);
     }
 
+    /// <summary>
+    /// Instantiates a bubble at the given grid position with the specified color.
+    /// </summary>
     public void SpawnBubble(int x, int y, int colorIndex)
     {
         Vector3 pos = GridToWorld(new Vector2Int(x, y));
@@ -64,6 +82,9 @@ public class BubbleShooterManager : MonoBehaviour
         grid[new Vector2Int(x, y)] = bubble;
     }
 
+    /// <summary>
+    /// Fires the current bubble in the given direction.
+    /// </summary>
     public void ShootBubble(Vector2 direction)
     {
         if (currentBubble == null) return;
@@ -76,12 +97,16 @@ public class BubbleShooterManager : MonoBehaviour
         Invoke(nameof(LoadNextBubble), 0.5f);
     }
 
+    /// <summary>
+    /// Called when a fired bubble stops: snaps it to the grid, checks for matches of 3+, and removes floating bubbles.
+    /// </summary>
     public void BubbleStopped(Bubble bubble)
     {
         Vector2Int gridPos = WorldToGrid(bubble.transform.position);
         bubble.Init(gridPos.x, gridPos.y, bubble.ColorIndex, this);
         grid[gridPos] = bubble;
 
+        // Find all connected bubbles of the same color
         List<Bubble> connected = GetConnectedBubbles(gridPos, bubble.ColorIndex);
         if (connected.Count >= 3)
         {
@@ -95,6 +120,9 @@ public class BubbleShooterManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// BFS to find all connected bubbles of the same color starting from the given position.
+    /// </summary>
     private List<Bubble> GetConnectedBubbles(Vector2Int pos, int color)
     {
         List<Bubble> result = new List<Bubble>();
@@ -120,6 +148,9 @@ public class BubbleShooterManager : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// Returns the six hexagonal neighbors for a given grid position.
+    /// </summary>
     private List<Vector2Int> GetNeighbors(Vector2Int pos)
     {
         List<Vector2Int> neighbors = new List<Vector2Int>();
@@ -141,8 +172,12 @@ public class BubbleShooterManager : MonoBehaviour
         return neighbors;
     }
 
+    /// <summary>
+    /// Removes bubbles that are not connected to the ceiling (top row), making them fall with gravity.
+    /// </summary>
     private void RemoveFloatingBubbles()
     {
+        // BFS from the top row to find all connected bubbles
         HashSet<Vector2Int> connected = new HashSet<Vector2Int>();
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
 
@@ -166,6 +201,7 @@ public class BubbleShooterManager : MonoBehaviour
             }
         }
 
+        // Remove bubbles not connected to the top
         List<Vector2Int> toRemove = new List<Vector2Int>();
         foreach (var kvp in grid)
         {
@@ -184,12 +220,16 @@ public class BubbleShooterManager : MonoBehaviour
                 {
                     rb.bodyType = RigidbodyType2D.Dynamic;
                     rb.gravityScale = 2f;
+                    // Destroy after 3 seconds so they fall off screen
                     Destroy(b.gameObject, 3f);
                 }
             }
         }
     }
 
+    /// <summary>
+    /// Instantiates the next bubble to be shot at the shoot point with a random color.
+    /// </summary>
     private void LoadNextBubble()
     {
         currentColorIndex = Random.Range(0, bubblePrefabs.Length);

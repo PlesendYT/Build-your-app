@@ -1,3 +1,6 @@
+/// <summary>
+/// A turn-based strategy unit with grid movement, combat, health, and action tracking.
+/// </summary>
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -20,6 +23,9 @@ public class Unit : MonoBehaviour
     private GridManager gridManager;
     private SpriteRenderer spriteRenderer;
 
+    /// <summary>
+    /// Initializes health and caches component references.
+    /// </summary>
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -27,17 +33,26 @@ public class Unit : MonoBehaviour
         gridManager = FindAnyObjectByType<GridManager>();
     }
 
+    /// <summary>
+    /// Snaps to the grid on start.
+    /// </summary>
     private void Start()
     {
         gridPosition = gridManager.WorldToGrid(transform.position);
         AlignToGrid();
     }
 
+    /// <summary>
+    /// Snaps the unit to its grid position in world space.
+    /// </summary>
     public void AlignToGrid()
     {
         transform.position = gridManager.GridToWorld(gridPosition.x, gridPosition.y);
     }
 
+    /// <summary>
+    /// Moves the unit to a target grid position within its move range.
+    /// </summary>
     public bool MoveTo(Vector2Int target)
     {
         if (!gridManager.IsWalkable(target.x, target.y)) return false;
@@ -51,6 +66,9 @@ public class Unit : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Attacks a target unit within attack range, dealing damage based on attack and defense.
+    /// </summary>
     public bool Attack(Unit target)
     {
         if (hasAttacked) return false;
@@ -65,6 +83,9 @@ public class Unit : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Reduces health and destroys the unit if health reaches zero.
+    /// </summary>
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -74,6 +95,9 @@ public class Unit : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Resets movement and attack flags for the next turn.
+    /// </summary>
     public void ResetTurn()
     {
         hasMoved = false;

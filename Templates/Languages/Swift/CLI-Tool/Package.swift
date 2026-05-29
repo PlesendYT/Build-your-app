@@ -1,4 +1,6 @@
 // swift-tools-version: 5.9
+/// Package definition for the CLI-Tool executable.
+/// Depends on swift-argument-parser for command-line argument handling.
 import PackageDescription
 
 let package = Package(

@@ -1,8 +1,10 @@
+// Header for a fighting game character with combo moves and special meter.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "FighterCharacter.generated.h"
 
+// A combo move defined by an input sequence.
 USTRUCT(BlueprintType)
 struct FComboMove
 {
@@ -26,15 +28,19 @@ public:
     UPROPERTY(BlueprintReadWrite) float MaxSpecial = 100.0f;
     UPROPERTY(BlueprintReadOnly) int32 Wins = 0;
 
+    // Apply damage and gain special meter.
     UFUNCTION(BlueprintCallable)
     void TakeHitDamage(float Damage);
 
+    // Add to the special meter (clamped to max).
     UFUNCTION(BlueprintCallable)
     void AddSpecial(float Amount);
 
+    // Check if the input buffer matches a combo sequence.
     UFUNCTION(BlueprintCallable)
     bool TryCombo(FName ComboID);
 
+    // Spend special meter to perform a special attack.
     UFUNCTION(BlueprintCallable)
     void PerformSpecialAttack();
 

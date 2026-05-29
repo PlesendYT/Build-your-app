@@ -1,4 +1,6 @@
 // swift-tools-version: 5.9
+/// Package definition for the REST API executable.
+/// Depends on Vapor, Fluent (PostgreSQL), and JWT packages.
 import PackageDescription
 
 let package = Package(

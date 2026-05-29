@@ -1,3 +1,6 @@
+/// <summary>
+/// Handles player movement, combo-based melee attacks, and animation state.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,12 +26,18 @@ public class PlayerCombat : MonoBehaviour
     private Animator animator;
     private Vector2 moveInput;
 
+    /// <summary>
+    /// Caches rigidbody and animator references.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
     }
 
+    /// <summary>
+    /// Resets the combo if the timeout has elapsed and updates animations.
+    /// </summary>
     private void Update()
     {
         if (Time.time > lastAttackTime + comboResetTime)
@@ -38,6 +47,9 @@ public class PlayerCombat : MonoBehaviour
         UpdateAnimation();
     }
 
+    /// <summary>
+    /// Applies horizontal movement input when not attacking.
+    /// </summary>
     private void FixedUpdate()
     {
         if (!isAttacking)
@@ -46,6 +58,9 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates animator parameters for speed, attacking state, and combo level.
+    /// </summary>
     private void UpdateAnimation()
     {
         if (animator != null)
@@ -56,11 +71,17 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles movement input from the Input System.
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
 
+    /// <summary>
+    /// Handles attack input from the Input System, starting the attack coroutine.
+    /// </summary>
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.performed && !isAttacking)
@@ -69,6 +90,9 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Performs a combo attack: hits enemies within range with scaling damage, then waits for cooldown.
+    /// </summary>
     private System.Collections.IEnumerator PerformAttack()
     {
         isAttacking = true;
@@ -78,6 +102,7 @@ public class PlayerCombat : MonoBehaviour
         float range = comboRanges[combo];
         int damage = comboDamages[combo];
 
+        // Detect enemies in the attack range and apply damage
         Collider2D[] hits = Physics2D.OverlapCircleAll(attackPoint.position, range, enemyLayer);
         foreach (Collider2D hit in hits)
         {
@@ -95,6 +120,9 @@ public class PlayerCombat : MonoBehaviour
         isAttacking = false;
     }
 
+    /// <summary>
+    /// Draws the attack range gizmo in the editor for debugging.
+    /// </summary>
     private void OnDrawGizmosSelected()
     {
         if (attackPoint != null)

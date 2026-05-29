@@ -1,3 +1,4 @@
+# Top-down inventory UI with toggle and grid display
 extends CanvasLayer
 
 @onready var inventory_grid: GridContainer = $InventoryGrid

@@ -1,3 +1,4 @@
+// Header for a 2D puzzle piece actor in a match-3 grid.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -17,6 +18,7 @@ public:
     UPROPERTY(BlueprintReadWrite) int32 PieceType = 0;
     UPROPERTY(BlueprintReadOnly) bool bIsSelected = false;
 
+    // Toggle the selected state of this piece.
     UFUNCTION(BlueprintCallable)
     void SetSelected(bool Selected);
 

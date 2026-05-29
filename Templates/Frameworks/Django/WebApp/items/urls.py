@@ -1,3 +1,5 @@
+"""URL patterns for the items application."""
+
 from django.urls import path
 from . import views
 

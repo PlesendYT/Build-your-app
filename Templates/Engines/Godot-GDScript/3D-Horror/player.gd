@@ -1,3 +1,5 @@
+# Horror game player controller
+# Manages movement, flashlight battery drain, sanity system, hiding spots, and death
 extends CharacterBody3D
 
 @export var walk_speed: float = 3.0

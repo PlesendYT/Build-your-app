@@ -1,7 +1,13 @@
+/// <summary>
+/// Manages the card game turn flow: player turns, opponent turns, health tracking, and game over state.
+/// </summary>
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance for global access.
+    /// </summary>
     public static GameManager Instance { get; private set; }
 
     public enum GamePhase { Draw, Main, Combat, End }
@@ -20,6 +26,9 @@ public class GameManager : MonoBehaviour
     private int currentTurn;
     private bool isPlayerTurn;
 
+    /// <summary>
+    /// Initializes the singleton instance.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -33,6 +42,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Starts the first player turn.
+    /// </summary>
     private void Start()
     {
         currentTurn = 1;
@@ -40,6 +52,9 @@ public class GameManager : MonoBehaviour
         StartPlayerTurn();
     }
 
+    /// <summary>
+    /// Begins the player's turn with draw phase and UI update.
+    /// </summary>
     public void StartPlayerTurn()
     {
         currentPhase = GamePhase.Draw;
@@ -47,6 +62,9 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Ends the player's turn, discards hand, and proceeds to opponent turn.
+    /// </summary>
     public void EndPlayerTurn()
     {
         currentPhase = GamePhase.End;
@@ -55,14 +73,19 @@ public class GameManager : MonoBehaviour
         StartOpponentTurn();
     }
 
+    /// <summary>
+    /// Processes the opponent turn (AI stub) and increments turn counter.
+    /// </summary>
     private void StartOpponentTurn()
     {
-        // AI opponent logic here
         currentTurn++;
         isPlayerTurn = true;
         StartPlayerTurn();
     }
 
+    /// <summary>
+    /// Shows the game over panel and pauses the game.
+    /// </summary>
     public void GameOver()
     {
         if (gameOverPanel != null)
@@ -70,6 +93,9 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    /// <summary>
+    /// Reloads the current scene to restart the game.
+    /// </summary>
     public void RestartGame()
     {
         Time.timeScale = 1f;
@@ -77,6 +103,9 @@ public class GameManager : MonoBehaviour
             UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
     }
 
+    /// <summary>
+    /// Updates the turn counter and health display for both players.
+    /// </summary>
     private void UpdateUI()
     {
         if (turnText != null) turnText.text = "Turn " + currentTurn;

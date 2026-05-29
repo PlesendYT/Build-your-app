@@ -1,7 +1,10 @@
 <script lang="ts">
+  // Track whether the contact form has been submitted
   let sent = false
+  // Form field bindings
   let name = '', email = '', message = ''
 
+  // Handle form submission – marks the message as sent
   function handleSubmit() {
     sent = true
   }

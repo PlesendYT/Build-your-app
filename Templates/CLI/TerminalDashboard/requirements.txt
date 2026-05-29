@@ -1,0 +1,4 @@
+# System and process utility library
+psutil>=5.9.0
+# Rich terminal formatting library
+rich>=13.0.0

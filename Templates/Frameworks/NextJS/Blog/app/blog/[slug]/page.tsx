@@ -1,3 +1,4 @@
+// Individual blog post page — looks up the post by slug and renders it
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { posts } from '@/lib/posts'

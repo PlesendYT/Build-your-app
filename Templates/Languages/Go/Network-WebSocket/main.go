@@ -1,3 +1,5 @@
+// Package main implements a WebSocket-based chat server that
+// broadcasts messages to all connected clients.
 package main
 
 import (
@@ -9,23 +11,28 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// upgrader upgrades HTTP connections to WebSocket, accepting all origins.
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
+// Message represents a chat message exchanged between clients.
 type Message struct {
 	Type    string `json:"type"`
 	Content string `json:"content"`
 	Sender  string `json:"sender"`
 }
 
+// Hub manages connected WebSocket clients and their associated names.
 type Hub struct {
 	mu      sync.RWMutex
 	clients map[*websocket.Conn]string
 }
 
+// hub is the global Hub instance managing all active connections.
 var hub = &Hub{clients: make(map[*websocket.Conn]string)}
 
+// broadcast sends a JSON-encoded message to every connected client.
 func (h *Hub) broadcast(msg Message) {
 	h.mu.RLock()
 	defer h.mu.RUnlock()
@@ -35,6 +42,8 @@ func (h *Hub) broadcast(msg Message) {
 	}
 }
 
+// handleWS upgrades an HTTP connection to WebSocket, registers the client
+// in the hub, broadcasts join/leave messages, and relays incoming messages.
 func handleWS(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -82,6 +91,7 @@ func handleWS(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// main sets up the HTTP routes and starts the WebSocket server on :8080.
 func main() {
 	http.HandleFunc("/ws", handleWS)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

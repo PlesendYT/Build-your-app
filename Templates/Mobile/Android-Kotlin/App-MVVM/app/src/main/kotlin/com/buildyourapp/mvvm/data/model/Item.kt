@@ -3,6 +3,7 @@ package com.buildyourapp.mvvm.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/** Room entity representing a database item with an auto-generated ID, title, description, and timestamp. */
 @Entity(tableName = "items")
 data class Item(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,

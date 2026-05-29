@@ -1,3 +1,6 @@
+/// <summary>
+/// Open world day/night cycle, weather system, chunk loading, and world state.
+/// </summary>
 using UnityEngine;
 
 public class WorldManager : MonoBehaviour

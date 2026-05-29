@@ -1,8 +1,10 @@
 -- Obstacle module for Solar2D endless runner
+-- Creates and manages obstacle types (low, high, double) with physics bodies
 local M = {}
 
 local physics = require("physics")
 
+-- Internal helper: creates an obstacle image with physics body and type tag
 local function createObstacle(img, x, y, w, h, obsType)
     local obs = display.newImageRect(img, w, h)
     obs.x = x
@@ -29,6 +31,7 @@ function M.createDouble(x, y)
     return createObstacle("obstacle_double.png", x, y, 48, 48, "double")
 end
 
+-- Updates obstacle positions by scrolling left; removes off-screen obstacles
 function M.update(obstacles, speed, dt)
     for i = #obstacles, 1, -1 do
         local obs = obstacles[i]
@@ -40,6 +43,7 @@ function M.update(obstacles, speed, dt)
     end
 end
 
+-- Removes all obstacles from the display
 function M.clear(obstacles)
     for _, obs in ipairs(obstacles) do
         display.remove(obs)

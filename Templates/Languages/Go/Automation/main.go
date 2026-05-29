@@ -1,3 +1,5 @@
+// Package main provides an automation tool that watches directories for file
+// changes and runs scheduled commands using cron expressions.
 package main
 
 import (
@@ -16,6 +18,8 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+// runCommand executes an external command with the given arguments,
+// streaming its stdout and stderr directly to the terminal.
 func runCommand(name string, args ...string) {
 	cmd := exec.Command(name, args...)
 	cmd.Stdout = os.Stdout
@@ -25,6 +29,8 @@ func runCommand(name string, args ...string) {
 	}
 }
 
+// watchDir monitors a directory for new or modified .go files and
+// automatically rebuilds the project when changes are detected.
 func watchDir(dir string) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -69,6 +75,8 @@ func watchDir(dir string) {
 	<-done
 }
 
+// runScheduler starts a cron scheduler that executes the given command
+// on the specified cron schedule. Blocks until SIGINT/SIGTERM.
 func runScheduler(spec string, cmdName string, args []string) {
 	c := cron.New()
 	_, err := c.AddFunc(spec, func() {
@@ -89,6 +97,7 @@ func runScheduler(spec string, cmdName string, args []string) {
 	c.Stop()
 }
 
+// main parses CLI flags and dispatches to either watch mode or schedule mode.
 func main() {
 	var mode string
 	var dir string

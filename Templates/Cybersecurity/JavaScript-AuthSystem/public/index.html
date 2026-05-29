@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!-- index.html — Login / Register form for the JWT authentication system -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth Demo</title>
+  <style>
+    /* Minimal styling for the auth form panel */
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f0f2f5; }
+    .container { background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 360px; }
+    h2 { margin-top: 0; text-align: center; color: #333; }
+    input { width: 100%; padding: 0.6rem; margin: 0.4rem 0 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; padding: 0.6rem; background: #1a73e8; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+    button:hover { background: #1557b0; }
+    .toggle { text-align: center; margin-top: 1rem; color: #1a73e8; cursor: pointer; }
+    #message { text-align: center; margin-top: 0.8rem; font-size: 0.9rem; color: #d32f2f; }
+    #message.success { color: #2e7d32; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="formTitle">Login</h2>
+
+    <!-- Username input field -->
+    <input type="text" id="username" placeholder="Username" autocomplete="off">
+    <!-- Password input field -->
+    <input type="password" id="password" placeholder="Password">
+    <!-- Submit button — triggers either login or register -->
+    <button id="submitBtn">Login</button>
+
+    <p id="message"></p>
+
+    <!-- Toggle link between Login and Register modes -->
+    <p class="toggle" id="toggleLink">Don't have an account? Register</p>
+  </div>
+
+  <script>
+    // Client-side logic for login/register forms and JWT token display
+    let isLogin = true;
+    const title = document.getElementById('formTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const toggleLink = document.getElementById('toggleLink');
+    const message = document.getElementById('message');
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+
+    // Toggle between Login and Register mode
+    toggleLink.addEventListener('click', () => {
+      isLogin = !isLogin;
+      title.textContent = isLogin ? 'Login' : 'Register';
+      submitBtn.textContent = isLogin ? 'Login' : 'Register';
+      toggleLink.textContent = isLogin
+        ? "Don't have an account? Register"
+        : 'Already have an account? Login';
+    });
+
+    // Handle form submission via fetch to the API
+    submitBtn.addEventListener('click', async () => {
+      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: username.value,
+            password: password.value,
+          }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          message.textContent = `Success! Token: ${data.token.substring(0, 20)}...`;
+          message.className = 'success';
+        } else {
+          message.textContent = data.error || 'Request failed';
+          message.className = '';
+        }
+      } catch (err) {
+        message.textContent = 'Network error';
+        message.className = '';
+      }
+    });
+  </script>
+</body>
+</html>

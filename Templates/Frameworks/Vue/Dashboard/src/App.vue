@@ -1,13 +1,17 @@
 <script setup>
+// Import Vue composition API and router utilities
 import { ref, onMounted } from 'vue'
 import { RouterView, RouterLink, useRoute } from 'vue-router'
+// Import and register Chart.js components for dashboard charts
 import { Chart, registerables } from 'chart.js'
 
 Chart.register(...registerables)
 
+// Sidebar toggle state
 const sidebarOpen = ref(true)
 const toggleSidebar = () => sidebarOpen.value = !sidebarOpen.value
 
+// Dashboard stat cards data (revenue, orders, customers, visitors)
 const stats = [
   { label: 'Umsatz', value: '€12,430', change: '+12%', positive: true },
   { label: 'Bestellungen', value: '156', change: '+8%', positive: true },
@@ -15,6 +19,7 @@ const stats = [
   { label: 'Besucher', value: '8,932', change: '-3%', positive: false },
 ]
 
+// Recent orders table data
 const recentOrders = [
   { customer: 'Max M.', product: 'Laptop', status: 'Versandt', date: '2024-01-15' },
   { customer: 'Anna S.', product: 'Monitor', status: 'Bearbeitung', date: '2024-01-14' },
@@ -22,6 +27,7 @@ const recentOrders = [
 ]
 </script>
 
+<!-- Root layout with sidebar navigation, topbar, and main dashboard content -->
 <template>
   <div class="app" :class="{ 'sidebar-closed': !sidebarOpen }">
     <aside class="sidebar">

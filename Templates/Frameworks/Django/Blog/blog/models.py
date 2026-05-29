@@ -1,6 +1,11 @@
+"""Blog models: Post, Category, Tag, and Comment."""
+
 from django.db import models
 
+
 class Post(models.Model):
+    """Blog post with slug, content, category, tags, and timestamps."""
+
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     content = models.TextField()
@@ -12,19 +17,28 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+
 class Category(models.Model):
+    """Blog post category."""
+
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+
 
 class Tag(models.Model):
+    """Tag for labeling blog posts."""
+
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
+
 class Comment(models.Model):
+    """Comment on a blog post."""
+
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     author = models.CharField(max_length=100)
     text = models.TextField()

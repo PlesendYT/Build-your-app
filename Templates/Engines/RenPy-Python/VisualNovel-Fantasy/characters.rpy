@@ -1,4 +1,5 @@
 ## Characters for Fantasy Visual Novel
+# Defines hero, companions, and NPC plus stat tracking for bravery, wisdom, magic, and trust
 
 define hero = Character("Kaelen", color="#e74c3c")
 define luna = Character("Luna", color="#9b59b6")

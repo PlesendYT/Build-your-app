@@ -1,5 +1,8 @@
+//! A 2D platformer template with player movement, double-jump, gravity, patrol enemies, and coins.
+
 use bevy::prelude::*;
 
+/// Entry point: builds and runs the Bevy app.
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
@@ -8,6 +11,7 @@ fn main() {
         .run();
 }
 
+/// Player component with movement, jump, and health stats.
 #[derive(Component)]
 struct Player {
     speed: f32,
@@ -16,6 +20,7 @@ struct Player {
     health: i32,
 }
 
+/// Enemy component with patrol boundaries.
 #[derive(Component)]
 struct Enemy {
     speed: f32,
@@ -24,20 +29,25 @@ struct Enemy {
     moving_right: bool,
 }
 
+/// Collectable coin with a point value.
 #[derive(Component)]
 struct Coin {
     value: i32,
 }
 
+/// Velocity applied each frame.
 #[derive(Component)]
 struct Velocity(Vec3);
 
+/// Tracks whether the player is standing on the ground.
 #[derive(Component)]
 struct Grounded(bool);
 
+/// Spawns camera, player, enemy, and coins.
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
 
+    // Player at the origin.
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("player.png"),
@@ -54,6 +64,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         Grounded(false),
     ));
 
+    // Patrol enemy to the right.
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("enemy.png"),
@@ -69,6 +80,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         Velocity(Vec3::ZERO),
     ));
 
+    // Coins placed in a horizontal line.
     for i in 0..5 {
         commands.spawn((
             SpriteBundle {
@@ -81,6 +93,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     }
 }
 
+/// Left/right arrow keys set horizontal velocity.
 fn player_movement(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Velocity, &Player)>,
@@ -97,6 +110,7 @@ fn player_movement(
     }
 }
 
+/// Space triggers a jump (or double-jump if already airborne).
 fn player_jump(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Velocity, &mut Player, &mut Grounded)>,
@@ -115,6 +129,7 @@ fn player_jump(
     }
 }
 
+/// Applies a simple downward acceleration and resets grounded state at y=0.
 fn gravity(
     time: Res<Time>,
     mut query: Query<(&mut Velocity, &mut Grounded, &Transform), With<Player>>,
@@ -127,6 +142,7 @@ fn gravity(
     }
 }
 
+/// Moves the enemy back and forth within its patrol range.
 fn enemy_patrol(
     mut query: Query<(&mut Velocity, &mut Enemy)>,
 ) {
@@ -142,6 +158,7 @@ fn enemy_patrol(
     }
 }
 
+/// Despawns coins when the player overlaps them.
 fn coin_collect(
     mut commands: Commands,
     player_query: Query<&Transform, With<Player>>,

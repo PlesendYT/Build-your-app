@@ -1,13 +1,16 @@
+// OpenGL 3.3 Core template - renders a colored triangle using GLFW.
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+// Vertex data: position (x,y,z) and color (r,g,b) interleaved.
 static const float vertices[] = {
     -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
      0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
      0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
 };
 
+// Vertex shader: passes position and color through.
 static const char *vertex_shader_src =
     "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
@@ -18,6 +21,7 @@ static const char *vertex_shader_src =
     "    Color = aColor;\n"
     "}\n";
 
+// Fragment shader: outputs interpolated color.
 static const char *fragment_shader_src =
     "#version 330 core\n"
     "in vec3 Color;\n"
@@ -26,6 +30,7 @@ static const char *fragment_shader_src =
     "    FragColor = vec4(Color, 1.0);\n"
     "}\n";
 
+// Compile a shader from source; returns 0 on failure.
 static GLuint create_shader(GLenum type, const char *src) {
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &src, NULL);
@@ -42,6 +47,7 @@ static GLuint create_shader(GLenum type, const char *src) {
     return shader;
 }
 
+// Link vertex and fragment shaders into a shader program.
 static GLuint create_program(const char *vs_src, const char *fs_src) {
     GLuint vs = create_shader(GL_VERTEX_SHADER, vs_src);
     GLuint fs = create_shader(GL_FRAGMENT_SHADER, fs_src);
@@ -67,6 +73,7 @@ static GLuint create_program(const char *vs_src, const char *fs_src) {
     return program;
 }
 
+// Entry point: initialize GLFW, create window, render triangle loop.
 int main(void) {
     if (!glfwInit()) {
         fprintf(stderr, "Failed to init GLFW\n");
@@ -102,6 +109,7 @@ int main(void) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    // Main render loop.
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);

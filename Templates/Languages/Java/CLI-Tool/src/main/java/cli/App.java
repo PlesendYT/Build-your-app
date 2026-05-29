@@ -1,11 +1,17 @@
+/**
+ * CLI application entry point: parses arguments via the sealed Command type
+ * and executes the matching action.
+ */
 package cli;
 
 import java.util.stream.Stream;
 
+/** Main class that dispatches CLI commands and prints results. */
 public final class App {
 
     public static void main(String... args) {
         var cmd = Command.parse(args);
+        // Dispatch each command variant with pattern matching
         var result = switch (cmd) {
             case Command.Greet(var name, var upper) -> {
                 var msg = "Hallo, " + name + "!";

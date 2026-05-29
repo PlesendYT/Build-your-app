@@ -1,4 +1,5 @@
 <script lang="ts">
+  // Import the posts data source
   import { posts } from '$lib/posts'
 </script>
 

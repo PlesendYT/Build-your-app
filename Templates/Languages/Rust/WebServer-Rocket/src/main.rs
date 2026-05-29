@@ -1,31 +1,38 @@
+//! Rocket web server with health, info, and item-creation endpoints.
+
 #[macro_use] extern crate rocket;
 
 use rocket::{State, serde::json::Json};
 use serde::{Deserialize, Serialize};
 use std::sync::atomic::{AtomicU64, Ordering};
 
+/// Shared state with an atomic request counter.
 struct AppState {
     counter: AtomicU64,
 }
 
+/// Health-check response body.
 #[derive(Serialize)]
 struct Health {
     status: String,
     version: String,
 }
 
+/// Info endpoint response body.
 #[derive(Serialize)]
 struct Info {
     message: String,
     counter: u64,
 }
 
+/// Request body for creating a new item.
 #[derive(Deserialize)]
 struct CreateItem {
     name: String,
     value: String,
 }
 
+/// Response body after creating an item.
 #[derive(Serialize)]
 struct ItemResponse {
     id: u64,
@@ -33,6 +40,7 @@ struct ItemResponse {
     value: String,
 }
 
+/// Returns a health check with the current package version.
 #[get("/health")]
 fn health() -> Json<Health> {
     Json(Health {
@@ -41,6 +49,7 @@ fn health() -> Json<Health> {
     })
 }
 
+/// Returns a greeting and an incrementing request counter.
 #[get("/info")]
 fn info(state: &State<AppState>) -> Json<Info> {
     let counter = state.counter.fetch_add(1, Ordering::SeqCst) + 1;
@@ -50,6 +59,7 @@ fn info(state: &State<AppState>) -> Json<Info> {
     })
 }
 
+/// Creates a new item from JSON input and returns it with a random ID.
 #[post("/items", format = "json", data = "<body>")]
 fn create_item(body: Json<CreateItem>) -> Json<ItemResponse> {
     let id = rand::random::<u64>();
@@ -60,11 +70,13 @@ fn create_item(body: Json<CreateItem>) -> Json<ItemResponse> {
     })
 }
 
+/// 404 catch-all handler.
 #[catch(404)]
 fn not_found() -> Json<serde_json::Value> {
     Json(serde_json::json!({"error": "Resource not found"}))
 }
 
+/// Entry point: builds and launches the Rocket application.
 #[launch]
 fn rocket() -> _ {
     rocket::build()

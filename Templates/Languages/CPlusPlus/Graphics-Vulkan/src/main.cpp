@@ -1,3 +1,4 @@
+// Vulkan application template - creates instance, device, and window (C++).
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 #include <algorithm>
@@ -10,13 +11,16 @@
 #include <stdexcept>
 #include <vector>
 
+// Vulkan application with window, instance, and logical device.
 class VulkanApp {
 public:
+    // Initialize window and Vulkan.
     VulkanApp() {
         init_window();
         init_vulkan();
     }
 
+    // Clean up Vulkan and GLFW resources.
     ~VulkanApp() {
         vkDestroyDevice(device_, nullptr);
         vkDestroyInstance(instance_, nullptr);
@@ -24,6 +28,7 @@ public:
         glfwTerminate();
     }
 
+    // Main loop: poll events until window closes.
     void run() {
         while (!glfwWindowShouldClose(window_)) {
             glfwPollEvents();
@@ -36,18 +41,21 @@ private:
     VkDevice device_ = VK_NULL_HANDLE;
     VkPhysicalDevice physical_device_ = VK_NULL_HANDLE;
 
+    // Create a GLFW window without OpenGL context.
     void init_window() {
         glfwInit();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         window_ = glfwCreateWindow(800, 600, "Vulkan Template", nullptr, nullptr);
     }
 
+    // Set up Vulkan instance, physical device, and logical device.
     void init_vulkan() {
         create_instance();
         pick_physical_device();
         create_logical_device();
     }
 
+    // Create a Vulkan instance with GLFW extensions.
     void create_instance() {
         VkApplicationInfo app_info{};
         app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -73,6 +81,7 @@ private:
         }
     }
 
+    // Select the first available Vulkan physical device.
     void pick_physical_device() {
         uint32_t count = 0;
         vkEnumeratePhysicalDevices(instance_, &count, nullptr);
@@ -86,6 +95,7 @@ private:
         std::cout << "Using: " << props.deviceName << "\n";
     }
 
+    // Create a logical device from the selected physical device.
     void create_logical_device() {
         uint32_t count = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(physical_device_, &count, nullptr);
@@ -112,6 +122,7 @@ private:
     }
 };
 
+// Entry point: create and run the Vulkan application.
 int main() {
     try {
         VulkanApp app;

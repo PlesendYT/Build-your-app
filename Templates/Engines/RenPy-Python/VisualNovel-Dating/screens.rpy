@@ -1,4 +1,5 @@
 ## Screens for Dating Visual Novel
+# Affection HUD, location picker, date choice, and ending screen
 
 screen affection_display():
     vbox:

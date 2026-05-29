@@ -1,0 +1,15 @@
+{
+  "name": "typescript-browser-extension",
+  "private": true,
+  "version": "1.0.0",
+  "description": "TypeScript browser extension scaffold (Manifest V3)",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && cp manifest.json dist/",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.260",
+    "typescript": "^5.4.0"
+  }
+}

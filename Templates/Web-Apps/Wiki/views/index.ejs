@@ -1,0 +1,41 @@
+<!-- Wiki home page - lists all pages -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wiki</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f8fafc; }
+    nav { background: #1e293b; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    nav a { color: white; text-decoration: none; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    .page-card { background: white; padding: 1.5rem; margin: 1rem 0; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+    .page-card h2 a { color: #1e293b; text-decoration: none; }
+    .meta { color: #64748b; font-size: 0.85rem; }
+    .btn { background: #2563eb; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <!-- Navigation header -->
+  <nav>
+    <a href="/"><strong>Wiki</strong></a>
+    <a href="/new" class="btn">New Page</a>
+  </nav>
+
+  <div class="container">
+    <h1>Wiki Pages</h1>
+    <!-- List of wiki pages -->
+    <% if (pages.length === 0) { %>
+      <p>No pages yet. <a href="/new">Create the first page</a>.</p>
+    <% } %>
+    <% pages.forEach(page => { %>
+      <div class="page-card">
+        <h2><a href="/<%= page.slug %>"><%= page.title %></a></h2>
+        <p class="meta">Created <%= new Date(page.createdAt).toLocaleDateString() %> | Updated <%= new Date(page.updatedAt).toLocaleDateString() %></p>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

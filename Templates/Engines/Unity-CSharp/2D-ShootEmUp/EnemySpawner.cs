@@ -1,8 +1,14 @@
+/// <summary>
+/// Spawns waves of enemies in a shoot-em-up, including a boss at a specified wave.
+/// </summary>
 using UnityEngine;
 using System.Collections;
 
 public class EnemySpawner : MonoBehaviour
 {
+    /// <summary>
+    /// Data for a single enemy wave.
+    /// </summary>
     [System.Serializable]
     public class Wave
     {
@@ -22,11 +28,17 @@ public class EnemySpawner : MonoBehaviour
     public GameObject bossPrefab;
     public int bossWave = 3;
 
+    /// <summary>
+    /// Begins spawning waves on start.
+    /// </summary>
     private void Start()
     {
         StartCoroutine(SpawnWaves());
     }
 
+    /// <summary>
+    /// Spawns each wave sequentially, waiting for all enemies to be cleared between waves.
+    /// </summary>
     private IEnumerator SpawnWaves()
     {
         for (int i = 0; i < waves.Length; i++)
@@ -55,6 +67,9 @@ public class EnemySpawner : MonoBehaviour
         GameManager.Instance?.Victory();
     }
 
+    /// <summary>
+    /// Instantiates a random enemy prefab from the wave at a random position in the spawn area.
+    /// </summary>
     private void SpawnEnemy(Wave wave)
     {
         if (wave.enemyPrefabs.Length == 0) return;

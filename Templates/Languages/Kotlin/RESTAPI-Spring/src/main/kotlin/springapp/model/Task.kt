@@ -1,3 +1,7 @@
+/**
+ * Task entity mapped to the "tasks" database table.
+ * Used by Spring Data JDBC with auto-generated ID and nullable description.
+ */
 package springapp.model
 
 import org.springframework.data.annotation.Id

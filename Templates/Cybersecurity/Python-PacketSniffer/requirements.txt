@@ -1,0 +1,2 @@
+# Core dependencies for the packet sniffer and protocol analyzer
+scapy>=2.5.0

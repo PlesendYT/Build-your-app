@@ -1,3 +1,4 @@
+# Metroidvania room manager: tracks room transitions, connections, and player presence
 extends Node2D
 
 @export var room_id: String = "room_1"

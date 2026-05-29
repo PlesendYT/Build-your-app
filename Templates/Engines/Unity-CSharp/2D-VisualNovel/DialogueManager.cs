@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages visual novel dialogue: node-based branching, text reveal, character portraits, choices, and flag tracking.
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +8,9 @@ using TMPro;
 
 public class DialogueManager : MonoBehaviour
 {
+    /// <summary>
+    /// Data for a single line of dialogue spoken by a character.
+    /// </summary>
     [System.Serializable]
     public class DialogueLine
     {
@@ -14,6 +20,9 @@ public class DialogueManager : MonoBehaviour
         public AudioClip voiceClip;
     }
 
+    /// <summary>
+    /// A dialogue node containing lines and optional branching choices.
+    /// </summary>
     [System.Serializable]
     public class DialogueNode
     {
@@ -24,6 +33,9 @@ public class DialogueManager : MonoBehaviour
         public string backgroundSceneId;
     }
 
+    /// <summary>
+    /// A player choice with prerequisites and flag-setting effects.
+    /// </summary>
     [System.Serializable]
     public class Choice
     {
@@ -54,11 +66,17 @@ public class DialogueManager : MonoBehaviour
     private bool isTextRevealing;
     private HashSet<string> flags = new HashSet<string>();
 
+    /// <summary>
+    /// Initializes the dialogue node dictionary.
+    /// </summary>
     private void Awake()
     {
         dialogueNodes = new Dictionary<string, DialogueNode>();
     }
 
+    /// <summary>
+    /// Loads a dialogue node by ID and displays the first line.
+    /// </summary>
     public void LoadDialogueNode(string nodeId)
     {
         if (!dialogueNodes.ContainsKey(nodeId)) return;
@@ -68,6 +86,9 @@ public class DialogueManager : MonoBehaviour
         ShowCurrentLine();
     }
 
+    /// <summary>
+    /// Shows the current line or presents choices if all lines are done.
+    /// </summary>
     private void ShowCurrentLine()
     {
         if (currentNode == null || currentLineIndex >= currentNode.lines.Length)
@@ -84,6 +105,9 @@ public class DialogueManager : MonoBehaviour
         textRoutine = StartCoroutine(RevealText(line.text));
     }
 
+    /// <summary>
+    /// Reveals text one character at a time with a typewriter effect.
+    /// </summary>
     private IEnumerator RevealText(string text)
     {
         isTextRevealing = true;
@@ -106,6 +130,9 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Advances the dialogue: skips text reveal or moves to the next line.
+    /// </summary>
     public void AdvanceDialogue()
     {
         if (isTextRevealing)
@@ -121,6 +148,9 @@ public class DialogueManager : MonoBehaviour
         ShowCurrentLine();
     }
 
+    /// <summary>
+    /// Displays available choices or auto-advances if no choices exist.
+    /// </summary>
     private void ShowChoices()
     {
         if (currentNode == null) return;
@@ -167,6 +197,9 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Processes a selected choice: sets flags and loads the next node.
+    /// </summary>
     private void SelectChoice(int index)
     {
         if (currentNode.choices == null || index >= currentNode.choices.Length) return;

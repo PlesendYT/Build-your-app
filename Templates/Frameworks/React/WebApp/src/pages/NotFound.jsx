@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 
+/** 404 fallback page displayed when no route matches. */
 function NotFound() {
   return (
     <div className="not-found">

@@ -1,3 +1,5 @@
+# Mobile UI overlay for touch-based games
+# Manages score display, pause button, and pause menu visibility
 extends CanvasLayer
 
 @onready var score_label: Label = $ScoreLabel

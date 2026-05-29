@@ -1,3 +1,6 @@
+/// <summary>
+/// Displays quiz question UI: question text, answer buttons, score, timer, and progress.
+/// </summary>
 using UnityEngine;
 using TMPro;
 
@@ -9,6 +12,9 @@ public class QuestionDisplay : MonoBehaviour
     public TMP_Text timerText;
     public TMP_Text progressText;
 
+    /// <summary>
+    /// Updates all UI elements from the QuizManager state each frame.
+    /// </summary>
     private void Update()
     {
         QuizManager qm = QuizManager.Instance;
@@ -26,6 +32,9 @@ public class QuestionDisplay : MonoBehaviour
         progressText.text = "Question " + qm.QuestionIndex + "/" + qm.TotalQuestions;
     }
 
+    /// <summary>
+    /// Called when the player clicks an answer button.
+    /// </summary>
     public void OnAnswerClicked(int index)
     {
         QuizManager.Instance.SubmitAnswer(index);

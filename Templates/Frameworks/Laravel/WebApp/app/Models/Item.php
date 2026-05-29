@@ -1,11 +1,13 @@
 <?php
 
+// Item Eloquent model for the web application
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
+    // Attributes that are mass assignable
     protected $fillable = ['title', 'description'];
 }
 

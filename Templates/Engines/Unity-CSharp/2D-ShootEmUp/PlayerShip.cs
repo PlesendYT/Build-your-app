@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls the player ship in a shoot-em-up with movement, auto-fire, weapon upgrades, and health.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,12 +23,18 @@ public class PlayerShip : MonoBehaviour
     public int maxHealth = 3;
     private int currentHealth;
 
+    /// <summary>
+    /// Caches the rigidbody and initializes health.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
     }
 
+    /// <summary>
+    /// Auto-fires at the configured rate each frame.
+    /// </summary>
     private void Update()
     {
         if (Time.time >= lastFireTime + fireRate)
@@ -35,6 +44,9 @@ public class PlayerShip : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves the ship based on input and clamps to bounds.
+    /// </summary>
     private void FixedUpdate()
     {
         rb.linearVelocity = moveInput * moveSpeed;
@@ -44,6 +56,9 @@ public class PlayerShip : MonoBehaviour
         transform.position = clamped;
     }
 
+    /// <summary>
+    /// Fires bullets from all fire points up to the current weapon level.
+    /// </summary>
     private void Fire()
     {
         if (bulletPrefab == null) return;
@@ -55,16 +70,25 @@ public class PlayerShip : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reads movement input from the input system.
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
 
+    /// <summary>
+    /// Increases the weapon level up to the number of available fire points.
+    /// </summary>
     public void UpgradeWeapon()
     {
         weaponLevel = Mathf.Min(weaponLevel + 1, firePoints.Length);
     }
 
+    /// <summary>
+    /// Reduces health and triggers death if health reaches zero.
+    /// </summary>
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
@@ -74,6 +98,9 @@ public class PlayerShip : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Disables the ship and triggers game over.
+    /// </summary>
     private void Die()
     {
         gameObject.SetActive(false);

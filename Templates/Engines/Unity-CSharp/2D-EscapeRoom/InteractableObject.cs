@@ -1,3 +1,6 @@
+/// <summary>
+/// Represents an interactable object in the escape room that can be picked up, combined, or examined.
+/// </summary>
 using UnityEngine;
 
 public class InteractableObject : MonoBehaviour
@@ -13,12 +16,18 @@ public class InteractableObject : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Collider2D col;
 
+    /// <summary>
+    /// Caches sprite renderer and collider components.
+    /// </summary>
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
     }
 
+    /// <summary>
+    /// Handles interaction: pickups, combining items with required item, or showing a message.
+    /// </summary>
     public void Interact()
     {
         EscapeRoomManager rm = EscapeRoomManager.Instance;
@@ -31,6 +40,7 @@ public class InteractableObject : MonoBehaviour
             return;
         }
 
+        // Check if player has the required item to combine
         if (!string.IsNullOrEmpty(requiredItem))
         {
             if (rm.HasItem(requiredItem))
@@ -55,6 +65,9 @@ public class InteractableObject : MonoBehaviour
         if (destroyOnUse) Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Interacts with the object when clicked.
+    /// </summary>
     private void OnMouseDown()
     {
         Interact();

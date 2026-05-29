@@ -1,3 +1,4 @@
+// SDL2 GUI template (C++) - window with rectangle and text rendering.
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
@@ -5,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 
+// Custom deleters for SDL resource RAII wrappers.
 struct SDL_Deleter {
     void operator()(SDL_Window* w) const { SDL_DestroyWindow(w); }
     void operator()(SDL_Renderer* r) const { SDL_DestroyRenderer(r); }
@@ -13,8 +15,10 @@ struct SDL_Deleter {
 using WindowPtr = std::unique_ptr<SDL_Window, SDL_Deleter>;
 using RendererPtr = std::unique_ptr<SDL_Renderer, SDL_Deleter>;
 
+// SDL2 application class wrapping window, renderer, and event loop.
 class SDLApp {
 public:
+    // Initialize SDL, create window and renderer, load font.
     SDLApp(const char* title, int w, int h)
         : width_{w}, height_{h} {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -41,12 +45,14 @@ public:
         font_ = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24);
     }
 
+    // Clean up SDL resources.
     ~SDLApp() {
         if (font_) TTF_CloseFont(font_);
         TTF_Quit();
         SDL_Quit();
     }
 
+    // Main event loop: render rectangle and text every frame.
     auto run() -> void {
         bool running = true;
         while (running) {
@@ -86,6 +92,7 @@ private:
     TTF_Font* font_ = nullptr;
 };
 
+// Entry point: create SDL app and run.
 auto main() -> int {
     try {
         SDLApp app{"SDL2 Template", 800, 600};

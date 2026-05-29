@@ -1,3 +1,4 @@
+// Ready event — logs when the bot comes online
 import { Events, type Client } from 'discord.js';
 
 export const name = Events.ClientReady;

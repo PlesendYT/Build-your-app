@@ -1,3 +1,4 @@
+// Header for a puzzle block with activation, chaining, and pressure plate detection.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -5,6 +6,7 @@
 
 class UBoxComponent;
 
+// Delegate broadcast when the block's activation state changes.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBlockActivated, bool, bActivated);
 
 UCLASS()
@@ -17,9 +19,11 @@ public:
     UPROPERTY(BlueprintAssignable) FOnBlockActivated OnActivated;
     UPROPERTY(BlueprintReadOnly) bool bActivated = false;
 
+    // Activate or deactivate this block and its connected blocks.
     UFUNCTION(BlueprintCallable)
     void Activate(bool bNewState);
 
+    // Toggle the current activation state.
     UFUNCTION(BlueprintCallable)
     void Toggle();
 

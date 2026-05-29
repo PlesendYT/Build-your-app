@@ -1,3 +1,7 @@
+/**
+ * Main entry point for the Vue WebApp application.
+ * Sets up Pinia state management, Vue Router, and mounts the root component.
+ */
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import router from './router'

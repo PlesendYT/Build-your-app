@@ -1,3 +1,4 @@
+// About page — describes the app and lists the technologies used
 export default function About() {
   return (
     <div>

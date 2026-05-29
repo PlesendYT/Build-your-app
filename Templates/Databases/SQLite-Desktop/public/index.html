@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!-- Electron desktop UI for SQLite notes CRUD application -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SQLite Notes</title>
+  <style>
+    /* Minimal styling for the notes app layout */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; padding: 20px; background: #f5f5f5; }
+    h1 { margin-bottom: 16px; }
+    form { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    input, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    input { flex: 1 1 200px; }
+    textarea { flex: 2 1 300px; resize: vertical; }
+    button { padding: 8px 16px; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    ul { list-style: none; }
+    li { background: #fff; padding: 12px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .note-content { flex: 1; }
+    .note-title { font-weight: bold; }
+    .note-text { color: #555; }
+    .del-btn { background: #dc3545; }
+    .del-btn:hover { background: #b52d3a; }
+  </style>
+</head>
+<body>
+  <h1>📝 Notes</h1>
+
+  <!-- Form to add a new note -->
+  <form id="noteForm">
+    <input type="text" id="titleInput" placeholder="Title" required />
+    <textarea id="contentInput" placeholder="Note content"></textarea>
+    <button type="submit">Add Note</button>
+  </form>
+
+  <!-- List of notes rendered dynamically -->
+  <ul id="noteList"></ul>
+
+  <script>
+    // Render all notes into the list element
+    async function renderNotes() {
+      const notes = await window.notes.getAll();
+      const list = document.getElementById('noteList');
+      list.innerHTML = notes.map(n => `
+        <li>
+          <div class="note-content">
+            <div class="note-title">${escapeHtml(n.title)}</div>
+            <div class="note-text">${escapeHtml(n.content || '')}</div>
+          </div>
+          <button class="del-btn" data-id="${n.id}">Delete</button>
+        </li>
+      `).join('');
+
+      // Attach delete handlers to each delete button
+      document.querySelectorAll('.del-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await window.notes.delete(Number(btn.dataset.id));
+          renderNotes();
+        });
+      });
+    }
+
+    // Escape HTML to prevent XSS when rendering user input
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Handle form submission to add a new note
+    document.getElementById('noteForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('titleInput').value.trim();
+      const content = document.getElementById('contentInput').value.trim();
+      if (title) {
+        await window.notes.add(title, content);
+        document.getElementById('titleInput').value = '';
+        document.getElementById('contentInput').value = '';
+        renderNotes();
+      }
+    });
+
+    // Initial render when the page loads
+    renderNotes();
+  </script>
+</body>
+</html>

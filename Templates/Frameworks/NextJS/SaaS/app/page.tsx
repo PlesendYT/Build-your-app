@@ -1,3 +1,4 @@
+// SaaS landing page — hero section with CTAs and feature highlights
 import Link from 'next/link'
 
 export default function Home() {

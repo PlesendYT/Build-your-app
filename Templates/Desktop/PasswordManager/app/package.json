@@ -1,0 +1,12 @@
+{
+  "name": "password-manager",
+  "version": "1.0.0",
+  "description": "Electron password manager with encrypted storage",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^28.0.0"
+  }
+}

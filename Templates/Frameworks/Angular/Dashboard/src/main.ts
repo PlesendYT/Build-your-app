@@ -1,8 +1,10 @@
+// Entry point for the Angular Dashboard template — bootsraps a standalone app with sidebar layout and routing
 import { bootstrapApplication } from '@angular/platform-browser'
 import { provideRouter } from '@angular/router'
 import { Component, signal } from '@angular/core'
 import { RouterOutlet, RouterLink, Routes } from '@angular/router'
 
+// Main dashboard view with stats cards and orders table
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -32,18 +34,21 @@ import { RouterOutlet, RouterLink, Routes } from '@angular/router'
   `
 })
 export class DashboardComponent {
+  // Sample stats for the KPI cards
   stats = [
     { label: 'Umsatz', value: '€12,430', change: '+12%', positive: true },
     { label: 'Bestellungen', value: '156', change: '+8%', positive: true },
     { label: 'Kunden', value: '1,234', change: '+23%', positive: true },
     { label: 'Besucher', value: '8,932', change: '-3%', positive: false },
   ]
+  // Sample recent orders data
   orders = [
     { customer: 'Max M.', product: 'Laptop', status: 'Versandt', date: '2024-01-15' },
     { customer: 'Anna S.', product: 'Monitor', status: 'Bearbeitung', date: '2024-01-14' },
   ]
 }
 
+// Root layout with sidebar navigation and top bar
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -63,16 +68,20 @@ export class DashboardComponent {
 })
 export class AppComponent {}
 
+// Placeholder user management component
 @Component({ selector: 'app-users', standalone: true, template: `<h2>Benutzerverwaltung</h2>` })
 export class UsersComponent {}
 
+// Placeholder settings component
 @Component({ selector: 'app-settings', standalone: true, template: `<h2>Einstellungen</h2>` })
 export class SettingsComponent {}
 
+// Application route definitions
 const routes: Routes = [
   { path: '', component: DashboardComponent },
   { path: 'users', component: UsersComponent },
   { path: 'settings', component: SettingsComponent },
 ]
 
+// Bootstrap the standalone app with router
 bootstrapApplication(AppComponent, { providers: [provideRouter(routes)] })

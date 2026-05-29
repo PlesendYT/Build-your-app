@@ -1,30 +1,73 @@
+/// <summary>
+/// Core simulation: ResourceManager tracks resources globally; Entity base class for living things.
+/// </summary>
 using UnityEngine;
 
-public class Entity : MonoBehaviour
+public enum ResourceType
 {
-    [Header("Entity")]
-    public string entityName;
-    public EntityType type;
-    public EntityState state;
-    public float health = 100f;
-    public float maxHealth = 100f;
+    Food,
+    Wood,
+    Stone,
+    Gold
+}
 
-    [Header("Behavior")]
-    public float moveSpeed = 3f;
-    public Transform target;
-    public Vector3 destination;
+[System.Serializable]
+public class ResourceAmount
+{
+    public ResourceType resourceType;
+    public int amount;
+}
 
-    public enum EntityType { Person, Animal, Vehicle, Building }
-    public enum EntityState { Idle, Moving, Working, Sleeping }
+public class ResourceManager : MonoBehaviour
+{
+    public static ResourceManager Instance { get; private set; }
 
-    protected virtual void Update()
+    private Dictionary<ResourceType, int> resources = new Dictionary<ResourceType, int>();
+
+    private void Awake()
     {
-        switch (state)
+        Instance = this;
+        foreach (ResourceType type in System.Enum.GetValues(typeof(ResourceType)))
+            resources[type] = 0;
+    }
+
+    public void AddResource(ResourceType type, int amount)
+    {
+        if (resources.ContainsKey(type))
+            resources[type] += amount;
+    }
+
+    public bool SpendResource(ResourceType type, int amount)
+    {
+        if (resources.ContainsKey(type) && resources[type] >= amount)
         {
-            case EntityState.Moving:
-                MoveToDestination();
-                break;
+            resources[type] -= amount;
+            return true;
         }
+        return false;
+    }
+
+    public int GetResource(ResourceType type)
+    {
+        return resources.ContainsKey(type) ? resources[type] : 0;
+    }
+}
+
+public abstract class Entity : MonoBehaviour
+{
+    public string entityName;
+    public int health;
+    public int maxHealth;
+    public int level;
+
+    public virtual void TakeDamage(int damage)
+    {
+        health -= damage;
+        if (health <= 0) Die();
+    }
+
+    public abstract void Die();
+}
     }
 
     protected virtual void MoveToDestination()

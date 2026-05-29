@@ -1,9 +1,11 @@
+// 2D projectile that moves forward and damages characters on hit.
 #include "TopDownProjectile.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "GameFramework/Character.h"
 
+// Set up collision sphere, sprite, and projectile movement.
 ATopDownProjectile::ATopDownProjectile()
 {
     Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));

@@ -1,3 +1,4 @@
+// Root layout component — header with navigation, router outlet, and footer
 import { Component } from '@angular/core'
 import { RouterOutlet, RouterLink } from '@angular/router'
 
@@ -35,5 +36,6 @@ import { RouterOutlet, RouterLink } from '@angular/router'
   `]
 })
 export class AppComponent {
+  // Current year displayed in the footer copyright
   year = new Date().getFullYear()
 }

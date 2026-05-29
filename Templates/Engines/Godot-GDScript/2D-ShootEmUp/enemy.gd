@@ -1,3 +1,4 @@
+# Shoot-em-up enemy with movement patterns, shooting, health, and score reward
 extends CharacterBody2D
 
 @export var speed: float = 150.0

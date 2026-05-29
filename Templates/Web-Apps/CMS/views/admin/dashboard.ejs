@@ -1,0 +1,67 @@
+<!-- Admin dashboard - manage all content -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - CMS Admin</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f8fafc; }
+    nav { background: #1e293b; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    nav a { color: white; text-decoration: none; }
+    .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    table { width: 100%; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+    th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f1f5f9; }
+    .btn { background: #2563eb; color: white; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; display: inline-block; margin-right: 0.25rem; }
+    .btn-danger { background: #dc2626; }
+    .badge { padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.8rem; }
+    .badge-published { background: #d1fae5; color: #065f46; }
+    .badge-draft { background: #fef3c7; color: #92400e; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/"><strong>CMS Admin</strong></a>
+    <div>
+      <span><%= user.username %></span>
+      <a href="/admin/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Dashboard</h1>
+    <a href="/admin/content/new" class="btn">New Content</a>
+    <!-- Content management table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% contents.forEach(c => { %>
+          <tr>
+            <td><%= c.title %></td>
+            <td><span class="badge <%= c.published ? 'badge-published' : 'badge-draft' %>"><%= c.published ? 'Published' : 'Draft' %></span></td>
+            <td><%= new Date(c.createdAt).toLocaleDateString() %></td>
+            <td>
+              <a href="/admin/content/<%= c.id %>/edit" class="btn">Edit</a>
+              <form action="/admin/content/<%= c.id %>?_method=DELETE" method="POST" style="display:inline">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+        <% if (contents.length === 0) { %>
+          <tr><td colspan="4">No content yet.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

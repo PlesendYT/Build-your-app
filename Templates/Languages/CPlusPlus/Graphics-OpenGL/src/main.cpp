@@ -1,3 +1,4 @@
+// OpenGL 3.3 Core template (C++) - renders a colored triangle with GLFW.
 #include "shader.hpp"
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -6,12 +7,14 @@
 #include <array>
 #include <iostream>
 
+// Vertex data: position (x,y,z) and color (r,g,b) interleaved.
 constexpr std::array vertices = {
     -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
      0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
      0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
 };
 
+// Entry point: initialize GLFW, load shaders, render triangle.
 int main() {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW\n";

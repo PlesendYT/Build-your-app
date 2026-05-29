@@ -1,0 +1,54 @@
+<!-- Paste view page with syntax-highlighted code -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= paste.title %> - Pastebin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f8fafc; }
+    header { background: #1e293b; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    header a { color: white; text-decoration: none; }
+    .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .paste-header { margin-bottom: 1rem; }
+    .paste-header h1 { font-size: 1.5rem; }
+    .meta { color: #64748b; font-size: 0.85rem; }
+    .actions { margin: 1rem 0; display: flex; gap: 0.5rem; }
+    .btn { background: #2563eb; color: white; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; }
+    pre { border-radius: 8px; overflow: hidden; }
+    pre code.hljs { padding: 1.5rem; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/"><strong>Pastebin</strong></a>
+    <a href="/" class="btn">New Paste</a>
+  </header>
+
+  <div class="container">
+    <!-- Paste metadata -->
+    <div class="paste-header">
+      <h1><%= paste.title %></h1>
+      <p class="meta">
+        <%= paste.language %> | 
+        Created <%= new Date(paste.createdAt).toLocaleString() %> |
+        <% if (paste.expiresAt) { %>
+          Expires <%= new Date(paste.expiresAt).toLocaleDateString() %>
+        <% } else { %>
+          Never expires
+        <% } %>
+      </p>
+    </div>
+
+    <!-- Raw link -->
+    <div class="actions">
+      <a href="/<%= paste.code %>/raw" class="btn">Raw</a>
+    </div>
+
+    <!-- Syntax-highlighted code block -->
+    <pre><code class="hljs language-<%= paste.language %>"><%- highlighted %></code></pre>
+  </div>
+</body>
+</html>

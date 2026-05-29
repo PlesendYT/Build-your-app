@@ -1,0 +1,2 @@
+# Core dependency for Raspberry Pi GPIO control
+RPi.GPIO>=0.7.1

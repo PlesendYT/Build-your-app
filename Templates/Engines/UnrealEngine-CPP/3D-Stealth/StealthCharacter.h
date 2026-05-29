@@ -1,3 +1,4 @@
+// Header for a stealth character with noise, crouching, and distraction.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -15,12 +16,15 @@ public:
     UPROPERTY(BlueprintReadOnly) bool bIsInShadow = false;
     UPROPERTY(BlueprintReadOnly) bool bIsCrouching = false;
 
+    // Generate noise at the character's location.
     UFUNCTION(BlueprintCallable)
     void MakeNoise(float Loudness);
 
+    // Toggle crouching state (affects move speed).
     UFUNCTION(BlueprintCallable)
     void ToggleCrouch();
 
+    // Create a distraction noise at a given location.
     UFUNCTION(BlueprintCallable)
     void DistractEnemy(FVector Location);
 

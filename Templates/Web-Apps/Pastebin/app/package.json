@@ -1,0 +1,15 @@
+{
+  "name": "pastebin",
+  "version": "1.0.0",
+  "description": "Express pastebin with syntax highlighting and expiration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "highlight.js": "^11.9.0",
+    "nanoid": "^3.3.7"
+  }
+}

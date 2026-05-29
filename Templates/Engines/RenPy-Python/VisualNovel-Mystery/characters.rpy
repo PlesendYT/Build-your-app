@@ -1,4 +1,5 @@
 ## Characters for Mystery Visual Novel
+# Defines detective, suspects, and tracks clues, interviewed list, and the correct culprit
 
 define detective = Character("Detective Morgan", color="#2c3e50")
 define player = Character("You", color="#ffffff")

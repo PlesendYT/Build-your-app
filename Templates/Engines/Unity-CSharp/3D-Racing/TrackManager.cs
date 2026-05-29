@@ -1,3 +1,6 @@
+/// <summary>
+/// Provides start position and AI waypoints; includes GameManager for race state.
+/// </summary>
 using UnityEngine;
 
 public class TrackManager : MonoBehaviour

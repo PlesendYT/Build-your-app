@@ -1,5 +1,8 @@
+//! A 3D FPS template with mouse-look, WASD movement, shooting, and enemy AI.
+
 use bevy::prelude::*;
 
+/// Entry point: builds and runs the Bevy app.
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
@@ -8,6 +11,7 @@ fn main() {
         .run();
 }
 
+/// Player component with movement and ammo stats.
 #[derive(Component)]
 struct Player {
     speed: f32,
@@ -16,6 +20,7 @@ struct Player {
     max_ammo: i32,
 }
 
+/// Enemy component with health, speed, attack range, and cooldown.
 #[derive(Component)]
 struct Enemy {
     health: i32,
@@ -25,20 +30,24 @@ struct Enemy {
     timer: f32,
 }
 
+/// Marker component for the gun (placeholder).
 #[derive(Component)]
 struct Gun;
 
+/// Tracks the player's look direction (pitch/yaw).
 #[derive(Component)]
 struct LookState {
     pitch: f32,
     yaw: f32,
 }
 
+/// Spawns the player camera, light, and two enemies.
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
+    // Player camera with look state at eye height.
     commands.spawn((
         Camera3dBundle {
             transform: Transform::from_xyz(0.0, 1.5, 0.0),
@@ -56,11 +65,13 @@ fn setup(
         },
     ));
 
+    // Global point light.
     commands.spawn(PointLightBundle {
         transform: Transform::from_xyz(0.0, 10.0, 0.0),
         ..default()
     });
 
+    // Red enemy.
     commands.spawn((
         PbrBundle {
             mesh: meshes.add(Cuboid::from_size(Vec3::splat(0.5))),
@@ -77,6 +88,7 @@ fn setup(
         },
     ));
 
+    // Green enemy.
     commands.spawn((
         PbrBundle {
             mesh: meshes.add(Cuboid::from_size(Vec3::splat(0.5))),
@@ -94,6 +106,7 @@ fn setup(
     ));
 }
 
+/// Updates the camera rotation based on mouse movement.
 fn player_look(
     mouse: Res<ButtonInput<MouseButton>>,
     mut mouse_events: EventReader<CursorMoved>,
@@ -113,6 +126,7 @@ fn player_look(
     }
 }
 
+/// Moves the player forward/back/strafe relative to the look direction.
 fn player_move(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Transform, &LookState), (With<Player>, Without<Enemy>)>,
@@ -136,6 +150,7 @@ fn player_move(
     }
 }
 
+/// Fires a ray from the centre of the viewport and marks hit enemies.
 fn shooting(
     mouse: Res<ButtonInput<MouseButton>>,
     mut commands: Commands,
@@ -156,9 +171,11 @@ fn shooting(
     }
     player.ammo -= 1;
 
+    // Cast a ray from the centre of the viewport.
     let ray = camera.viewport_to_world(camera_transform, Vec2::new(0.0, 0.0)).unwrap();
     let ray = Ray3d::new(camera_transform.translation, ray.direction);
 
+    // Check each enemy for a hit using a dot-product threshold.
     for (entity, enemy_transform, enemy) in enemy_query.iter() {
         let enemy_pos = enemy_transform.translation;
         let distance = ray.origin.distance(enemy_pos);
@@ -173,9 +190,11 @@ fn shooting(
     }
 }
 
+/// Temporary component added to enemies that have been shot (placeholder).
 #[derive(Component)]
 struct Hit;
 
+/// Chases the player if outside attack range; attacks (logs) when within range.
 fn enemy_ai(
     mut commands: Commands,
     time: Res<Time>,

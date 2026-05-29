@@ -1,0 +1,45 @@
+# Docker Compose for a microservice stack: API, background worker, and Redis
+# Usage: docker compose up --build
+version: "3.9"
+
+services:
+  # ---------- FastAPI REST API ----------
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ms-api
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # ---------- Background worker process ----------
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ms-worker
+    # Override the default command to run the worker instead of the API
+    command: python services/worker/app.py
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  # ---------- Redis message broker ----------
+  redis:
+    image: redis:7-alpine
+    container_name: ms-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  redis_data:

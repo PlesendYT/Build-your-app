@@ -1,3 +1,4 @@
+# Rhythm game manager: spawns notes on beat, scores hits by accuracy, tracks combo
 extends Node2D
 
 @export var lanes: int = 4

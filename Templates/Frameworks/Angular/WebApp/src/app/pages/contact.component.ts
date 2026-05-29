@@ -1,3 +1,4 @@
+// Contact page component — form with name, email, and message fields that submits to an API endpoint
 import { Component } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { HttpClient } from '@angular/common/http'
@@ -42,6 +43,7 @@ export class ContactComponent {
   form = { name: '', email: '', message: '' }
   sent = false
 
+  // Submit the contact form data to the API
   handleSubmit() {
     this.http.post('/api/contact', this.form).subscribe(() => this.sent = true)
   }

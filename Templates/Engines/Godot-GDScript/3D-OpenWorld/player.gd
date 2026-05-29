@@ -1,3 +1,5 @@
+# 3D open-world player controller
+# Handles movement, camera look, vehicle entry, quest interaction, and location discovery
 extends CharacterBody3D
 
 @export var walk_speed: float = 6.0

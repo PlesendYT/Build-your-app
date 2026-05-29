@@ -1,0 +1,16 @@
+# Name displayed in the plugin list
+name: MyPlugin
+# Main class path — Paper uses this to load the plugin
+main: com.example.plugin.MyPlugin
+# API version required by the Paper server
+api-version: '1.20'
+# Human-readable version string
+version: 1.0.0
+# Author metadata
+author: ExampleAuthor
+
+# Register the /hello command
+commands:
+  hello:
+    description: Sends a friendly greeting
+    usage: /<command>

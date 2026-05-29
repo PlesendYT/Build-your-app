@@ -1,7 +1,9 @@
+// RPG character with stats, leveling, inventory, quests, and damage reduction.
 #include "RPGCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/DataTable.h"
 
+// Initialize hit points, mana, and stats.
 ARPGCharacter::ARPGCharacter()
 {
     CurrentHealth = 100.0f;

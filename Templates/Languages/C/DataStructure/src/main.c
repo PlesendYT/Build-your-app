@@ -1,7 +1,9 @@
+// Data Structure test runner - demonstrates ArrayList, Linked List, Stack, and Queue usage.
 #include "datastruct.h"
 #include <stdio.h>
 #include <stdlib.h>
 
+// Test all ArrayList operations: create, push, get, size, destroy.
 static void test_arraylist(void) {
     printf("=== ArrayList ===\n");
     ArrayList *list = alist_create();
@@ -17,6 +19,7 @@ static void test_arraylist(void) {
     alist_destroy(list);
 }
 
+// Test all Linked List operations: append, prepend, print, destroy.
 static void test_linkedlist(void) {
     printf("\n=== Linked List ===\n");
     Node *list = NULL;
@@ -29,6 +32,7 @@ static void test_linkedlist(void) {
     list_destroy(list);
 }
 
+// Test all Stack operations: push, peek, pop, is_empty, destroy.
 static void test_stack(void) {
     printf("\n=== Stack ===\n");
     Stack *s = stack_create();
@@ -42,6 +46,7 @@ static void test_stack(void) {
     stack_destroy(s);
 }
 
+// Test all Queue operations: enqueue, peek, dequeue, is_empty, destroy.
 static void test_queue(void) {
     printf("\n=== Queue ===\n");
     Queue *q = queue_create();
@@ -55,6 +60,7 @@ static void test_queue(void) {
     queue_destroy(q);
 }
 
+// Entry point: runs all data structure tests.
 int main(void) {
     test_arraylist();
     test_linkedlist();

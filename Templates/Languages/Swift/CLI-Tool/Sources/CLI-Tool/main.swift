@@ -1,3 +1,5 @@
+/// Entry point for the CLI-Tool application.
+/// Defines the root command with subcommands for processing, status, and analysis.
 import ArgumentParser
 import Foundation
 
@@ -10,6 +12,7 @@ struct CLI: AsyncParsableCommand {
     )
 }
 
+/// Reads an input file, optionally writes the result to an output path.
 struct Process: AsyncParsableCommand {
     @Argument(help: "Input file path")
     var input: String
@@ -25,12 +28,14 @@ struct Process: AsyncParsableCommand {
         let data = try Data(contentsOf: url)
         let result = "Processed \(data.count) bytes from \(input)"
 
+        // Write to output file or print to console
         if let outputPath = output {
             try result.write(toFile: outputPath, atomically: true, encoding: .utf8)
         } else {
             print(result)
         }
 
+        // Print detailed info when verbose flag is set
         if verbose {
             print("Input: \(input)")
             print("Size: \(data.count) bytes")
@@ -38,6 +43,7 @@ struct Process: AsyncParsableCommand {
     }
 }
 
+/// Displays system information such as host name, OS version, and hardware specs.
 struct Status: ParsableCommand {
     func run() throws {
         let info = ProcessInfo.processInfo
@@ -49,6 +55,7 @@ struct Status: ParsableCommand {
     }
 }
 
+/// Recursively analyzes a directory, counting files and total size.
 struct Analyze: AsyncParsableCommand {
     @Argument(help: "Directory to analyze")
     var directory: String
@@ -60,6 +67,7 @@ struct Analyze: AsyncParsableCommand {
         let url = URL(fileURLWithPath: directory)
         let fm = FileManager.default
 
+        // Walk the directory tree collecting file metadata
         guard let enumerator = fm.enumerator(at: url, includingPropertiesForKeys: [.fileSizeKey, .isDirectoryKey]) else {
             throw CLIError.invalidDirectory(directory)
         }
@@ -89,6 +97,7 @@ struct Analyze: AsyncParsableCommand {
     }
 }
 
+/// Errors that can occur during CLI operations.
 enum CLIError: Error, CustomStringConvertible {
     case invalidDirectory(String)
     case fileNotFound(String)

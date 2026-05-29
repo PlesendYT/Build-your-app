@@ -1,0 +1,25 @@
+# Forge mod metadata file — loaded by the game on startup
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+# The mod entry — required for every Forge mod
+[[mods]]
+modId = "forgemod"
+version = "1.0.0"
+displayName = "ForgeMod"
+authors = "ExampleAuthor"
+description = "An example Forge mod"
+logoFile = "logo.png"
+
+# Dependency on Minecraft itself
+[[dependencies.forgemod]]
+    modId = "forge"
+    mandatory = true
+    versionRange = "[52,)"
+
+[[dependencies.forgemod]]
+    modId = "minecraft"
+    mandatory = true
+    versionRange = "[1.21,)"
+

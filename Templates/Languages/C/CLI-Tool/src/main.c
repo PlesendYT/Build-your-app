@@ -1,3 +1,4 @@
+// CLI tool template with command parsing, config loading, and subcommands.
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -14,6 +15,7 @@
 #define VERSION "1.0.0"
 #define MAX_LINE 4096
 
+// Application configuration loaded from a file.
 typedef struct {
     char name[256];
     char version[64];
@@ -21,6 +23,7 @@ typedef struct {
     int timeout;
 } Config;
 
+// Parse a key=value config file and populate Config struct.
 static int config_load(Config *cfg, const char *path) {
     FILE *f = fopen(path, "r");
     if (!f) return -1;
@@ -49,6 +52,7 @@ static int config_load(Config *cfg, const char *path) {
     return 0;
 }
 
+// "process" command: read input file, optionally write output.
 static int cmd_process(int argc, char **argv) {
     if (argc < 1) {
         fprintf(stderr, "Usage: %s process <input> [output]\n", argv[-1]);
@@ -78,6 +82,7 @@ static int cmd_process(int argc, char **argv) {
     return 0;
 }
 
+// "status" command: print tool version and OS info.
 static int cmd_status(void) {
     printf("CLI Tool v%s\n", VERSION);
     printf("C Standard: %ld\n", __STDC_VERSION__);
@@ -93,6 +98,7 @@ static int cmd_status(void) {
     return 0;
 }
 
+// Print usage/help information.
 static void print_usage(const char *prog) {
     printf("Usage: %s [options] <command> [args]\n", prog);
     printf("Commands:\n");
@@ -104,11 +110,13 @@ static void print_usage(const char *prog) {
     printf("  -h, --help               This help\n");
 }
 
+// Entry point: parse options, dispatch to subcommands.
 int main(int argc, char **argv) {
     Config cfg = {0};
     int verbose = 0;
     int optind = 1;
 
+    // Parse leading options.
     while (optind < argc && argv[optind][0] == '-') {
         if (strcmp(argv[optind], "-h") == 0 || strcmp(argv[optind], "--help") == 0) {
             print_usage(argv[0]);

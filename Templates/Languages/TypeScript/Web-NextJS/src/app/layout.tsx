@@ -1,3 +1,4 @@
+// Root layout — sets the HTML shell with metadata and global body styles
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

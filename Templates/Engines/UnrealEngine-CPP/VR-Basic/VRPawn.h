@@ -1,3 +1,4 @@
+// VR Pawn header - VR character with motion controllers and interaction.
 #pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
@@ -14,15 +15,19 @@ class AVRPawn : public APawn
 public:
     AVRPawn();
 
+    // Teleport the VR pawn to a world location.
     UFUNCTION(BlueprintCallable)
     void TeleportToLocation(FVector Location);
 
+    // Grab an actor and attach it to a motion controller.
     UFUNCTION(BlueprintCallable)
     void GrabActor(UMotionControllerComponent* Controller, AActor* Target);
 
+    // Release the actor held by the given controller.
     UFUNCTION(BlueprintCallable)
     void ReleaseActor(UMotionControllerComponent* Controller);
 
+    // Interact with objects via line trace from controller.
     UFUNCTION(BlueprintCallable)
     void Interact(UMotionControllerComponent* Controller);
 

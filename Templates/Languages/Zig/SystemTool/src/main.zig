@@ -1,6 +1,8 @@
+/// System information tool that reads CPU, memory, disk, and process data from /proc
 const std = @import("std");
 const builtin = @import("builtin");
 
+/// Main entry point — parses command and dispatches to the appropriate info function
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
@@ -35,6 +37,7 @@ pub fn main() !void {
     }
 }
 
+/// Print usage instructions
 fn printUsage() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print(
@@ -50,6 +53,7 @@ fn printUsage() !void {
     , .{});
 }
 
+/// Print all system information sections
 fn printAll(allocator: std.mem.Allocator) !void {
     try printCPU();
     try std.io.getStdOut().writer().print("\n", .{});
@@ -60,6 +64,7 @@ fn printAll(allocator: std.mem.Allocator) !void {
     try printProcesses(allocator);
 }
 
+/// Print CPU architecture, core count, and model name from /proc/cpuinfo
 fn printCPU() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("=== CPU Information ===\n", .{});
@@ -85,6 +90,7 @@ fn printCPU() !void {
     }
 }
 
+/// Print memory totals from /proc/meminfo
 fn printMemory() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("=== Memory Information ===\n", .{});
@@ -110,6 +116,7 @@ fn printMemory() !void {
     }
 }
 
+/// Print disk I/O statistics from /proc/diskstats
 fn printDisk() !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("=== Disk Information ===\n", .{});
@@ -146,6 +153,7 @@ fn printDisk() !void {
     }
 }
 
+/// Print a list of running processes with PID and name from /proc
 fn printProcesses(allocator: std.mem.Allocator) !void {
     const stdout = std.io.getStdOut().writer();
     try stdout.print("=== Process List ===\n", .{});

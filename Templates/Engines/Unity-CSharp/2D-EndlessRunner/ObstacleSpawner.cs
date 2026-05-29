@@ -1,3 +1,6 @@
+/// <summary>
+/// Spawns obstacles and collectibles at intervals that decrease over time for increasing difficulty.
+/// </summary>
 using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
@@ -15,12 +18,18 @@ public class ObstacleSpawner : MonoBehaviour
     private float currentInterval;
     private float nextSpawnTime;
 
+    /// <summary>
+    /// Sets the initial spawn interval and first spawn time.
+    /// </summary>
     private void Start()
     {
         currentInterval = spawnInterval;
         nextSpawnTime = Time.time + currentInterval;
     }
 
+    /// <summary>
+    /// Decreases spawn interval over time and spawns objects at the scheduled time.
+    /// </summary>
     private void Update()
     {
         currentInterval = Mathf.Max(minSpawnInterval, spawnInterval - Time.timeSinceLevelLoad * difficultyIncreaseRate);
@@ -32,6 +41,9 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Instantiates a random obstacle (70% chance) or collectible (30% chance) at a random Y position.
+    /// </summary>
     private void Spawn()
     {
         float yPos = Random.Range(spawnYMin, spawnYMax);

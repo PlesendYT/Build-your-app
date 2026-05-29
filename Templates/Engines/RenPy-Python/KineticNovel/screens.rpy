@@ -1,4 +1,5 @@
 ## Screens for Kinetic Novel
+# Simple UI with auto-forward, save, and preferences buttons
 
 screen kinetic_ui():
     textbutton "Auto" action Preference("auto-forward", "toggle")

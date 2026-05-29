@@ -1,3 +1,6 @@
+/// <summary>
+/// Represents a farm field plot with tilling, planting, watering, growth stages, and harvesting.
+/// </summary>
 using UnityEngine;
 
 public class FieldPlot : MonoBehaviour
@@ -22,6 +25,9 @@ public class FieldPlot : MonoBehaviour
         public Sprite[] growthSprites;
     }
 
+    /// <summary>
+    /// Tills the empty plot, changing its color to brown.
+    /// </summary>
     public void Till()
     {
         if (state == PlotState.Empty)
@@ -31,6 +37,9 @@ public class FieldPlot : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Plants a crop in a tilled plot, resetting growth timer and water level.
+    /// </summary>
     public void Plant(CropData crop)
     {
         if (state == PlotState.Tilled)
@@ -43,6 +52,9 @@ public class FieldPlot : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Increases the water level for planted or growing crops, up to the maximum.
+    /// </summary>
     public void Water()
     {
         if (state == PlotState.Planted || state == PlotState.Growing)
@@ -51,6 +63,9 @@ public class FieldPlot : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Advances crop growth each frame when watered, updates visual stages, and transitions to Ready when done.
+    /// </summary>
     private void Update()
     {
         if (state == PlotState.Planted || state == PlotState.Growing)
@@ -75,6 +90,9 @@ public class FieldPlot : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Harvests the ready crop, earning money and resetting the plot to empty.
+    /// </summary>
     public void Harvest()
     {
         if (state == PlotState.Ready)
@@ -89,6 +107,9 @@ public class FieldPlot : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the plot sprite to the first growth stage.
+    /// </summary>
     private void UpdateVisual()
     {
         if (cropData != null && cropData.growthSprites != null && cropData.growthSprites.Length > 0)

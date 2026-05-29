@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace DesktopTool;
 
+/// <summary>Main form displaying system processes with auto-refresh.</summary>
 public class MainForm : Form
 {
     private readonly ListView _processList;
@@ -10,12 +11,15 @@ public class MainForm : Form
     private readonly Label _systemLabel;
     private readonly Timer _refreshTimer;
 
+    /// <summary>Initialises the form, layout, and starts the refresh timer.</summary>
     public MainForm()
     {
+        // Configure window
         Text = "Desktop Tool";
         Size = new Size(700, 500);
         StartPosition = FormStartPosition.CenterScreen;
 
+        // Table layout for vertical stacking
         var layout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -24,6 +28,7 @@ public class MainForm : Form
             RowCount = 4,
         };
 
+        // System info label at top
         _systemLabel = new Label
         {
             Text = $"OS: {Environment.OSVersion} | .NET: {Environment.Version}",
@@ -32,6 +37,7 @@ public class MainForm : Form
             AutoSize = true,
         };
 
+        // Refresh button
         _refreshButton = new Button
         {
             Text = "Refresh",
@@ -40,6 +46,7 @@ public class MainForm : Form
         };
         _refreshButton.Click += async (_, _) => await RefreshProcesses();
 
+        // Process list view with three columns
         _processList = new ListView
         {
             View = View.Details,
@@ -53,23 +60,28 @@ public class MainForm : Form
             },
         };
 
+        // Assemble layout
         layout.Controls.Add(_systemLabel, 0, 0);
         layout.Controls.Add(_refreshButton, 0, 1);
         layout.Controls.Add(_processList, 0, 2);
         Controls.Add(layout);
 
+        // Auto-refresh every 5 seconds
         _refreshTimer = new Timer { Interval = 5000 };
         _refreshTimer.Tick += async (_, _) => await RefreshProcesses();
         _refreshTimer.Start();
 
+        // Initial load
         _ = RefreshProcesses();
     }
 
+    /// <summary>Populates the list view with the top 50 processes by memory usage.</summary>
     private async Task RefreshProcesses()
     {
         _processList.BeginUpdate();
         _processList.Items.Clear();
 
+        // Fetch processes on background thread
         var processes = await Task.Run(() =>
             Process.GetProcesses()
                 .OrderByDescending(p => p.WorkingSet64)
@@ -82,6 +94,7 @@ public class MainForm : Form
                 })
                 .ToList());
 
+        // Add each process to the list view
         foreach (var p in processes)
         {
             _processList.Items.Add(new ListViewItem([
@@ -92,6 +105,7 @@ public class MainForm : Form
         _processList.EndUpdate();
     }
 
+    /// <summary>Stops the refresh timer when the form is closed.</summary>
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         _refreshTimer?.Stop();

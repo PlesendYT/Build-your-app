@@ -1,0 +1,39 @@
+<!-- Version history page for a wiki page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History: <%= page.title %> - Wiki</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f8fafc; }
+    nav { background: #1e293b; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+    nav a { color: white; text-decoration: none; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    .version { background: white; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .version .meta { color: #64748b; font-size: 0.85rem; }
+    .version pre { background: #f1f5f9; padding: 1rem; border-radius: 4px; margin-top: 0.5rem; max-height: 200px; overflow-y: auto; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/"><strong>Wiki</strong></a>
+    <a href="/<%= page.slug %>">View Page</a>
+  </nav>
+
+  <div class="container">
+    <h1>History: <%= page.title %></h1>
+    <!-- List of all saved versions -->
+    <% history.forEach(entry => { %>
+      <div class="version">
+        <p class="meta">Version <%= entry.version %> - Saved <%= new Date(entry.savedAt).toLocaleString() %></p>
+        <pre><%= entry.content.substring(0, 300) %><%= entry.content.length > 300 ? '...' : '' %></pre>
+      </div>
+    <% }) %>
+    <% if (history.length === 0) { %>
+      <p>No version history available.</p>
+    <% } %>
+  </div>
+</body>
+</html>

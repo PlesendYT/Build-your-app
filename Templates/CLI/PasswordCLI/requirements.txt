@@ -1,0 +1,2 @@
+# Cryptography library for password encryption
+cryptography>=41.0.0

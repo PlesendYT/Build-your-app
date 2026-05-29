@@ -1,6 +1,8 @@
 <script setup>
+// About view — no additional logic required
 </script>
 
+<!-- About page listing the technologies used in the application -->
 <template>
   <div class="about-page">
     <h2>Über uns</h2>

@@ -1,3 +1,4 @@
+# Roguelike enemy with turn-based AI, pathfinding, combat, and XP reward on death
 extends Node2D
 
 @export var health: int = 5

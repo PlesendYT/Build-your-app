@@ -1,3 +1,4 @@
+/// iOS task management app using SwiftUI and SwiftData for persistence.
 import SwiftUI
 import SwiftData
 
@@ -12,6 +13,7 @@ struct iOSApp: App {
         }
     }
 
+    /// Configures the SwiftData model container with the TaskItem schema.
     init() {
         do {
             let schema = Schema([TaskItem.self])
@@ -23,6 +25,7 @@ struct iOSApp: App {
     }
 }
 
+/// A persistent task model with title, note, completion status, and creation date.
 @Model
 final class TaskItem {
     @Attribute(.unique) var id: UUID
@@ -40,6 +43,7 @@ final class TaskItem {
     }
 }
 
+/// Main list view showing all tasks with toggle, swipe-to-delete, and an add button.
 struct ContentView: View {
     @Environment(\.modelContext) private var context
     @Query private var tasks: [TaskItem]
@@ -50,6 +54,7 @@ struct ContentView: View {
             List {
                 ForEach(tasks) { task in
                     HStack {
+                        // Toggle completion status
                         Button(action: { toggleTask(task) }) {
                             Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                         }
@@ -80,10 +85,12 @@ struct ContentView: View {
         }
     }
 
+    /// Toggles the completion state of a given task.
     private func toggleTask(_ task: TaskItem) {
         task.isCompleted.toggle()
     }
 
+    /// Deletes tasks at the given index offsets from the list.
     private func deleteTasks(at offsets: IndexSet) {
         for index in offsets {
             context.delete(tasks[index])
@@ -91,6 +98,7 @@ struct ContentView: View {
     }
 }
 
+/// Modal form view for creating a new task with a title and optional note.
 struct AddTaskView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss

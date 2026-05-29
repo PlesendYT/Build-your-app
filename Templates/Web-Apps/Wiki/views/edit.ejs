@@ -1,0 +1,40 @@
+<!-- Page edit / create form -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= page ? 'Edit: ' + page.title : 'New Page' %> - Wiki</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f8fafc; }
+    nav { background: #1e293b; color: white; padding: 1rem 2rem; }
+    nav a { color: white; text-decoration: none; }
+    .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    form { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+    input, textarea { display: block; width: 100%; margin: 0.5rem 0; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px; }
+    textarea { min-height: 300px; font-family: monospace; }
+    button { background: #2563eb; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
+    .error { color: #dc2626; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/"><strong>Wiki</strong></a>
+  </nav>
+
+  <div class="container">
+    <!-- Page edit/create form -->
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/<%= page ? page.slug + '?_method=PUT' : '' %>" method="POST">
+      <% if (!page) { %>
+        <input type="text" name="title" placeholder="Page Title" required>
+      <% } %>
+      <textarea name="content" placeholder="Write your content in Markdown..." required><%= page ? page.content : '' %></textarea>
+      <button type="submit"><%= page ? 'Update Page' : 'Create Page' %></button>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,3 +1,6 @@
+/// <summary>
+/// Controls the farmer player: movement, interacting with field plots, and cycling through available crops.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,21 +17,33 @@ public class PlayerFarmer : MonoBehaviour
     public FieldPlot.CropData[] availableCrops;
     private int selectedCrop;
 
+    /// <summary>
+    /// Caches the rigidbody component.
+    /// </summary>
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
+    /// <summary>
+    /// Applies movement velocity each physics frame.
+    /// </summary>
     private void FixedUpdate()
     {
         rb.linearVelocity = moveInput * moveSpeed;
     }
 
+    /// <summary>
+    /// Reads movement input from the Input System.
+    /// </summary>
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
 
+    /// <summary>
+    /// Interacts with a nearby field plot: tills, plants, waters, or harvests based on the plot state.
+    /// </summary>
     public void OnInteract(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -60,6 +75,9 @@ public class PlayerFarmer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Cycles to the next available crop type.
+    /// </summary>
     public void OnCycleCrop(InputAction.CallbackContext context)
     {
         if (context.performed)

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Represents a single puzzle piece with grid position, snap behavior, and visual feedback.
+/// </summary>
 public class PuzzlePiece : MonoBehaviour
 {
     [Header("Settings")]
@@ -23,10 +26,14 @@ public class PuzzlePiece : MonoBehaviour
         puzzleManager = FindAnyObjectByType<PuzzleManager>();
     }
 
+    /// <summary>
+    /// Attempts to snap the piece to its correct position if close enough.
+    /// </summary>
     public void TrySnap()
     {
         if (Vector2.Distance(transform.position, GetWorldPosition(correctPosition)) <= snapDistance)
         {
+            // Snap to correct position and lock the piece
             transform.position = GetWorldPosition(correctPosition);
             isLocked = true;
             if (spriteRenderer != null)
@@ -35,6 +42,9 @@ public class PuzzlePiece : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Converts a grid position to a world-space Vector3.
+    /// </summary>
     private Vector3 GetWorldPosition(Vector2Int pos)
     {
         return new Vector3(pos.x, pos.y, 0);
@@ -42,12 +52,14 @@ public class PuzzlePiece : MonoBehaviour
 
     private void OnMouseDown()
     {
+        // Highlight piece when selected
         if (spriteRenderer != null)
             spriteRenderer.color = selectedColor;
     }
 
     private void OnMouseUp()
     {
+        // Restore original color when deselected, unless piece is locked
         if (spriteRenderer != null && !isLocked)
             spriteRenderer.color = originalColor;
     }

@@ -20,8 +20,10 @@ class ExampleCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         """Listen for messages."""
+        # Ignore messages from other bots
         if message.author.bot:
             return
+        # React with snake emoji if message mentions Python
         if "python" in message.content.lower():
             await message.add_reaction("🐍")
 

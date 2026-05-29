@@ -1,3 +1,4 @@
+// Battle Royale character with parachuting, storm damage, kills, and loot.
 #include "BRCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
@@ -5,8 +6,11 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
 
+// Enable tick for parachute and storm logic.
 ABRCharacter::ABRCharacter() { PrimaryActorTick.bCanEverTick = true; }
 
+// Register enhanced input mapping context.
+// Register enhanced input mapping context at start.
 void ABRCharacter::BeginPlay()
 {
     Super::BeginPlay();
@@ -15,6 +19,7 @@ void ABRCharacter::BeginPlay()
             S->AddMappingContext(InputMapping, 0);
 }
 
+// Handle parachute descent and storm damage over time.
 void ABRCharacter::Tick(float DT)
 {
     Super::Tick(DT);
@@ -28,6 +33,7 @@ void ABRCharacter::Tick(float DT)
     }
 }
 
+// Bind enhanced input actions for move, look, parachute, and interact.
 void ABRCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
 {
     if (auto* EIC = Cast<UEnhancedInputComponent>(PIC))
@@ -39,6 +45,7 @@ void ABRCharacter::SetupPlayerInputComponent(UInputComponent* PIC)
     }
 }
 
+// Handle movement input (forward/back, strafe).
 void ABRCharacter::Move(const FInputActionValue& V)
 {
     FVector2D Vec = V.Get<FVector2D>();
@@ -46,6 +53,7 @@ void ABRCharacter::Move(const FInputActionValue& V)
     AddMovementInput(GetActorRightVector(), Vec.X);
 }
 
+// Handle mouse look input.
 void ABRCharacter::Look(const FInputActionValue& V)
 {
     FVector2D Vec = V.Get<FVector2D>();
@@ -53,6 +61,7 @@ void ABRCharacter::Look(const FInputActionValue& V)
     AddControllerPitchInput(Vec.Y);
 }
 
+// Deploy parachute and switch to flying movement mode.
 void ABRCharacter::DeployParachute()
 {
     if (!bIsParachuting)
@@ -62,18 +71,24 @@ void ABRCharacter::DeployParachute()
     }
 }
 
+// Increment kill count.
 void ABRCharacter::AddKill() { Kills++; }
+// Add to total damage dealt.
 void ABRCharacter::AddDamage(int32 Amount) { DamageDealt += Amount; }
 
+// Pick up loot item if inventory has space (max 6).
 void ABRCharacter::PickupLoot(FLootItem Item)
 {
     if (Inventory.Num() < 6) Inventory.Add(Item);
 }
 
+// Check if the character is in the storm zone (placeholder).
 bool ABRCharacter::IsInStorm() const { return false; }
 
+// Interact with objects (placeholder).
 void ABRCharacter::Interact() {}
 
+// Handle damage application; mark as dead if health reaches zero.
 float ABRCharacter::TakeDamage(float Damage, FDamageEvent const& Event, AController* Instigator, AActor* Causer)
 {
     float Actual = Super::TakeDamage(Damage, Event, Instigator, Causer);
@@ -85,6 +100,7 @@ float ABRCharacter::TakeDamage(float Damage, FDamageEvent const& Event, AControl
     return Actual;
 }
 
+// Set up replication for kills, damage, alive state, and inventory.
 void ABRCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);

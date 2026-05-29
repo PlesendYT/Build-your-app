@@ -1,3 +1,5 @@
+// Package main implements a REST API for managing users using the Echo framework,
+// with in-memory storage and CRUD endpoints.
 package main
 
 import (
@@ -9,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
+// User represents a user entity stored in the in-memory slice.
 type User struct {
 	ID        int       `json:"id"`
 	Name      string    `json:"name" validate:"required"`
@@ -17,11 +20,16 @@ type User struct {
 }
 
 var (
+	// users is the in-memory user store, pre-populated with one entry.
 	users   = []User{{ID: 1, Name: "Alice", Email: "alice@example.com", CreatedAt: time.Now()}}
+	// nextID is the auto-incrementing ID counter for new users.
 	nextID  = 2
+	// usersMu protects concurrent access to the users slice.
 	usersMu sync.RWMutex
 )
 
+// main creates the Echo instance, configures middleware, registers
+// CRUD routes for /api/users, and starts the server on :8080.
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())

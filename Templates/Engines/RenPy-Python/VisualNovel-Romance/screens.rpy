@@ -1,4 +1,5 @@
 ## Screens for Romance Visual Novel
+# Affection tracker and date activity picker
 
 screen relationship_status():
     vbox:

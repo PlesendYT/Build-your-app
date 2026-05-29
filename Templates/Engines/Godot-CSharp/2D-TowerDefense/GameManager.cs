@@ -1,6 +1,13 @@
+// File: GameManager.cs
+// Core manager for the 2D tower defense game. Handles gold, lives, wave spawning, tower placement, and UI.
+
 using Godot;
 using System;
 
+/// <summary>
+/// Manages tower defense game state: resources (gold/lives), wave progression, enemy spawning,
+/// tower placement with tier-based stats, and game-over logic.
+/// </summary>
 public partial class GameManager : Node2D
 {
     [Export] public int StartingGold = 100;
@@ -34,6 +41,9 @@ public partial class GameManager : Node2D
         UpdateUI();
     }
 
+    /// <summary>
+    /// Starts the next wave. Enemy count increases with each wave.
+    /// </summary>
     public void StartWave()
     {
         if (_isWaveActive) return;
@@ -44,6 +54,9 @@ public partial class GameManager : Node2D
         _spawnTimer.Start(0.5f);
     }
 
+    /// <summary>
+    /// Spawns a single enemy from the scene template until the wave quota is met.
+    /// </summary>
     private void OnSpawnTimerTimeout()
     {
         if (_enemiesSpawned >= _enemiesInWave)
@@ -59,6 +72,9 @@ public partial class GameManager : Node2D
         _enemiesSpawned++;
     }
 
+    /// <summary>
+    /// Places a tower at the given position if the player has enough gold for the selected type.
+    /// </summary>
     public void PlaceTower(Vector2 position)
     {
         var towerData = GetTowerData(_selectedTowerType);
@@ -72,6 +88,9 @@ public partial class GameManager : Node2D
         UpdateUI();
     }
 
+    /// <summary>
+    /// Returns stat presets for each tower type (basic, sniper, rapid).
+    /// </summary>
     private TowerData GetTowerData(string type)
     {
         return type switch
@@ -83,6 +102,9 @@ public partial class GameManager : Node2D
         };
     }
 
+    /// <summary>
+    /// Called when an enemy reaches the path end. Decrements lives and triggers game over if zero.
+    /// </summary>
     public void EnemyReachedEnd(Node enemy)
     {
         _lives--;
@@ -91,18 +113,27 @@ public partial class GameManager : Node2D
         UpdateUI();
     }
 
+    /// <summary>
+    /// Called when an enemy is killed. Adds gold reward.
+    /// </summary>
     public void EnemyKilled(int goldValue)
     {
         _gold += goldValue;
         UpdateUI();
     }
 
+    /// <summary>
+    /// Pauses the game and shows the game over screen.
+    /// </summary>
     private void GameOver()
     {
         GetTree().Paused = true;
         GetNode<Control>("UI/GameOverScreen").Show();
     }
 
+    /// <summary>
+    /// Refreshes all UI labels with current game state values.
+    /// </summary>
     private void UpdateUI()
     {
         _goldLabel.Text = $"Gold: {_gold}";
@@ -110,6 +141,9 @@ public partial class GameManager : Node2D
         _waveLabel.Text = $"Wave: {_currentWave + 1}";
     }
 
+    /// <summary>
+    /// Data structure holding tower stat presets.
+    /// </summary>
     private struct TowerData
     {
         public int Cost;

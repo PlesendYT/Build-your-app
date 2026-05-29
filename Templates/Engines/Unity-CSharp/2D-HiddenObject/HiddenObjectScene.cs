@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages a hidden object scene: randomly selects items to find, tracks progress, and provides hints.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -12,6 +15,9 @@ public class HiddenObjectScene : MonoBehaviour
     private List<HiddenItem> activeItems = new List<HiddenItem>();
     private int foundCount;
 
+    /// <summary>
+    /// Randomly selects a subset of items to be active and shows the item list.
+    /// </summary>
     private void Start()
     {
         List<HiddenItem> pool = new List<HiddenItem>(allItems);
@@ -25,6 +31,9 @@ public class HiddenObjectScene : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Marks an item as found, removes it from the active list, and checks for level completion.
+    /// </summary>
     public void ItemFound(HiddenItem item)
     {
         if (activeItems.Contains(item))
@@ -39,6 +48,9 @@ public class HiddenObjectScene : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Flashes a random active item as a hint to the player.
+    /// </summary>
     public void ShowHint()
     {
         if (activeItems.Count > 0)
@@ -48,11 +60,14 @@ public class HiddenObjectScene : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates the item list UI with found count and remaining items.
+    /// </summary>
     private void UpdateUI()
     {
         if (itemListText != null)
         {
-            string text = "Finde: " + foundCount + "/" + itemsToFind + "\n";
+            string text = "Find: " + foundCount + "/" + itemsToFind + "\n";
             foreach (HiddenItem item in activeItems)
                 text += "- " + item.itemName + "\n";
             itemListText.text = text;

@@ -1,4 +1,5 @@
 <script lang="ts">
+  // Home page script – no logic required for this static hero section
 </script>
 
 <div class="hero">

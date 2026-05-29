@@ -1,3 +1,6 @@
+/// <summary>
+/// Spawns food at random grid-aligned positions for the snake to eat.
+/// </summary>
 using UnityEngine;
 
 public class FoodSpawner : MonoBehaviour
@@ -7,6 +10,9 @@ public class FoodSpawner : MonoBehaviour
     public Vector2 gridSize = new Vector2(18, 10);
     public Vector2 gridOffset;
 
+    /// <summary>
+    /// Spawns food at a random grid-aligned position within the bounds.
+    /// </summary>
     public void SpawnFood()
     {
         float x = Mathf.Round(Random.Range(-gridSize.x / 2f, gridSize.x / 2f) + gridOffset.x);
@@ -14,6 +20,9 @@ public class FoodSpawner : MonoBehaviour
         Instantiate(foodPrefab, new Vector3(x, y, 0f), Quaternion.identity);
     }
 
+    /// <summary>
+    /// Spawns the first piece of food on start.
+    /// </summary>
     private void Start()
     {
         SpawnFood();

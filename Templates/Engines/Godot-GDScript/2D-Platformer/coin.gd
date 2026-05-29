@@ -1,3 +1,4 @@
+# Platformer coin that rotates, awards points, and plays a sound on collection
 extends Area2D
 
 @export var value: int = 1

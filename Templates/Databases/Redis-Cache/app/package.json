@@ -1,0 +1,12 @@
+{
+  "name": "redis-cache-app",
+  "version": "1.0.0",
+  "description": "Node.js app using ioredis for caching",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ioredis": "^5.4.1"
+  }
+}

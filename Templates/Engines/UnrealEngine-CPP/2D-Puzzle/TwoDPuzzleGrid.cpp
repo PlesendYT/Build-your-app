@@ -1,15 +1,18 @@
+// 2D match-3 puzzle grid - manages pieces, matching, and board refill.
 #include "TwoDPuzzleGrid.h"
 #include "TwoDPuzzlePiece.h"
 #include "Engine/World.h"
 
 ATwoDPuzzleGrid::ATwoDPuzzleGrid() {}
 
+// On begin play, initialize the grid with random pieces.
 void ATwoDPuzzleGrid::BeginPlay()
 {
     Super::BeginPlay();
     InitializeGrid();
 }
 
+// Spawn puzzle pieces for each cell in the grid.
 void ATwoDPuzzleGrid::InitializeGrid()
 {
     Grid.SetNum(GridHeight);
@@ -31,6 +34,7 @@ void ATwoDPuzzleGrid::InitializeGrid()
     }
 }
 
+// Swap two pieces on the grid; updates their GridX/GridY coordinates.
 bool ATwoDPuzzleGrid::SwapPieces(int32 X1, int32 Y1, int32 X2, int32 Y2)
 {
     if (!Grid.IsValidIndex(Y1) || !Grid[Y1].IsValidIndex(X1)) return false;
@@ -49,6 +53,7 @@ bool ATwoDPuzzleGrid::SwapPieces(int32 X1, int32 Y1, int32 X2, int32 Y2)
     return true;
 }
 
+// Find all horizontal and vertical matches of 3+ same-type pieces.
 TArray<FIntPoint> ATwoDPuzzleGrid::FindMatches()
 {
     TArray<FIntPoint> Matches;
@@ -87,6 +92,7 @@ TArray<FIntPoint> ATwoDPuzzleGrid::FindMatches()
     return Matches;
 }
 
+// Destroy matched pieces and mark cells as empty.
 void ATwoDPuzzleGrid::RemoveMatches(TArray<FIntPoint> Matches)
 {
     for (auto& M : Matches)
@@ -100,6 +106,7 @@ void ATwoDPuzzleGrid::RemoveMatches(TArray<FIntPoint> Matches)
     }
 }
 
+// Shift pieces down to fill gaps and spawn new pieces at the top.
 void ATwoDPuzzleGrid::FillEmptyCells()
 {
     for (int32 X = 0; X < GridWidth; X++)

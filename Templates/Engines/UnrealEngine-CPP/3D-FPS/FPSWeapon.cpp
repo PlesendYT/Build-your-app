@@ -1,4 +1,4 @@
-// FPSWeapon.cpp
+// FPS weapon with automatic fire, hitscan/projectile, ammo, and reload.
 #include "FPSWeapon.h"
 #include "Engine/World.h"
 #include "Engine/HitResult.h"
@@ -8,6 +8,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "TimerManager.h"
 
+// Set up weapon mesh, initial ammo, and replication.
 AFPSWeapon::AFPSWeapon()
 {
     PrimaryActorTick.bCanEverTick = false;

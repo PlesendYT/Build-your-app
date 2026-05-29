@@ -1,4 +1,5 @@
 -- Solar2D Card Game
+-- Main game controller: manages deck, hand, mana, turns, and card combat between player and enemy
 display.setStatusBar(display.HiddenStatusBar)
 
 local deck = {}
@@ -14,7 +15,7 @@ local turn = 1
 local phase = "player"
 local gameOver = false
 
--- Card definitions
+-- Card definitions: name, mana cost, type (attack/defense/spell), value, and display color
 local cardDefs = {
     { name = "Strike", cost = 1, type = "attack", value = 6, color = {1, 0.4, 0.4} },
     { name = "Strike", cost = 1, type = "attack", value = 6, color = {1, 0.4, 0.4} },
@@ -182,7 +183,7 @@ function showResult(text)
     display.newText("Press SPACE to restart", display.contentCenterX, display.contentCenterY + 30, nil, 18)
 end
 
--- UI
+-- Renders the game UI showing HP, mana, enemy HP, turn info, deck/discard counts, and end turn button
 function renderUI()
     if uiGroup then uiGroup:removeSelf() end
     uiGroup = display.newGroup()
@@ -245,7 +246,7 @@ function renderEnemyCards()
     end
 end
 
--- Input
+-- Handles SPACE key to restart the game when game over
 function handleKey(event)
     if event.keyName == "space" and event.phase == "down" and gameOver then
         if uiGroup then uiGroup:removeSelf() end

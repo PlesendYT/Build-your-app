@@ -1,3 +1,4 @@
+// Product data model and sample product catalog for the E-Commerce template
 export interface Product {
   id: number
   name: string

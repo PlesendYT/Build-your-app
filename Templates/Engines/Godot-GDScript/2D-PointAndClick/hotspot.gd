@@ -1,3 +1,4 @@
+# Point-and-click hotspot with item requirements, locked states, and interaction feedback
 extends Area2D
 
 @export var hotspot_name: String = "Door"

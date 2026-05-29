@@ -1,3 +1,4 @@
+# Roguelike player with turn-based movement, melee combat, XP/leveling, and death
 extends Node2D
 
 @export var move_delay: float = 0.15

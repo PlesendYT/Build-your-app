@@ -1,0 +1,12 @@
+{
+  "name": "file-explorer",
+  "version": "1.0.0",
+  "description": "Electron file explorer for directory browsing and file operations",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^28.0.0"
+  }
+}

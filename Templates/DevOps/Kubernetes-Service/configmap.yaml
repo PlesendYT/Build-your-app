@@ -1,0 +1,15 @@
+# ConfigMap holding non-sensitive configuration for the Go service
+# Values are injected as environment variables into the pods
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: go-service-config
+  labels:
+    app: go-service
+data:
+  # Application configuration key-value pairs
+  APP_ENV: "production"
+  APP_PORT: "8080"
+  LOG_LEVEL: "info"
+  # Database connection string (use a Secret for credentials in production)
+  DB_URL: "postgres://user:password@postgres-service:5432/mydb"

@@ -1,7 +1,8 @@
 -- Card module for Solar2D card game
+-- Provides card type definitions, visual creation, deck generation, shuffling, and drawing
 local M = {}
 
--- Card data
+-- Card data: color and icon per type (attack, defense, spell)
 M.cardTypes = {
     attack = { color = {1, 0.4, 0.4}, icon = "sword" },
     defense = { color = {0.4, 0.6, 1}, icon = "shield" },
@@ -46,6 +47,7 @@ function M.createDeck(count)
     return d
 end
 
+-- Fisher-Yates shuffle for a deck table
 function M.shuffle(d)
     for i = #d, 2, -1 do
         local j = math.random(i)
@@ -53,6 +55,7 @@ function M.shuffle(d)
     end
 end
 
+-- Draws the top card from deck; returns nil if empty
 function M.draw(d)
     if #d > 0 then
         return table.remove(d)

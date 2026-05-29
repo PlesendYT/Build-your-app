@@ -1,3 +1,4 @@
+/// Vapor REST API entry point with PostgreSQL, JWT auth, middleware, and route configuration.
 import Vapor
 import Fluent
 import FluentPostgresDriver
@@ -5,6 +6,7 @@ import JWT
 
 @main
 enum Entry {
+    /// Boots the application with database, JWT, middleware, and routes.
     static func main() async throws {
         var env = try Environment.detect()
         try LoggingSystem.bootstrap(from: &env)
@@ -23,7 +25,9 @@ enum Entry {
 
 // MARK: - Configuration
 
+/// Configures the PostgreSQL database connection and runs auto-migrations.
 private func configureDatabase(_ app: Application) throws {
+    // Use DATABASE_URL if available, otherwise fall back to individual env vars
     if let databaseURL = Environment.get("DATABASE_URL") {
         try app.databases.use(.postgres(url: databaseURL), as: .psql)
     } else {
@@ -41,10 +45,12 @@ private func configureDatabase(_ app: Application) throws {
     try app.autoMigrate().wait()
 }
 
+/// Configures JWT signing with HS256 using the provided secret.
 private func configureJWT(_ app: Application) throws {
     app.jwt.signers.use(.hs256(key: Environment.get("JWT_SECRET") ?? "super-secret-key-change-me"))
 }
 
+/// Configures CORS and error handling middleware.
 private func configureMiddleware(_ app: Application) throws {
     app.middleware.use(CORSMiddleware(configuration: .init(
         allowedOrigin: .all,
@@ -56,12 +62,15 @@ private func configureMiddleware(_ app: Application) throws {
 
 // MARK: - Routes
 
+/// Registers API v1 routes for auth, todos, and user profile.
 func configureRoutes(_ app: Application) throws {
     let api = app.grouped("api", "v1")
 
+    // Public auth endpoints
     api.post("auth", "register", use: AuthController.register)
     api.post("auth", "login", use: AuthController.login)
 
+    // Protected endpoints requiring JWT authentication
     let protected = api.grouped(JWTAuthenticator())
     protected.get("todos", use: TodoController.index)
     protected.post("todos", use: TodoController.create)
@@ -74,6 +83,7 @@ func configureRoutes(_ app: Application) throws {
 
 // MARK: - Authenticator
 
+/// Authenticates requests by verifying the Bearer JWT token.
 struct JWTAuthenticator: AsyncBearerAuthenticator {
     func authenticate(bearer: BearerAuthorization, for request: Request) async throws {
         let payload = try await request.jwt.verify(bearer.token, as: UserPayload.self)
@@ -81,6 +91,7 @@ struct JWTAuthenticator: AsyncBearerAuthenticator {
     }
 }
 
+/// JWT payload containing user ID, email, and expiration claim.
 struct UserPayload: JWTPayload, Authenticatable {
     let id: UUID
     let email: String
@@ -93,7 +104,9 @@ struct UserPayload: JWTPayload, Authenticatable {
 
 // MARK: - Controllers
 
+/// Handles user registration and login.
 enum AuthController {
+    /// Registers a new user with email and hashed password.
     static func register(req: Request) async throws -> UserResponse {
         let dto = try req.content.decode(RegisterDTO.self)
         let user = User(email: dto.email, password: try Bcrypt.hash(dto.password))
@@ -101,6 +114,7 @@ enum AuthController {
         return UserResponse(id: try user.requireID(), email: user.email)
     }
 
+    /// Authenticates a user and returns a JWT token valid for 7 days.
     static func login(req: Request) async throws -> TokenResponse {
         let dto = try req.content.decode(LoginDTO.self)
         guard let user = try await User.query(on: req.db)
@@ -121,7 +135,9 @@ enum AuthController {
     }
 }
 
+/// Handles CRUD operations on todos scoped to the authenticated user.
 enum TodoController {
+    /// Lists all todos belonging to the authenticated user.
     static func index(req: Request) async throws -> [TodoDTO] {
         let userId = try req.auth.require(UserPayload.self).id
         let todos = try await Todo.query(on: req.db)
@@ -130,6 +146,7 @@ enum TodoController {
         return todos.map { TodoDTO(from: $0) }
     }
 
+    /// Creates a new todo for the authenticated user.
     static func create(req: Request) async throws -> TodoDTO {
         let userId = try req.auth.require(UserPayload.self).id
         let dto = try req.content.decode(CreateTodoDTO.self)
@@ -138,6 +155,7 @@ enum TodoController {
         return TodoDTO(from: todo)
     }
 
+    /// Returns a single todo by ID, scoped to the authenticated user.
     static func show(req: Request) async throws -> TodoDTO {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest)
@@ -148,6 +166,7 @@ enum TodoController {
         return TodoDTO(from: todo)
     }
 
+    /// Updates a todo's title and/or completion status.
     static func update(req: Request) async throws -> TodoDTO {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest)
@@ -162,6 +181,7 @@ enum TodoController {
         return TodoDTO(from: todo)
     }
 
+    /// Deletes a todo by ID.
     static func delete(req: Request) async throws -> HTTPStatus {
         guard let id = req.parameters.get("id", as: UUID.self) else {
             throw Abort(.badRequest)
@@ -174,6 +194,7 @@ enum TodoController {
     }
 }
 
+/// Handles returning the authenticated user's profile.
 enum UserController {
     static func profile(req: Request) async throws -> UserResponse {
         let payload = try req.auth.require(UserPayload.self)
@@ -183,34 +204,41 @@ enum UserController {
 
 // MARK: - DTOs
 
+/// Request body for user registration.
 struct RegisterDTO: Content {
     let email: String
     let password: String
 }
 
+/// Request body for user login.
 struct LoginDTO: Content {
     let email: String
     let password: String
 }
 
+/// Response containing the JWT token.
 struct TokenResponse: Content {
     let token: String
 }
 
+/// Response containing user profile data.
 struct UserResponse: Content {
     let id: UUID
     let email: String
 }
 
+/// Request body for creating a todo.
 struct CreateTodoDTO: Content {
     let title: String
 }
 
+/// Request body for updating a todo (partial update).
 struct UpdateTodoDTO: Content {
     let title: String?
     let completed: Bool?
 }
 
+/// Response body for a todo item.
 struct TodoDTO: Content {
     let id: UUID
     let title: String

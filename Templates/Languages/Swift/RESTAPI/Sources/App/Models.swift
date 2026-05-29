@@ -1,8 +1,10 @@
+/// Fluent model definitions for User and Todo entities with their migrations.
 import Fluent
 import Vapor
 
 // MARK: - User Model
 
+/// Represents a user with email, password hash, and a one-to-many relationship to Todos.
 final class User: Model, Content {
     static let schema = "users"
 
@@ -30,6 +32,7 @@ final class User: Model, Content {
     }
 }
 
+/// Migration creating the users table with a unique email constraint.
 struct CreateUser: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema("users")
@@ -48,6 +51,7 @@ struct CreateUser: Migration {
 
 // MARK: - Todo Model
 
+/// Represents a todo item owned by a user, with title, completion, and timestamps.
 final class Todo: Model, Content {
     static let schema = "todos"
 
@@ -79,6 +83,7 @@ final class Todo: Model, Content {
     }
 }
 
+/// Migration creating the todos table with a foreign key referencing users.
 struct CreateTodo: Migration {
     func prepare(on database: Database) -> EventLoopFuture<Void> {
         database.schema("todos")

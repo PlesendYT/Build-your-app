@@ -1,8 +1,10 @@
+// Interaction create event — dispatches chat input commands and handles errors gracefully
 import { Events, type Interaction } from 'discord.js';
 
 export const name = Events.InteractionCreate;
 
 export async function execute(interaction: Interaction): Promise<void> {
+  // Ignore non-command interactions (e.g. button clicks, modals)
   if (!interaction.isChatInputCommand()) return;
 
   const command = interaction.client.commands.get(interaction.commandName);

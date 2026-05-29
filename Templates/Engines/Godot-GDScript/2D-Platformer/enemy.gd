@@ -1,3 +1,4 @@
+# Platformer enemy that patrols back and forth with edge detection
 extends CharacterBody2D
 
 @export var patrol_speed: float = 100.0

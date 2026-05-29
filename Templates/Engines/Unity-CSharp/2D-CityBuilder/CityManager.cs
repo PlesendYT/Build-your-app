@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages city economy: money, population, happiness, zone registration, and income/expenses simulation.
+/// </summary>
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -22,14 +25,23 @@ public class CityManager : MonoBehaviour
     private List<ZonePlot> commercialZones = new List<ZonePlot>();
     private List<ZonePlot> industrialZones = new List<ZonePlot>();
 
+    /// <summary>
+    /// Singleton instance for global access.
+    /// </summary>
     public static CityManager Instance { get; private set; }
 
+    /// <summary>
+    /// Initializes the singleton instance.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Calculates income and expenses each frame and updates the UI.
+    /// </summary>
     private void Update()
     {
         float income = population * taxRate * 0.1f;
@@ -43,6 +55,9 @@ public class CityManager : MonoBehaviour
         UpdateUI();
     }
 
+    /// <summary>
+    /// Spends money if enough is available; returns true on success.
+    /// </summary>
     public bool SpendMoney(float amount)
     {
         if (money >= amount)
@@ -53,6 +68,9 @@ public class CityManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Registers a zone plot into the appropriate list based on its type.
+    /// </summary>
     public void RegisterZone(ZonePlot zone)
     {
         switch (zone.zoneType)
@@ -63,11 +81,17 @@ public class CityManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Adds population up to the maximum allowed by residential zones.
+    /// </summary>
     public void AddPopulation(int amount)
     {
         population = Mathf.Min(population + amount, maxPopulation);
     }
 
+    /// <summary>
+    /// Refreshes the money, population, and happiness UI displays.
+    /// </summary>
     private void UpdateUI()
     {
         if (moneyText != null) moneyText.text = "Money: $" + money.ToString("F1");

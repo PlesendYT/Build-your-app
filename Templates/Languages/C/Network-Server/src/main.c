@@ -1,3 +1,4 @@
+// TCP echo server - accepts clients and echoes their messages back.
 #include <arpa/inet.h>
 #include <errno.h>
 #include <signal.h>
@@ -9,13 +10,16 @@
 #define BUFFER_SIZE 4096
 #define DEFAULT_PORT 8080
 
+// Flag to control the server's main loop.
 static volatile int running = 1;
 
+// Signal handler: gracefully stop the server on SIGINT/SIGTERM.
 static void handle_signal(int sig) {
     (void)sig;
     running = 0;
 }
 
+// Handle a connected client: read data and echo it back.
 static void handle_client(int client_fd) {
     char buffer[BUFFER_SIZE];
     ssize_t bytes;
@@ -40,19 +44,23 @@ static void handle_client(int client_fd) {
     close(client_fd);
 }
 
+// Entry point: set up server socket, accept clients, echo messages.
 int main(int argc, char *argv[]) {
     int port = DEFAULT_PORT;
     if (argc > 1) port = atoi(argv[1]);
 
+    // Set up signal handlers for graceful shutdown.
     signal(SIGINT, handle_signal);
     signal(SIGTERM, handle_signal);
 
+    // Create TCP socket.
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd < 0) {
         perror("socket");
         return 1;
     }
 
+    // Allow reuse of the address.
     int opt = 1;
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
@@ -75,6 +83,7 @@ int main(int argc, char *argv[]) {
 
     printf("Server listening on port %d\n", port);
 
+    // Accept and handle clients until signal is received.
     while (running) {
         struct sockaddr_in client_addr;
         socklen_t client_len = sizeof(client_addr);

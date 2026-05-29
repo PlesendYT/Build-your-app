@@ -9,6 +9,7 @@ from args import parse_args
 
 def greet(name: str, count: int, uppercase: bool) -> list[str]:
     """Generate greeting messages."""
+    # Create repeated greeting, optionally uppercase
     messages = [f"Hello, {name}!"] * count
     if uppercase:
         messages = [m.upper() for m in messages]

@@ -1,3 +1,6 @@
+/// <summary>
+/// Manages the minesweeper board: grid creation, mine placement, cell revealing with flood-fill, and win/lose detection.
+/// </summary>
 using UnityEngine;
 
 public class MinesweeperBoard : MonoBehaviour
@@ -15,6 +18,9 @@ public class MinesweeperBoard : MonoBehaviour
     private int revealedCount;
     private int totalSafeCells;
 
+    /// <summary>
+    /// Creates the cell grid and calculates the total number of safe cells.
+    /// </summary>
     public void Init()
     {
         grid = new Cell[width, height];
@@ -36,6 +42,9 @@ public class MinesweeperBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Randomly places mines avoiding the first-click cell, then calculates adjacent mine counts.
+    /// </summary>
     public void PlaceMines(int excludeX, int excludeY)
     {
         int placed = 0;
@@ -59,6 +68,9 @@ public class MinesweeperBoard : MonoBehaviour
         isInitialized = true;
     }
 
+    /// <summary>
+    /// Counts the number of mines adjacent to a given cell.
+    /// </summary>
     private int CountAdjacentMines(int x, int y)
     {
         int count = 0;
@@ -74,6 +86,9 @@ public class MinesweeperBoard : MonoBehaviour
         return count;
     }
 
+    /// <summary>
+    /// Reveals a cell: on first click places mines, on mine triggers game over, on empty cell flood-fills.
+    /// </summary>
     public void RevealCell(int x, int y)
     {
         if (!isInitialized) PlaceMines(x, y);
@@ -97,6 +112,7 @@ public class MinesweeperBoard : MonoBehaviour
             return;
         }
 
+        // Flood-fill adjacent cells if this cell has no adjacent mines
         if (cell.AdjacentMines == 0)
         {
             for (int dx = -1; dx <= 1; dx++)
@@ -111,6 +127,9 @@ public class MinesweeperBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles a flag on a cell (right-click).
+    /// </summary>
     public void ToggleFlag(int x, int y)
     {
         if (!isInitialized) return;
@@ -119,6 +138,9 @@ public class MinesweeperBoard : MonoBehaviour
             cell.ToggleFlag();
     }
 
+    /// <summary>
+    /// Reveals all mines on the board (called on game loss).
+    /// </summary>
     private void RevealAllMines()
     {
         for (int x = 0; x < width; x++)

@@ -1,5 +1,6 @@
 #!/usr/bin/env lua
 
+-- ANSI color codes for terminal output
 local colors = {
     reset = "\27[0m",
     red = "\27[31m",
@@ -9,15 +10,18 @@ local colors = {
     bold = "\27[1m",
 }
 
+-- Formatted print to stdout
 local function printf(fmt, ...)
     io.write(string.format(fmt, ...))
 end
 
+-- Print a red error message and exit
 local function error(msg)
     io.stderr:write(colors.red .. "Fehler: " .. msg .. colors.reset .. "\n")
     os.exit(1)
 end
 
+-- Print a greeting, optionally in uppercase
 local function greet(name, upper)
     name = name or "Welt"
     local msg = "Hallo, " .. name .. "!"
@@ -27,6 +31,7 @@ local function greet(name, upper)
     print(colors.green .. msg .. colors.reset)
 end
 
+-- Perform basic arithmetic and print the result
 local function calc(op, a, b)
     local result
     if op == "add" then
@@ -44,6 +49,7 @@ local function calc(op, a, b)
     printf(colors.blue .. "%s %s %s = %s" .. colors.reset .. "\n", a, op, b, result)
 end
 
+-- Print usage information
 local function help()
     print(colors.bold .. "Lua CLI-Tool" .. colors.reset)
     print("  greet <name> [--upper]  - Begrüßung")
@@ -51,6 +57,7 @@ local function help()
     print("  help                    - Diese Hilfe")
 end
 
+-- Command dispatch table mapping names to handler functions
 local commands = {
     greet = function(args)
         local upper = false

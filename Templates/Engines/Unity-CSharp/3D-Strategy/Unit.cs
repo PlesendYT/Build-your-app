@@ -1,3 +1,6 @@
+/// <summary>
+/// RTS unit with NavMesh movement, attack, health; includes Building and GameManager classes.
+/// </summary>
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;

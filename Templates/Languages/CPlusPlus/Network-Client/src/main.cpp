@@ -1,3 +1,4 @@
+// TCP network client (C++) - connects to server and sends user messages.
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -6,8 +7,10 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+// TCP client: connects, sends messages, receives responses.
 class TCPClient {
 public:
+    // Connect to host:port; throws on failure.
     TCPClient(const std::string& host, uint16_t port) {
         fd_ = socket(AF_INET, SOCK_STREAM, 0);
         if (fd_ < 0) throw std::runtime_error("socket() failed");
@@ -28,14 +31,17 @@ public:
         std::cout << "Connected to " << host << ":" << port << "\n";
     }
 
+    // Close socket on destruction.
     ~TCPClient() {
         if (fd_ >= 0) close(fd_);
     }
 
+    // Send a message over the TCP connection.
     void send_message(const std::string& msg) {
         send(fd_, msg.c_str(), msg.size(), 0);
     }
 
+    // Receive a response from the server.
     std::string receive() {
         char buffer[4096];
         auto bytes = recv(fd_, buffer, sizeof(buffer) - 1, 0);
@@ -46,6 +52,7 @@ public:
         return {};
     }
 
+    // Interactive loop: read stdin, send to server, print response.
     void interactive() {
         std::string line;
         while (std::getline(std::cin, line)) {
@@ -64,6 +71,7 @@ private:
     int fd_ = -1;
 };
 
+// Entry point: parse args, create client, run interactive session.
 int main(int argc, char* argv[]) {
     auto host = argc > 1 ? argv[1] : "127.0.0.1";
     auto port = static_cast<uint16_t>(argc > 2 ? std::atoi(argv[2]) : 8080);

@@ -1,8 +1,12 @@
 <script setup lang="ts">
+// Set page metadata and define form submission state
 useHead({ title: 'Kontakt' })
+
+// Track whether the contact form has been successfully submitted
 const sent = ref(false)
 </script>
 
+<!-- Contact form with name, email, and message fields, plus success state -->
 <template>
   <div class="max-w-lg mx-auto">
     <h2 class="text-2xl font-bold mb-4">Kontakt</h2>

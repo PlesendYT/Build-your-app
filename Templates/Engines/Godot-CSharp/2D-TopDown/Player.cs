@@ -1,6 +1,13 @@
+// File: Player.cs
+// Top-down player controller with 8-direction movement, dash ability, and sprite animation.
+
 using Godot;
 using System;
 
+/// <summary>
+/// Drivable player character for a top-down game. Supports WASD/arrow movement, a dash
+/// with cooldown, and directional sprite animation for four cardinal orientations.
+/// </summary>
 public partial class Player : CharacterBody2D
 {
     [Export] public float Speed = 200.0f;
@@ -26,6 +33,7 @@ public partial class Player : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
+        // During dash, skip normal movement
         if (_isDashing)
         {
             MoveAndSlide();
@@ -49,6 +57,9 @@ public partial class Player : CharacterBody2D
         HandleDash();
     }
 
+    /// <summary>
+    /// Chooses the correct walk animation (side, up, or down) and flips the sprite horizontally if facing left.
+    /// </summary>
     private void UpdateAnimation(Vector2 direction)
     {
         _animatedSprite.Play("walk");
@@ -63,6 +74,9 @@ public partial class Player : CharacterBody2D
             _animatedSprite.Animation = "walk_down";
     }
 
+    /// <summary>
+    /// Triggers a dash in the current facing direction if the ability is available and not on cooldown.
+    /// </summary>
     private void HandleDash()
     {
         if (Input.IsActionJustPressed("dash") && _canDash && !_isDashing)
@@ -75,6 +89,9 @@ public partial class Player : CharacterBody2D
         }
     }
 
+    /// <summary>
+    /// Resets velocity when the dash duration ends.
+    /// </summary>
     private void OnDashEnd()
     {
         _isDashing = false;

@@ -1,10 +1,13 @@
 <script setup>
+// Import router components and cart store for header navigation
 import { RouterView, RouterLink } from 'vue-router'
 import { useCartStore } from './stores/cart'
 
+// Reactive cart state for displaying item count in nav
 const cart = useCartStore()
 </script>
 
+<!-- ECommerce app layout with header logo, navigation links, and router view -->
 <template>
   <div class="app">
     <header class="header">

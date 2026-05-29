@@ -1,6 +1,14 @@
+// File: Player.cs
+// First-person shooter player controller with mouse-look, movement, shooting, reloading, and damage.
+
 using Godot;
 using System;
 
+/// <summary>
+/// Full FPS player controller. Features: mouse-look with vertical clamping, WASD movement,
+/// sprint, jump, raycast-based shooting with fire-rate limiting, magazine reloading,
+/// and armor-mitigated damage.
+/// </summary>
 public partial class Player : CharacterBody3D
 {
     [Export] public float MouseSensitivity = 0.002f;
@@ -36,6 +44,7 @@ public partial class Player : CharacterBody3D
         Input.MouseMode = Input.MouseModeEnum.Captured;
     }
 
+    // Handles mouse look: horizontal (head Y rotation) and vertical (camera X rotation, clamped)
     public override void _Input(InputEvent @event)
     {
         if (@event is InputEventMouseMotion motion && Input.MouseMode == Input.MouseModeEnum.Captured)
@@ -52,9 +61,11 @@ public partial class Player : CharacterBody3D
 
     public override void _PhysicsProcess(double delta)
     {
+        // Apply gravity if not on ground
         if (!IsOnFloor())
             Velocity = new Vector3(Velocity.X, Velocity.Y - Gravity * (float)delta, Velocity.Z);
 
+        // Calculate movement direction relative to the head's orientation
         float speed = Input.IsActionPressed("sprint") ? SprintSpeed : WalkSpeed;
         Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_backward");
         Vector3 direction = (_head.Transform.Basis * new Vector3(inputDir.X, 0, -inputDir.Y)).Normalized();
@@ -72,6 +83,9 @@ public partial class Player : CharacterBody3D
         HandleShooting();
     }
 
+    /// <summary>
+    /// Checks input for shooting or reloading and invokes the appropriate method.
+    /// </summary>
     private void HandleShooting()
     {
         if (Input.IsActionPressed("shoot") && _canShoot && !_isReloading && Ammo > 0)
@@ -80,6 +94,9 @@ public partial class Player : CharacterBody3D
             StartReload();
     }
 
+    /// <summary>
+    /// Fires a raycast from the center of the viewport. Hits enemies in the "enemy" group for 25 damage.
+    /// </summary>
     private void Shoot()
     {
         _canShoot = false;
@@ -100,12 +117,18 @@ public partial class Player : CharacterBody3D
         }
     }
 
+    /// <summary>
+    /// Begins a 2-second reload sequence. Prevents shooting while reloading.
+    /// </summary>
     private void StartReload()
     {
         _isReloading = true;
         _reloadTimer.Start(2.0f);
     }
 
+    /// <summary>
+    /// Transfers ammo from reserve to the magazine upon reload completion.
+    /// </summary>
     private void OnReloadFinished()
     {
         int needed = MaxAmmo - Ammo;
@@ -115,6 +138,9 @@ public partial class Player : CharacterBody3D
         _isReloading = false;
     }
 
+    /// <summary>
+    /// Applies damage to the player. Armor absorbs up to 50% of incoming damage (capped at current armor value).
+    /// </summary>
     public void TakeDamage(int amount)
     {
         if (Armor > 0)
@@ -127,6 +153,9 @@ public partial class Player : CharacterBody3D
         if (Health <= 0) Die();
     }
 
+    /// <summary>
+    /// Reloads the current scene on death.
+    /// </summary>
     private void Die()
     {
         GetTree().ReloadCurrentScene();

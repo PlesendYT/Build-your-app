@@ -1,3 +1,4 @@
+/// Simple 2D shooter game built with Raylib in Zig
 const std = @import("std");
 const c = @cImport({
     @cInclude("raylib.h");
@@ -9,12 +10,14 @@ const PlayerSpeed = 5.0;
 const BulletSpeed = 7.0;
 const MaxBullets = 32;
 
+/// Player entity with position, size, and color
 const Player = struct {
     x: f32,
     y: f32,
     radius: f32,
     color: c.Color,
 
+    /// Create a new player at the bottom center of the screen
     fn init() Player {
         return Player{
             .x = @floatFromInt(ScreenWidth / 2),
@@ -24,6 +27,7 @@ const Player = struct {
         };
     }
 
+    /// Update player position based on keyboard input, clamped to screen bounds
     fn update(self: *Player) void {
         if (c.IsKeyDown(c.KEY_LEFT) or c.IsKeyDown(c.KEY_A)) {
             self.x -= PlayerSpeed;
@@ -42,20 +46,24 @@ const Player = struct {
         self.y = std.math.clamp(self.y, self.radius, @as(f32, @floatFromInt(ScreenHeight)) - self.radius);
     }
 
+    /// Draw the player as a circle
     fn draw(self: Player) void {
         c.DrawCircle(@intFromFloat(self.x), @intFromFloat(self.y), self.radius, self.color);
     }
 };
 
+/// Bullet entity fired by the player
 const Bullet = struct {
     x: f32,
     y: f32,
     active: bool,
 
+    /// Create a bullet at the given position, marked as active
     fn init(x: f32, y: f32) Bullet {
         return Bullet{ .x = x, .y = y, .active = true };
     }
 
+    /// Move the bullet upward; deactivate if it leaves the screen
     fn update(self: *Bullet) void {
         if (self.active) {
             self.y -= BulletSpeed;
@@ -65,6 +73,7 @@ const Bullet = struct {
         }
     }
 
+    /// Draw the bullet as a small yellow circle if active
     fn draw(self: Bullet) void {
         if (self.active) {
             c.DrawCircle(@intFromFloat(self.x), @intFromFloat(self.y), 5, c.YELLOW);
@@ -72,6 +81,7 @@ const Bullet = struct {
     }
 };
 
+/// Enemy entity that moves downward
 const Enemy = struct {
     x: f32,
     y: f32,
@@ -79,6 +89,7 @@ const Enemy = struct {
     active: bool,
     speed: f32,
 
+    /// Create an enemy at the given spawn position
     fn init(x: f32, y: f32) Enemy {
         return Enemy{
             .x = x,
@@ -89,6 +100,7 @@ const Enemy = struct {
         };
     }
 
+    /// Move the enemy downward; deactivate if it leaves the screen
     fn update(self: *Enemy) void {
         if (self.active) {
             self.y += self.speed;
@@ -98,6 +110,7 @@ const Enemy = struct {
         }
     }
 
+    /// Draw the enemy as a red circle if active
     fn draw(self: Enemy) void {
         if (self.active) {
             c.DrawCircle(@intFromFloat(self.x), @intFromFloat(self.y), self.radius, c.RED);
@@ -105,6 +118,7 @@ const Enemy = struct {
     }
 };
 
+/// Main game loop with player movement, shooting, enemy spawning, and collision
 pub fn main() !void {
     c.InitWindow(ScreenWidth, ScreenHeight, "Zig Game");
     defer c.CloseWindow();
@@ -121,6 +135,7 @@ pub fn main() !void {
     while (!c.WindowShouldClose()) {
         player.update();
 
+        // Fire a new bullet on spacebar press
         if (c.IsKeyPressed(c.KEY_SPACE)) {
             for (&bullets) |*b| {
                 if (!b.active) {
@@ -130,6 +145,7 @@ pub fn main() !void {
             }
         }
 
+        // Spawn enemies periodically
         spawn_timer += c.GetFrameTime();
         if (spawn_timer > 1.5 and enemy_count < enemies.len) {
             const ex = @as(f32, @floatFromInt(c.GetRandomValue(20, ScreenWidth - 20)));
@@ -141,6 +157,7 @@ pub fn main() !void {
         for (&bullets) |*b| b.update();
         for (&enemies) |*e| e.update();
 
+        // Check bullet-enemy collisions
         for (&bullets) |*b| {
             if (!b.active) continue;
             for (&enemies) |*e| {
@@ -156,6 +173,7 @@ pub fn main() !void {
             }
         }
 
+        // Check player-enemy collisions (game over on hit)
         for (&enemies) |*e| {
             if (!e.active) continue;
             const dx = player.x - e.x;

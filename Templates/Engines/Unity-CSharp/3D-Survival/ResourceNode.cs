@@ -1,3 +1,6 @@
+/// <summary>
+/// Harvestable resource node with depletion, gathering, and visual feedback.
+/// </summary>
 using UnityEngine;
 
 public class ResourceNode : MonoBehaviour

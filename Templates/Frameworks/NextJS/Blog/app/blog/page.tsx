@@ -1,3 +1,4 @@
+// Blog listing page — renders a list of all posts with links to individual articles
 import Link from 'next/link'
 import { posts } from '@/lib/posts'
 

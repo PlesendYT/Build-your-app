@@ -1,3 +1,4 @@
+# Tower defense tower with target acquisition, aiming, firing, range visualization, and upgrades
 extends Node2D
 
 @export var damage: int = 10

@@ -28,6 +28,7 @@ class Game:
 
     def render(self) -> None:
         """Draw everything to the screen."""
+        # Clear screen and draw a blue circle at center
         self.screen.fill((30, 30, 30))
         pygame.draw.circle(
             self.screen, self.color,

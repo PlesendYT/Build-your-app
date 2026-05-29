@@ -1,3 +1,4 @@
+// Modern C++ CLI tool with cxxopts argument parsing and JSON config support.
 #include <cli.hpp>
 #include <cxxopts.hpp>
 #include <filesystem>
@@ -8,6 +9,7 @@
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
+// Entry point: parse arguments, load config, execute subcommand.
 auto main(int argc, char* argv[]) -> int {
     cxxopts::Options options("cli-tool", "A modern C++ CLI tool");
 

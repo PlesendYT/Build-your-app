@@ -1,3 +1,4 @@
+// Next.js home page (App Router) — counter and weather fetch demo (client component)
 'use client';
 
 import { useState, type FC } from 'react';
@@ -12,6 +13,7 @@ const Home: FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
+  // Fetch current weather data from the Open-Meteo API
   async function fetchWeather(): Promise<void> {
     setLoading(true);
     try {

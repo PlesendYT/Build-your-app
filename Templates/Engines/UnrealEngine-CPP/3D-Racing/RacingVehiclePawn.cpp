@@ -1,3 +1,4 @@
+// Racing vehicle pawn with physics-based driving, boost, and lap tracking.
 #include "RacingVehiclePawn.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -5,12 +6,14 @@
 #include "EnhancedInputComponent.h"
 #include "Net/UnrealNetwork.h"
 
+// Initialize boost and enable tick.
 ARacingVehiclePawn::ARacingVehiclePawn()
 {
     PrimaryActorTick.bCanEverTick = true;
     CurrentBoost = MaxBoost;
 }
 
+// Find and sort checkpoints in the world.
 void ARacingVehiclePawn::BeginPlay()
 {
     Super::BeginPlay();
@@ -21,6 +24,7 @@ void ARacingVehiclePawn::BeginPlay()
     TotalCheckpoints = Checkpoints.Num();
 }
 
+// Update race time and regenerate boost.
 void ARacingVehiclePawn::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
@@ -28,6 +32,7 @@ void ARacingVehiclePawn::Tick(float DeltaTime)
     if (CurrentBoost < MaxBoost) CurrentBoost = FMath::Min(MaxBoost, CurrentBoost + DeltaTime * 10.0f);
 }
 
+// Apply throttle input to the vehicle.
 void ARacingVehiclePawn::MoveForward(const FInputActionValue& Value)
 {
     float Axis = Value.Get<float>();
@@ -37,6 +42,7 @@ void ARacingVehiclePawn::MoveForward(const FInputActionValue& Value)
     }
 }
 
+// Apply steering input to the vehicle.
 void ARacingVehiclePawn::MoveRight(const FInputActionValue& Value)
 {
     float Axis = Value.Get<float>();
@@ -46,6 +52,7 @@ void ARacingVehiclePawn::MoveRight(const FInputActionValue& Value)
     }
 }
 
+// Apply handbrake input to the vehicle.
 void ARacingVehiclePawn::Handbrake(const FInputActionValue& Value)
 {
     if (UChaosWheeledVehicleMovementComponent* MoveComp = GetChaosWheeledVehicleMovementComponent())
@@ -54,6 +61,7 @@ void ARacingVehiclePawn::Handbrake(const FInputActionValue& Value)
     }
 }
 
+// Expend boost meter to apply a forward impulse.
 void ARacingVehiclePawn::ApplyBoost(float BoostAmount)
 {
     if (CurrentBoost <= 0) return;

@@ -1,10 +1,11 @@
-// FPSGameMode.cpp
+// FPS game mode with kill tracking and player respawning.
 #include "FPSGameMode.h"
 #include "FPSCharacter.h"
 #include "GameFramework/PlayerStart.h"
 #include "Engine/PlayerStartActor.h"
 #include "Kismet/GameplayStatics.h"
 
+// Set the default pawn class to the FPS character.
 AFPSGameMode::AFPSGameMode()
 {
     DefaultPawnClass = AFPSCharacter::StaticClass();

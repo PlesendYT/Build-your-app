@@ -1,0 +1,38 @@
+# systemd unit file for the myapp Go HTTP server
+# Manages the service lifecycle: start, stop, restart, and auto-restart on failure
+
+[Unit]
+Description=MyApp Go HTTP Server
+Documentation=https://example.com/docs
+# Only start after the network is available
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Type=simple means systemd considers the service started as soon as the process forks
+Type=simple
+
+# Path to the installed binary
+ExecStart=/usr/local/bin/myapp
+
+# Automatically restart the service if it crashes or exits unexpectedly
+Restart=on-failure
+RestartSec=5
+
+# Environment variables available to the application
+Environment=PORT=8080
+Environment=LOG_LEVEL=info
+
+# Run as a dedicated non-root user for security
+User=myapp
+Group=myapp
+
+# Hardening options for improved security
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+# Enable the service for the default multi-user runlevel (boot)
+WantedBy=multi-user.target

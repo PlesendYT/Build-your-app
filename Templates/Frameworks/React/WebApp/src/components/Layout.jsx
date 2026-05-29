@@ -1,5 +1,6 @@
 import { Outlet, Link, NavLink } from 'react-router-dom'
 
+/** Shared layout component rendering header navigation, page content via Outlet, and footer. */
 function Layout() {
   return (
     <div className="app-layout">

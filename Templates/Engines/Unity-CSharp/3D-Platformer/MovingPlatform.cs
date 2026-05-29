@@ -1,3 +1,6 @@
+/// <summary>
+/// Platform that moves between two points, carrying the player on top.
+/// </summary>
 using UnityEngine;
 
 public class MovingPlatform : MonoBehaviour

@@ -1,3 +1,4 @@
+// Root layout — provides the global HTML structure, navigation header, and footer
 import type { Metadata } from 'next'
 import './globals.css'
 

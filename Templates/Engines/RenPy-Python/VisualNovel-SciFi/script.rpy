@@ -1,4 +1,5 @@
 ## Script for Sci-Fi Visual Novel
+# Sci-fi exploration story: choices affect ship stats, tech level, and alien trust
 
 label start:
     scene bg bridge

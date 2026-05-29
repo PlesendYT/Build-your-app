@@ -1,3 +1,4 @@
+// SDL2 coin-collection game - move a player to collect coins.
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdio.h>
@@ -10,6 +11,7 @@
 #define COIN_SIZE 20
 #define NUM_COINS 10
 
+// Game state: window, renderer, player, coins, score.
 typedef struct {
     SDL_Window *window;
     SDL_Renderer *renderer;
@@ -21,6 +23,7 @@ typedef struct {
     int running;
 } Game;
 
+// Initialize SDL, window, renderer, font, and coin positions.
 static int game_init(Game *g) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) return -1;
     if (TTF_Init() < 0) { SDL_Quit(); return -1; }
@@ -50,6 +53,7 @@ static int game_init(Game *g) {
     return 0;
 }
 
+// Clean up SDL resources.
 static void game_cleanup(Game *g) {
     if (g->font) TTF_CloseFont(g->font);
     if (g->renderer) SDL_DestroyRenderer(g->renderer);
@@ -58,6 +62,7 @@ static void game_cleanup(Game *g) {
     SDL_Quit();
 }
 
+// Update game logic: handle input and collision detection.
 static void game_update(Game *g) {
     const Uint8 *keys = SDL_GetKeyboardState(NULL);
     int speed = 5;
@@ -75,6 +80,7 @@ static void game_update(Game *g) {
     }
 }
 
+// Render the game: clear screen, draw player and coins, show UI.
 static void game_render(Game *g) {
     SDL_SetRenderDrawColor(g->renderer, 30, 30, 30, 255);
     SDL_RenderClear(g->renderer);
@@ -113,6 +119,7 @@ static void game_render(Game *g) {
     SDL_RenderPresent(g->renderer);
 }
 
+// Entry point: init game, run game loop, cleanup.
 int main(int argc, char *argv[]) {
     Game game;
     if (game_init(&game) != 0) {

@@ -1,3 +1,4 @@
+# 3D RPG NPC with dialogue and optional merchant shop functionality
 extends Area3D
 
 @export var npc_name: String = "Merchant"

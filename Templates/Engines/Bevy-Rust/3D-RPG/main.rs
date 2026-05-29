@@ -1,5 +1,8 @@
+//! A 3D RPG template with player movement, camera follow, enemy AI, and melee combat.
+
 use bevy::prelude::*;
 
+/// Entry point: builds and runs the Bevy app.
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
@@ -8,6 +11,7 @@ fn main() {
         .run();
 }
 
+/// Player component with stats.
 #[derive(Component)]
 struct Player {
     speed: f32,
@@ -17,6 +21,7 @@ struct Player {
     attack: i32,
 }
 
+/// Enemy component with combat and AI stats.
 #[derive(Component)]
 struct Enemy {
     health: i32,
@@ -27,14 +32,17 @@ struct Enemy {
     is_alive: bool,
 }
 
+/// Marker for the third-person camera.
 #[derive(Component)]
 struct MainCamera;
 
+/// Spawns the player, camera, light, and enemies into the world.
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
+    // Player capsule at origin.
     commands.spawn((
         PbrBundle {
             mesh: meshes.add(Capsule3d::new(0.4, 1.0)),
@@ -51,6 +59,7 @@ fn setup(
         },
     ));
 
+    // Third-person camera behind and above the player.
     commands.spawn((
         Camera3dBundle {
             transform: Transform::from_xyz(0.0, 5.0, -10.0).looking_at(Vec3::ZERO, Vec3::Y),
@@ -59,11 +68,13 @@ fn setup(
         MainCamera,
     ));
 
+    // Global point light.
     commands.spawn(PointLightBundle {
         transform: Transform::from_xyz(0.0, 10.0, 0.0),
         ..default()
     });
 
+    // Two enemies at different positions with varying stats.
     commands.spawn((
         PbrBundle {
             mesh: meshes.add(Capsule3d::new(0.4, 1.0)),
@@ -99,6 +110,7 @@ fn setup(
     ));
 }
 
+/// Moves the player with WASD keys, velocity-scaled by time and speed.
 fn player_move(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut query: Query<&mut Transform, With<Player>>,
@@ -126,6 +138,7 @@ fn player_move(
     }
 }
 
+/// Smoothly follows the player from a fixed offset behind and above.
 fn camera_follow(
     player_query: Query<&Transform, With<Player>>,
     mut camera_query: Query<&mut Transform, (With<MainCamera>, Without<Player>)>,
@@ -138,6 +151,7 @@ fn camera_follow(
     }
 }
 
+/// Chases the player when within aggro range and attacks when close.
 fn enemy_ai(
     mut enemy_query: Query<(&mut Enemy, &mut Transform), Without<Player>>,
     player_query: Query<&Transform, (With<Player>, Without<Enemy>)>,
@@ -167,6 +181,7 @@ fn enemy_ai(
     }
 }
 
+/// Melee combat on Space press: damages enemies within range and marks them as defeated.
 fn combat(
     keyboard: Res<ButtonInput<KeyCode>>,
     mut player_query: Query<&mut Player>,

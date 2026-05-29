@@ -1,3 +1,4 @@
+// Root React component — composes Header, Counter, and Weather sections
 import { useState, useEffect, type FC } from 'react';
 
 interface WeatherData {
@@ -5,6 +6,7 @@ interface WeatherData {
   error?: string;
 }
 
+// Static header component
 const Header: FC = () => (
   <header>
     <h1>Web-React + TS</h1>
@@ -12,6 +14,7 @@ const Header: FC = () => (
   </header>
 );
 
+// Counter section with increment, decrement, and reset buttons
 const Counter: FC = () => {
   const [count, setCount] = useState<number>(0);
 
@@ -26,6 +29,7 @@ const Counter: FC = () => {
   );
 };
 
+// Weather section — fetches and displays current weather for the given coordinates
 const Weather: FC<{ lat: number; lon: number }> = ({ lat, lon }) => {
   const [data, setData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -57,6 +61,7 @@ const Weather: FC<{ lat: number; lon: number }> = ({ lat, lon }) => {
   );
 };
 
+// Main app layout
 const App: FC = () => (
   <>
     <Header />

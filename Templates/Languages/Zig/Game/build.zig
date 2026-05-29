@@ -1,3 +1,4 @@
+/// Build configuration for the Raylib game project
 const std = @import("std");
 
 pub fn build(b: *std.Build) void {
@@ -11,6 +12,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    // Link the Raylib system library for graphics and input
     exe.linkSystemLibrary("raylib");
     exe.linkLibC();
 

@@ -1,3 +1,4 @@
+{{-- Main application layout with header, navigation, and footer --}}
 <!DOCTYPE html>
 <html lang="de">
 <head>

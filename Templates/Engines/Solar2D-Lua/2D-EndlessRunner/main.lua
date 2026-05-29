@@ -1,4 +1,5 @@
 -- Solar2D Endless Runner
+-- Main game controller: player movement, obstacle spawning, collision detection, scrolling, and score
 display.setStatusBar(display.HiddenStatusBar)
 
 local physics = require("physics")
@@ -15,7 +16,7 @@ local scrollSpeed = 300
 local canJump = true
 local isSliding = false
 
--- Load highscore
+-- Loads the high score from a file on disk
 local function loadHighScore()
     local file = io.open("runner_highscore.txt", "r")
     if file then
@@ -32,7 +33,7 @@ local function saveHighScore()
     end
 end
 
--- Player
+-- Creates the player character with a dynamic physics body
 function createPlayer()
     player = display.newImageRect("player.png", 32, 48)
     player.x = 120
@@ -46,7 +47,7 @@ function createPlayer()
     player.isFixedRotation = true
 end
 
--- Ground
+-- Creates tiling ground segments for the running surface
 function createGround()
     for i = 1, 3 do
         local ground = display.newImageRect("ground.png", display.contentWidth, 40)
@@ -62,7 +63,7 @@ function createGround()
     end
 end
 
--- Obstacles
+-- Spawns a random obstacle (low or high) at the right edge; schedules the next one
 function spawnObstacle()
     if gameOver then return end
 
@@ -94,7 +95,7 @@ function spawnObstacle()
     timer.performWithDelay(interval * 1000, spawnObstacle)
 end
 
--- Collision
+-- Handles collision between player and obstacles; allows sliding under high obstacles
 function onCollision(event)
     if event.phase == "began" then
         if (event.object1 == player and event.object2.name == "obstacle") or
@@ -134,7 +135,7 @@ function showGameOver()
     display.newText("Press SPACE to restart", display.contentCenterX, display.contentCenterY + 80, nil, 18)
 end
 
--- Input
+-- Handles input: SPACE to jump/restart, DOWN/S to slide
 function handleKey(event)
     if event.keyName == "space" then
         if event.phase == "down" then
@@ -187,7 +188,7 @@ function restartGame()
     initGame()
 end
 
--- Game loop
+-- Main game loop: updates score, scrolls obstacles and ground, increases speed, and updates HUD
 function gameLoop()
     if gameOver then return end
 

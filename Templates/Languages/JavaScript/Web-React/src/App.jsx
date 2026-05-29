@@ -1,5 +1,9 @@
+// Web-React — main application component
+// Renders a header, a counter, and a weather widget
+
 import { useState, useEffect } from 'react';
 
+/** Header component — displays the app title */
 function Header() {
   return (
     <header>
@@ -9,6 +13,7 @@ function Header() {
   );
 }
 
+/** Counter component — buttons to increment, decrement, and reset */
 function Counter() {
   const [count, setCount] = useState(0);
 
@@ -23,10 +28,12 @@ function Counter() {
   );
 }
 
+/** Weather component — fetches and displays weather data from an API */
 function Weather({ lat, lon }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  /** Fetches current weather from the Open-Meteo API */
   async function fetchWeather() {
     setLoading(true);
     try {
@@ -45,15 +52,16 @@ function Weather({ lat, lon }) {
 
   return (
     <section>
-      <h2>Wetter / Weather</h2>
+      <h2>Weather</h2>
       <button onClick={fetchWeather} disabled={loading}>
-        {loading ? 'Lade…' : 'Daten laden'}
+        {loading ? 'Loading…' : 'Load data'}
       </button>
       {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
     </section>
   );
 }
 
+/** Root App component — composes all sub-components */
 export default function App() {
   return (
     <>

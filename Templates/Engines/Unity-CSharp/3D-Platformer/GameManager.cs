@@ -1,3 +1,6 @@
+/// <summary>
+/// 3D platformer manager: score tracking, game-over panel, and scene restart.
+/// </summary>
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

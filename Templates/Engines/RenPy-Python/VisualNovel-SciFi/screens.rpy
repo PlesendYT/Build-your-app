@@ -1,4 +1,5 @@
 ## Screens for Sci-Fi Visual Novel
+# Ship status HUD and exploration location picker
 
 screen ship_status():
     vbox:

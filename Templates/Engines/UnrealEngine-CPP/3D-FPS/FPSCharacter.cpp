@@ -1,4 +1,4 @@
-// FPSCharacter.cpp
+// FPS character with first-person camera, sprint, weapons, and armor damage reduction.
 #include "FPSCharacter.h"
 #include "FPSWeapon.h"
 #include "Camera/CameraComponent.h"
@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
 
+// Set up first-person camera, mesh, movement, health, and armor.
 AFPSCharacter::AFPSCharacter()
 {
     PrimaryActorTick.bCanEverTick = false;
@@ -29,6 +30,7 @@ AFPSCharacter::AFPSCharacter()
     CurrentArmor = 0.0f;
 }
 
+// Spawn default weapon on server and register input mapping.
 void AFPSCharacter::BeginPlay()
 {
     Super::BeginPlay();
@@ -45,6 +47,7 @@ void AFPSCharacter::BeginPlay()
     }
 }
 
+// Bind enhanced input actions for move, look, jump, sprint, fire, reload.
 void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -62,6 +65,7 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
     }
 }
 
+// Handle movement input.
 void AFPSCharacter::Move(const FInputActionValue& Value)
 {
     FVector2D MoveVector = Value.Get<FVector2D>();
@@ -69,6 +73,7 @@ void AFPSCharacter::Move(const FInputActionValue& Value)
     AddMovementInput(GetActorRightVector(), MoveVector.X);
 }
 
+// Handle mouse look input.
 void AFPSCharacter::Look(const FInputActionValue& Value)
 {
     FVector2D LookVector = Value.Get<FVector2D>();
@@ -76,34 +81,42 @@ void AFPSCharacter::Look(const FInputActionValue& Value)
     AddControllerPitchInput(LookVector.Y);
 }
 
+// Start jump.
 void AFPSCharacter::StartJump() { Jump(); }
+// Stop jump.
 void AFPSCharacter::StopJump() { StopJumping(); }
 
+// Increase walk speed to sprint speed.
 void AFPSCharacter::StartSprint()
 {
     GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 }
 
+// Restore normal walk speed.
 void AFPSCharacter::StopSprint()
 {
     GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
+// Start firing current weapon.
 void AFPSCharacter::StartFire()
 {
     if (CurrentWeapon) CurrentWeapon->StartFire();
 }
 
+// Stop firing current weapon.
 void AFPSCharacter::StopFire()
 {
     if (CurrentWeapon) CurrentWeapon->StopFire();
 }
 
+// Reload current weapon.
 void AFPSCharacter::ReloadWeapon()
 {
     if (CurrentWeapon) CurrentWeapon->Reload();
 }
 
+// Server RPC: spawn default weapon and attach to first-person mesh.
 void AFPSCharacter::ServerSpawnDefaultWeapon_Implementation()
 {
     FActorSpawnParameters SpawnParams;
@@ -117,6 +130,7 @@ void AFPSCharacter::ServerSpawnDefaultWeapon_Implementation()
     }
 }
 
+// Apply damage with armor absorption (armor absorbs 50%), destroy on death.
 float AFPSCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
@@ -134,6 +148,7 @@ float AFPSCharacter::TakeDamage(float Damage, FDamageEvent const& DamageEvent, A
     return ActualDamage;
 }
 
+// Replicate health, armor, and current weapon.
 void AFPSCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);

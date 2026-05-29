@@ -1,16 +1,25 @@
+/**
+ * Sealed interface defining all supported CLI commands with a parser.
+ */
 package cli;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/** A CLI command that can be Greet, Calc, or Help. */
 public sealed interface Command permits Command.Greet, Command.Calc, Command.Help {
 
+    /** Greets a name, optionally uppercased. */
     record Greet(String name, boolean uppercase) implements Command {}
+    /** Performs a binary arithmetic operation. */
     record Calc(Operation op, int a, int b) implements Command {}
+    /** Displays usage information. */
     record Help() implements Command {}
 
+    /** Supported arithmetic operations. */
     enum Operation { ADD, SUB, MUL, DIV }
 
+    /** Parses command-line arguments into a Command instance. */
     static Command parse(String... args) {
         if (args.length == 0) return new Help();
         return switch (args[0]) {

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!-- Kanban Board - drag-drop task management interface -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Board</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, sans-serif; background: #f0f4f8; }
+    header { background: #1e293b; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    #board-container { display: flex; gap: 1rem; padding: 2rem; overflow-x: auto; min-height: calc(100vh - 80px); }
+    .column { background: #e2e8f0; border-radius: 8px; min-width: 280px; max-width: 300px; padding: 0.75rem; display: flex; flex-direction: column; }
+    .column-header { font-weight: bold; padding: 0.5rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; }
+    .card { background: white; padding: 0.75rem; margin: 0.5rem 0; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); cursor: grab; }
+    .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .card.dragging { opacity: 0.5; }
+    .card .delete-btn { float: right; cursor: pointer; color: #ef4444; font-size: 0.8rem; }
+    .add-btn { background: none; border: 1px dashed #94a3b8; color: #64748b; padding: 0.5rem; border-radius: 6px; cursor: pointer; margin-top: 0.5rem; }
+    .add-btn:hover { background: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <!-- Header with board title and add column button -->
+  <header>
+    <h1>Kanban Board</h1>
+    <button id="add-column-btn">+ Add Column</button>
+  </header>
+
+  <!-- Board columns container -->
+  <div id="board-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

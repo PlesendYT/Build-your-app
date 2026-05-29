@@ -1,9 +1,11 @@
+// 3D platformer character with double jump, coins, and keys.
 #include "PlatformerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
 
+// Configure jump velocity, air control, and walk speed.
 APlatformerCharacter::APlatformerCharacter()
 {
     GetCharacterMovement()->JumpZVelocity = JumpVelocity;

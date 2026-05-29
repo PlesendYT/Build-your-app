@@ -1,7 +1,9 @@
+// RTS strategy unit with move, attack, gather, and damage commands.
 #include "StrategyUnit.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AI/Navigation/NavigationTypes.h"
 
+// Initialize unit with Hold command.
 AStrategyUnit::AStrategyUnit()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -10,6 +12,7 @@ AStrategyUnit::AStrategyUnit()
 
 void AStrategyUnit::BeginPlay() { Super::BeginPlay(); }
 
+// Execute the current command each tick.
 void AStrategyUnit::Tick(float DT)
 {
     Super::Tick(DT);
@@ -22,6 +25,7 @@ void AStrategyUnit::Tick(float DT)
     }
 }
 
+// Issue a command to the unit (move, attack, gather, etc.).
 void AStrategyUnit::IssueCommand(EUnitCommand Command, FVector TargetLocation, AActor* TargetActor)
 {
     CurrentCommand = Command;
@@ -41,12 +45,14 @@ void AStrategyUnit::IssueCommand(EUnitCommand Command, FVector TargetLocation, A
     }
 }
 
+// Set movement speed and begin moving toward the target.
 void AStrategyUnit::PerformMove()
 {
     GetCharacterMovement()->MaxWalkSpeed = 300.0f;
     // AIController would handle MoveToLocation
 }
 
+// Attack the target if in range; otherwise move toward it.
 void AStrategyUnit::PerformAttack(float DT)
 {
     if (AttackTarget && AttackTarget->IsValidLowLevel())
@@ -65,6 +71,7 @@ void AStrategyUnit::PerformAttack(float DT)
     }
 }
 
+// Gather resources from the target at the defined rate.
 void AStrategyUnit::PerformGather(float DT)
 {
     GatherTimer += DT;
@@ -75,10 +82,12 @@ void AStrategyUnit::PerformGather(float DT)
     }
 }
 
+// Apply damage to the unit; destroy if health reaches zero.
 void AStrategyUnit::TakeUnitDamage(float Damage)
 {
     Health -= Damage;
     if (Health <= 0) Destroy();
 }
 
+// Update the unit's selection state.
 void AStrategyUnit::SetSelected(bool Selected) { bIsSelected = Selected; }

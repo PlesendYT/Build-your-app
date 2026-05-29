@@ -1,4 +1,4 @@
-// FPSWeapon.h
+// Header for an FPS weapon with fire modes, ammo, reload, and effects.
 #pragma once
 
 #include "CoreMinimal.h"
@@ -18,9 +18,13 @@ class AFPSWeapon : public AActor
 public:
     AFPSWeapon();
 
+    // Fire a single shot.
     virtual void Fire();
+    // Start reload sequence.
     virtual void Reload();
+    // Begin automatic fire.
     virtual void StartFire();
+    // Stop automatic fire.
     virtual void StopFire();
 
     UFUNCTION(BlueprintPure)
@@ -71,7 +75,10 @@ protected:
     FTimerHandle FireTimerHandle;
     FTimerHandle ReloadTimerHandle;
 
+    // Perform a hitscan trace from the camera center.
     virtual void FireHitScan();
+    // Spawn a projectile actor from the muzzle socket.
     virtual void FireProjectile();
+    // Called when reload timer completes - refills ammo.
     virtual void OnReloadFinished();
 };

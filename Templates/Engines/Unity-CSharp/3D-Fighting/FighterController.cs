@@ -1,3 +1,6 @@
+/// <summary>
+/// Fighting game character with movement, combo attacks, jump, and health bar.
+/// </summary>
 using UnityEngine;
 using UnityEngine.InputSystem;
 

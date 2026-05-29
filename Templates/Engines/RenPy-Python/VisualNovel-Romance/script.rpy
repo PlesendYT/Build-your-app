@@ -1,4 +1,5 @@
 ## Script for Romance Visual Novel
+# Romance story: affection levels for Elena, Marco, and Lea determine the ending
 
 label start:
     scene bg city

@@ -1,14 +1,17 @@
+// Survival character with hunger, thirst, stamina, inventory, and crafting.
 #include "SurvivalCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Net/UnrealNetwork.h"
 
+// Enable tick for vital stat drain.
 ASurvivalCharacter::ASurvivalCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
 }
 
+// Register enhanced input mapping context at start.
 void ASurvivalCharacter::BeginPlay()
 {
     Super::BeginPlay();
@@ -19,6 +22,7 @@ void ASurvivalCharacter::BeginPlay()
     }
 }
 
+// Drain hunger/thirst over time; apply damage if depleted; regenerate stamina.
 void ASurvivalCharacter::Tick(float DT)
 {
     Super::Tick(DT);
@@ -32,11 +36,13 @@ void ASurvivalCharacter::Tick(float DT)
     Vitals.Stamina = FMath::Min(Vitals.MaxStamina, Vitals.Stamina + DT * 10.0f);
 }
 
+// Add gathered resources to the character's inventory.
 void ASurvivalCharacter::GatherResource(FName ResourceType, int32 Amount)
 {
     Inventory.FindOrAdd(ResourceType) += Amount;
 }
 
+// Attempt to craft an item: checks ingredients, consumes them, adds output.
 bool ASurvivalCharacter::CraftItem(FName RecipeID)
 {
     if (!Recipes.Contains(RecipeID)) return false;
@@ -54,6 +60,7 @@ bool ASurvivalCharacter::CraftItem(FName RecipeID)
     return true;
 }
 
+// Consume a food item from inventory to restore hunger and thirst.
 void ASurvivalCharacter::Eat(FName FoodItem, float HungerRestore, float ThirstRestore)
 {
     if (!Inventory.Contains(FoodItem) || Inventory[FoodItem] <= 0) return;
@@ -63,6 +70,7 @@ void ASurvivalCharacter::Eat(FName FoodItem, float HungerRestore, float ThirstRe
     Vitals.Thirst = FMath::Min(Vitals.MaxHealth, Vitals.Thirst + ThirstRestore);
 }
 
+// Spawn a building/object at the specified location (server only).
 void ASurvivalCharacter::BuildStructure(TSubclassOf<AActor> StructureClass, FVector Location, FRotator Rotation)
 {
     if (!HasAuthority() || !StructureClass) return;
@@ -71,6 +79,7 @@ void ASurvivalCharacter::BuildStructure(TSubclassOf<AActor> StructureClass, FVec
     GetWorld()->SpawnActor<AActor>(StructureClass, Location, Rotation, P);
 }
 
+// Set up replication for vitals and inventory.
 void ASurvivalCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);

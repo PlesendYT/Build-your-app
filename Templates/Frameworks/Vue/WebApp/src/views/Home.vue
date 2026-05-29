@@ -1,15 +1,19 @@
 <script setup>
+// Import lifecycle hook, app store, and router link for hero section
 import { onMounted } from 'vue'
 import { useAppStore } from '../stores/app'
 import { RouterLink } from 'vue-router'
 
+// App store instance for data fetching and loading state
 const store = useAppStore()
 
+// Fetch data on component mount
 onMounted(() => {
   store.fetchItems()
 })
 </script>
 
+<!-- Home page with hero section, call-to-action, and dynamic data grid from store -->
 <template>
   <div class="home-page">
     <section class="hero">

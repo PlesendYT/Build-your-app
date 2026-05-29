@@ -1,7 +1,10 @@
+/// Library providing system info, file management, and a simple notes app for the Desktop Compact CLI.
 import 'dart:io';
 import 'dart:math';
 
+/// Collects and returns system-level information about the current environment.
 class SystemInfo {
+  /// Returns a map of system information (OS, hostname, Dart version, CPUs, PID).
   static Map<String, dynamic> getInfo() {
     return {
       'os': Platform.operatingSystem,
@@ -14,11 +17,15 @@ class SystemInfo {
   }
 }
 
+/// Provides file system operations (list, create, read, delete) within a base directory.
 class FileManager {
   final String basePath;
 
+  /// Creates a FileManager that operates within the given [basePath].
   FileManager(this.basePath);
 
+  /// Lists all files and directories in the base path.
+  /// Optionally lists recursively when [recursive] is true.
   List<FileSystemEntity> listFiles({bool recursive = false}) {
     final dir = Directory(basePath);
     if (!dir.existsSync()) {
@@ -27,18 +34,21 @@ class FileManager {
     return dir.listSync(recursive: recursive, followLinks: false);
   }
 
+  /// Creates a new file with the given [name] and writes [content] into it.
   void createFile(String name, String content) {
     final file = File('$basePath/$name');
     file.writeAsStringSync(content);
     print('Datei erstellt: ${file.path}');
   }
 
+  /// Reads and returns the content of the file with the given [name], or null if it doesn't exist.
   String? readFile(String name) {
     final file = File('$basePath/$name');
     if (!file.existsSync()) return null;
     return file.readAsStringSync();
   }
 
+  /// Deletes the file with the given [name] if it exists.
   void deleteFile(String name) {
     final file = File('$basePath/$name');
     if (file.existsSync()) {
@@ -48,19 +58,23 @@ class FileManager {
   }
 }
 
+/// In-memory note-taking app supporting add, list, show, and delete operations.
 class NoteApp {
   final List<Map<String, String>> _notes = [];
   final Random _random = Random();
 
+  /// Initializes the note app with a default welcome note.
   NoteApp() {
     _notes.add({'title': 'Willkommen', 'content': 'Dies ist deine erste Notiz.'});
   }
 
+  /// Adds a new note with the given [title] and [content].
   void add(String title, String content) {
     _notes.add({'title': title, 'content': content});
     print('Notiz hinzugefügt: $title');
   }
 
+  /// Lists all note titles with their index numbers.
   void list() {
     if (_notes.isEmpty) {
       print('Keine Notizen.');
@@ -71,6 +85,7 @@ class NoteApp {
     }
   }
 
+  /// Displays the full content of the note at the given [index].
   void show(int index) {
     if (index < 0 || index >= _notes.length) {
       print('Ungültiger Index.');
@@ -82,6 +97,7 @@ class NoteApp {
     print(note['content']);
   }
 
+  /// Removes the note at the given [index] from the list.
   void delete(int index) {
     if (index < 0 || index >= _notes.length) {
       print('Ungültiger Index.');

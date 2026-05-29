@@ -1,3 +1,4 @@
+// Blog post data model and sample articles for the Next.js Blog template
 export interface Post {
   slug: string
   title: string

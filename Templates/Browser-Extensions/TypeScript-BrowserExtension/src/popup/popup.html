@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<!-- Popup view shown when the extension toolbar icon is clicked -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extension Popup</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <!-- Header with the extension name -->
+  <div id="app">
+    <h1>TypeScript Extension</h1>
+    <p>Active tab information:</p>
+    <!-- Container populated dynamically by popup.ts -->
+    <div id="pageInfo">Loading...</div>
+  </div>
+  <!-- Load the bundled popup script -->
+  <script src="popup.js"></script>
+</body>
+</html>
