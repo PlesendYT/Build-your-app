@@ -1,0 +1,157 @@
+{
+  "_kommentar": "======= ELECTRON APP KONFIGURATION =======",
+
+  "app": {
+    "name": "MeineApp",
+    "version": "1.0.0",
+    "author": "Dein Name",
+    "description": "Beschreibung deiner App",
+    "icon": "src/icon.ico",
+    "copyright": "Copyright © 2025 Dein Name"
+  },
+
+  "window": {
+    "url": "https://example.com",
+    "title": "Meine App",
+    "width": 1280,
+    "height": 800,
+    "minWidth": 800,
+    "minHeight": 600,
+    "maxWidth": 0,
+    "maxHeight": 0,
+    "resizable": true,
+    "fullscreen": false,
+    "fullscreenable": true,
+    "maximized": false,
+    "center": true,
+    "frame": true,
+    "transparent": false,
+    "alwaysOnTop": false,
+    "skipTaskbar": false,
+    "kiosk": false,
+    "hasShadow": true,
+    "backgroundColor": "#ffffff",
+    "opacity": 1.0
+  },
+
+  "devTools": {
+    "enabled": false,
+    "openOnStart": false,
+    "mode": "detach"
+  },
+
+  "browser": {
+    "contextMenu": true,
+    "zoom": true,
+    "zoomFactor": 1.0,
+    "minZoom": 0.5,
+    "maxZoom": 3.0,
+    "scrollBounce": false,
+    "smoothScrolling": true,
+    "spellcheck": true,
+    "images": true,
+    "javascript": true,
+    "webgl": true,
+    "plugins": false,
+    "experimentalFeatures": false
+  },
+
+  "navigation": {
+    "menuBar": false,
+    "externalLinksInBrowser": true,
+    "allowNewWindows": false,
+    "blockPopups": true,
+    "allowedHosts": [],
+    "blockedHosts": []
+  },
+
+  "network": {
+    "proxy": {
+    "enabled": false,
+    "server": "",
+    "bypass": "localhost"
+    },
+    "userAgent": "",
+    "offlineMode": false,
+    "ignoreCertificateErrors": false
+  },
+
+  "session": {
+    "persistCookies": true,
+    "persistCache": true,
+    "clearCookiesOnExit": false,
+    "clearCacheOnExit": false,
+    "cacheSize": 0,
+    "partition": ""
+  },
+
+  "shortcuts": {
+    "enabled": true,
+    "reload": true,
+    "forceReload": true,
+    "devTools": false,
+    "zoomIn": true,
+    "zoomOut": true,
+    "resetZoom": true,
+    "fullscreen": true,
+    "minimize": true,
+    "close": true,
+    "custom": []
+  },
+
+  "tray": {
+    "enabled": false,
+    "icon": "src/icon.ico",
+    "tooltip": "Meine App",
+    "minimizeToTray": false,
+    "closeToTray": false,
+    "showOnStartup": true
+  },
+
+  "notifications": {
+    "enabled": true,
+    "sound": true
+  },
+
+  "splashScreen": {
+    "enabled": false,
+    "image": "src/splash.png",
+    "width": 500,
+    "height": 300,
+    "duration": 3000
+  },
+
+  "autoUpdater": {
+    "enabled": false,
+    "feedUrl": "",
+    "checkOnStartup": false,
+    "interval": 3600000
+  },
+
+  "security": {
+    "nodeIntegration": false,
+    "contextIsolation": true,
+    "webSecurity": true,
+    "allowRunningInsecureContent": false,
+    "sandbox": false
+  },
+
+  "logging": {
+    "enabled": false,
+    "level": "info",
+    "file": "logs/app.log",
+    "maxSize": 10485760,
+    "maxFiles": 5
+  },
+
+  "build": {
+    "outputDir": "dist",
+    "portable": true,
+    "installer": false,
+    "targetArch": "x64",
+    "compression": "normal",
+    "asar": true,
+    "includeFiles": [],
+    "excludeFiles": ["*.log", ".env"]
+  }
+}
