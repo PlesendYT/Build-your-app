@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Password Generator · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Password Generator</h1>
+  <p class="sub">Create strong passwords with custom rules. Generation runs locally in your browser.</p>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-body">
+        <label for="result">Password</label>
+        <div class="row">
+          <input id="result" type="text" readonly />
+          <button id="reveal" class="ghost" title="Show/hide">👁</button>
+          <button id="regen" class="primary">Generate</button>
+        </div>
+
+        <div class="spacer-y"></div>
+        <label for="length">Length: <span id="lengthVal">20</span></label>
+        <input id="length" type="range" min="6" max="64" value="20" />
+
+        <div class="spacer-y"></div>
+        <div class="row">
+          <label class="row" style="gap:6px"><input id="lower" type="checkbox" checked /> a-z</label>
+          <label class="row" style="gap:6px"><input id="upper" type="checkbox" checked /> A-Z</label>
+          <label class="row" style="gap:6px"><input id="digits" type="checkbox" checked /> 0-9</label>
+          <label class="row" style="gap:6px"><input id="symbols" type="checkbox" checked /> !@#…</label>
+          <label class="row" style="gap:6px"><input id="avoidAmbig" type="checkbox" checked /> Avoid ambiguous (0/O, l/1, I)</label>
+        </div>
+
+        <div class="spacer-y"></div>
+        <label for="count">How many</label>
+        <input id="count" type="number" min="1" max="20" value="5" style="max-width:120px" />
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2 style="margin:0">Strength</h2>
+        <span class="spacer" style="flex:1"></span>
+        <span id="strength" class="tag">—</span>
+      </div>
+      <div class="panel-body">
+        <div style="height:8px;background:var(--panel-2);border:1px solid var(--border);border-radius:999px;overflow:hidden">
+          <div id="bar" style="height:100%;width:0%;background:var(--accent-2);transition:width .2s"></div>
+        </div>
+        <p class="muted" id="hint" style="margin-top:8px">Use 16+ characters and mix character classes for the best strength.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2 style="margin:0">Batch</h2>
+      <span class="spacer" style="flex:1"></span>
+      <button id="copyAll" class="ghost">Copy all</button>
+      <button id="download" class="ghost">Download .txt</button>
+    </div>
+    <div class="panel-body">
+      <pre id="batch" class="scroll"></pre>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Password Generator" });
+
+  var $ = Tools.qs;
+  var lower = "abcdefghijklmnopqrstuvwxyz";
+  var upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var digits = "0123456789";
+  var symbols = "!@#$%^&*()-_=+[]{};:,.<>/?~";
+  var ambig = "0O1lI|`'\"{}[]()/\\.,;: ";
+
+  var length = $("length"), lengthVal = $("lengthVal");
+  var result = $("result"), batch = $("batch");
+  var strength = $("strength"), bar = $("bar"), hint = $("hint");
+
+  function charset() {
+    var pool = "";
+    if ($("lower").checked) pool += lower;
+    if ($("upper").checked) pool += upper;
+    if ($("digits").checked) pool += digits;
+    if ($("symbols").checked) pool += symbols;
+    if ($("avoidAmbig").checked) pool = pool.split("").filter(function (c) { return ambig.indexOf(c) < 0; }).join("");
+    return pool;
+  }
+
+  function generateOne() {
+    var pool = charset();
+    if (!pool) return "";
+    var len = parseInt(length.value, 10);
+    var out = new Uint8Array(len);
+    crypto.getRandomValues(out);
+    var s = "";
+    for (var i = 0; i < len; i++) s += pool[out[i] % pool.length];
+    return s;
+  }
+
+  function entropyBits(pw) {
+    if (!pw) return 0;
+    var pool = 0;
+    if (/[a-z]/.test(pw)) pool += 26;
+    if (/[A-Z]/.test(pw)) pool += 26;
+    if (/[0-9]/.test(pw)) pool += 10;
+    if (/[^A-Za-z0-9]/.test(pw)) pool += 33;
+    return pw.length * Math.log2(Math.max(2, pool));
+  }
+  function strengthLabel(bits) {
+    if (bits < 40) return { tag: "err", text: "Weak", pct: 25 };
+    if (bits < 60) return { tag: "warn", text: "Fair", pct: 50 };
+    if (bits < 80) return { tag: "ok", text: "Strong", pct: 75 };
+    return { tag: "ok", text: "Very strong", pct: 100 };
+  }
+
+  function refresh() {
+    lengthVal.textContent = length.value;
+    var n = Math.max(1, Math.min(20, parseInt($("count").value, 10) || 1));
+    var list = [];
+    for (var i = 0; i < n; i++) list.push(generateOne());
+    if (n === 1) {
+      result.value = list[0] || "";
+      batch.textContent = "";
+    } else {
+      result.value = list[0] || "";
+      batch.textContent = list.join("\n");
+    }
+    var bits = entropyBits(result.value);
+    var s = strengthLabel(bits);
+    strength.className = "tag " + s.tag;
+    strength.textContent = bits.toFixed(0) + " bits · " + s.text;
+    bar.style.width = s.pct + "%";
+    bar.style.background = s.tag === "err" ? "var(--danger)" : s.tag === "warn" ? "var(--warn)" : "var(--accent-2)";
+    hint.textContent = bits >= 80 ? "Excellent. This password would take ages to crack." :
+                       bits >= 60 ? "Solid for most uses. Consider longer for high-value accounts." :
+                       bits >= 40 ? "Acceptable for low-risk accounts only." :
+                       "Too short or too predictable. Add length or symbols.";
+  }
+
+  $("regen").onclick = refresh;
+  length.addEventListener("input", refresh);
+  Tools.qsa("input[type=checkbox]").forEach(function (c) { c.addEventListener("change", refresh); });
+  $("count").addEventListener("input", refresh);
+
+  $("reveal").onclick = function () { result.type = result.type === "text" ? "password" : "text"; };
+  Tools.qs("#copyAll").onclick = function () {
+    var text = batch.textContent || result.value;
+    Tools.copyText(text).then(function (ok) { Tools.toast(ok ? "Copied" : "Copy failed", ok ? "ok" : "err"); });
+  };
+  Tools.qs("#download").onclick = function () {
+    var text = batch.textContent || result.value;
+    Tools.download("passwords.txt", text, "text/plain;charset=utf-8");
+  };
+
+  refresh();
+</script>
+</body>
+</html>

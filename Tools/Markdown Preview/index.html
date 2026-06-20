@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Markdown Preview · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+<style>
+  .md-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-height: 70vh; }
+  @media (max-width: 900px) { .md-grid { grid-template-columns: 1fr; } }
+  .md-grid textarea { min-height: 70vh; }
+  .md-body { padding: 12px 16px; overflow: auto; min-height: 70vh; max-height: 80vh; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); }
+  .md-body h1:first-child { margin-top: 0; }
+</style>
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Markdown Preview</h1>
+  <p class="sub">Live editor with side-by-side rendering. Headings, lists, tables, code, and quotes are all supported.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row" style="margin-bottom:8px">
+        <label class="btn ghost" for="file">Open .md</label>
+        <input id="file" type="file" accept=".md,.markdown,.txt,text/markdown" hidden />
+        <button id="sample" class="ghost">Sample</button>
+        <button id="copyMd" class="ghost">Copy Markdown</button>
+        <button id="copyHtml" class="ghost">Copy HTML</button>
+        <button id="download" class="ghost">Download .md</button>
+        <span class="spacer" style="flex:1"></span>
+        <span id="meta" class="muted"></span>
+      </div>
+
+      <div class="md-grid">
+        <textarea id="md" spellcheck="true" placeholder="# Start typing markdown..."></textarea>
+        <article id="out" class="md-body"></article>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Markdown Preview" });
+
+  var md = Tools.qs("#md"), out = Tools.qs("#out"), meta = Tools.qs("#meta");
+
+  // Minimal, dependency-free Markdown renderer covering common cases.
+  function render(src) {
+    var lines = src.replace(/\r\n?/g, "\n").split("\n");
+    var html = [];
+    var i = 0;
+    function inline(s) {
+      // escape first
+      s = Tools.escapeHtml(s);
+      // images ![alt](url)
+      s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, function (_, a, u, t) {
+        return '<img alt="' + a + '" src="' + u + '"' + (t ? ' title="' + t + '"' : '') + ' />';
+      });
+      // links [text](url)
+      s = s.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g, function (_, t, u, ti) {
+        return '<a href="' + u + '"' + (ti ? ' title="' + ti + '"' : '') + (u.indexOf("://") > 0 ? ' target="_blank" rel="noopener"' : '') + '>' + t + '</a>';
+      });
+      // inline code
+      s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // bold
+      s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      s = s.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+      // italic
+      s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+      s = s.replace(/(^|[^_])_([^_\n]+)_/g, '$1<em>$2</em>');
+      return s;
+    }
+
+    while (i < lines.length) {
+      var line = lines[i];
+
+      // Fenced code
+      var fence = line.match(/^```(\w*)\s*$/);
+      if (fence) {
+        var lang = fence[1] || "";
+        var buf = [];
+        i++;
+        while (i < lines.length && !/^```\s*$/.test(lines[i])) { buf.push(lines[i]); i++; }
+        i++; // skip closing fence
+        html.push('<pre><code' + (lang ? ' class="lang-' + lang + '"' : '') + '>' + Tools.escapeHtml(buf.join("\n")) + '</code></pre>');
+        continue;
+      }
+
+      // Headings
+      var h = line.match(/^(#{1,6})\s+(.*)$/);
+      if (h) { html.push("<h" + h[1].length + ">" + inline(h[2].trim()) + "</h" + h[1].length + ">"); i++; continue; }
+
+      // Horizontal rule
+      if (/^\s*([-*_])\s*\1\s*\1[\s\1]*$/.test(line)) { html.push("<hr/>"); i++; continue; }
+
+      // Blockquote
+      if (/^>\s?/.test(line)) {
+        var qbuf = [];
+        while (i < lines.length && /^>\s?/.test(lines[i])) { qbuf.push(lines[i].replace(/^>\s?/, "")); i++; }
+        html.push("<blockquote>" + render(qbuf.join("\n")) + "</blockquote>");
+        continue;
+      }
+
+      // Table (simple GFM)
+      if (/^\s*\|.+\|\s*$/.test(line) && i + 1 < lines.length && /^\s*\|?\s*:?-{3,}/.test(lines[i + 1])) {
+        var header = splitRow(line);
+        var sep = lines[i + 1];
+        var aligns = splitRow(sep).map(function (c) {
+          c = c.trim();
+          var left = /^:/.test(c), right = /:$/.test(c);
+          return left && right ? "center" : right ? "right" : left ? "left" : "";
+        });
+        i += 2;
+        var body = [];
+        while (i < lines.length && /^\s*\|.+\|\s*$/.test(lines[i])) { body.push(splitRow(lines[i])); i++; }
+        var thead = "<thead><tr>" + header.map(function (c, idx) {
+          return "<th" + (aligns[idx] ? ' style="text-align:' + aligns[idx] + '"' : "") + ">" + inline(c.trim()) + "</th>";
+        }).join("") + "</tr></thead>";
+        var tbody = "<tbody>" + body.map(function (r) {
+          return "<tr>" + r.map(function (c, idx) {
+            return "<td" + (aligns[idx] ? ' style="text-align:' + aligns[idx] + '"' : "") + ">" + inline(c.trim()) + "</td>";
+          }).join("") + "</tr>";
+        }).join("") + "</tbody>";
+        html.push("<table>" + thead + tbody + "</table>");
+        continue;
+      }
+
+      // Lists
+      var ul = /^\s*[-*+]\s+/.test(line);
+      var ol = /^\s*\d+\.\s+/.test(line);
+      if (ul || ol) {
+        var tag = ul ? "ul" : "ol";
+        var items = [];
+        while (i < lines.length && (/^\s*[-*+]\s+/.test(lines[i]) || /^\s*\d+\.\s+/.test(lines[i]))) {
+          var m = lines[i].match(/^(\s*)([-*+]|\d+\.)\s+(.*)$/);
+          items.push(inline(m[3]));
+          i++;
+        }
+        html.push("<" + tag + "><li>" + items.join("</li><li>") + "</li></" + tag + ">");
+        continue;
+      }
+
+      // Blank line
+      if (/^\s*$/.test(line)) { i++; continue; }
+
+      // Paragraph (gather until blank)
+      var pbuf = [line];
+      i++;
+      while (i < lines.length && !/^\s*$/.test(lines[i]) && !/^(#{1,6}\s|>\s?|\s*[-*+]\s|\s*\d+\.\s|```)/.test(lines[i])) {
+        pbuf.push(lines[i]); i++;
+      }
+      html.push("<p>" + inline(pbuf.join("\n")).replace(/\n/g, "<br/>") + "</p>");
+    }
+
+    return html.join("\n");
+
+    function splitRow(line) {
+      var t = line.trim();
+      if (t.charAt(0) === "|") t = t.slice(1);
+      if (t.charAt(t.length - 1) === "|") t = t.slice(0, -1);
+      return t.split("|");
+    }
+  }
+
+  function update() {
+    var src = md.value;
+    out.innerHTML = render(src);
+    meta.textContent = src.length.toLocaleString() + " chars · " + src.split(/\s+/).filter(Boolean).length + " words";
+  }
+  md.addEventListener("input", update);
+
+  Tools.qs("#sample").onclick = function () {
+    md.value = "# Welcome\n\nA quick **Markdown** demo with `inline code`, *italics*, and a [link](https://example.com).\n\n## Lists\n\n- One\n- Two\n- Three\n\n```js\nfunction hi(name) { return `Hi ${name}`; }\n```\n\n> Quotes look like this.\n\n| Tool | Status |\n| :--- | :----: |\n| API  |   ok   |\n| JSON |   ok   |\n";
+    update();
+  };
+  Tools.qs("#copyMd").onclick = function () { Tools.copyText(md.value).then(function (ok) { Tools.toast(ok ? "Copied Markdown" : "Copy failed", ok ? "ok" : "err"); }); };
+  Tools.qs("#copyHtml").onclick = function () { Tools.copyText(out.innerHTML).then(function (ok) { Tools.toast(ok ? "Copied HTML" : "Copy failed", ok ? "ok" : "err"); }); };
+  Tools.qs("#download").onclick = function () { Tools.download("document.md", md.value, "text/markdown"); };
+  Tools.qs("#file").onchange = function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    Tools.readFile(f).then(function (t) { md.value = String(t); update(); });
+  };
+
+  Tools.qs("#sample").click();
+</script>
+</body>
+</html>

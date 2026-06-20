@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Regex Tester · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Regex Tester</h1>
+  <p class="sub">Build and test regular expressions with live match highlighting and capture-group inspection.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row">
+        <span class="tag">/</span>
+        <input id="pattern" type="text" placeholder="Pattern, e.g. (\\d+)-([a-z]+)" />
+        <span class="tag">/</span>
+        <input id="flags" type="text" value="g" style="max-width:80px" placeholder="flags" />
+        <button id="run" class="primary">Run</button>
+        <button id="copyPattern" class="ghost">Copy regex</button>
+      </div>
+      <p class="muted" id="patternStatus" style="margin-top:8px">Enter a pattern.</p>
+    </div>
+  </section>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Test text</h2>
+        <span class="spacer" style="flex:1"></span>
+        <span id="matchCount" class="tag">0 matches</span>
+      </div>
+      <div class="panel-body">
+        <textarea id="text" placeholder="Paste text to search"></textarea>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Highlight</h2></div>
+      <div class="panel-body">
+        <div id="highlight" class="md-body" style="min-height:200px;max-height:60vh;overflow:auto;border:1px solid var(--border);background:var(--panel-2);border-radius:6px;padding:10px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">Matches</h2></div>
+    <div class="panel-body">
+      <table id="matches">
+        <thead><tr><th>#</th><th>Index</th><th>Match</th><th>Groups</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p id="matchesEmpty" class="muted">No matches yet.</p>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Regex Tester" });
+
+  var pattern = Tools.qs("#pattern"), flags = Tools.qs("#flags");
+  var text = Tools.qs("#text"), highlight = Tools.qs("#highlight");
+  var patternStatus = Tools.qs("#patternStatus"), matchCount = Tools.qs("#matchCount");
+  var matchesBody = Tools.qs("#matches").querySelector("tbody"), matchesEmpty = Tools.qs("#matchesEmpty");
+
+  function escapeHtml(s) { return Tools.escapeHtml(s); }
+
+  function run() {
+    matchesBody.innerHTML = "";
+    var src = text.value;
+    var f = flags.value;
+    var p;
+    try { p = new RegExp(pattern.value, f); }
+    catch (e) { patternStatus.textContent = "Error: " + e.message; patternStatus.style.color = "var(--danger)"; highlight.innerHTML = escapeHtml(src); matchCount.textContent = "0 matches"; matchesEmpty.style.display = ""; return; }
+    patternStatus.textContent = "Compiled OK.";
+    patternStatus.style.color = "var(--muted)";
+
+    var g = f.indexOf("g") >= 0;
+    var re = new RegExp(pattern.value, (g ? f : f + "g"));
+    var matches = [];
+    var m;
+    while ((m = re.exec(src)) !== null) {
+      matches.push({ index: m.index, full: m[0], groups: m.slice(1) });
+      if (m.index === re.lastIndex) re.lastIndex++; // avoid zero-length infinite loop
+      if (!g) break;
+    }
+
+    // Highlight
+    var html = "";
+    var cursor = 0;
+    matches.forEach(function (mm) {
+      html += escapeHtml(src.slice(cursor, mm.index));
+      html += "<mark>" + escapeHtml(mm.full) + "</mark>";
+      cursor = mm.index + mm.full.length;
+    });
+    html += escapeHtml(src.slice(cursor));
+    highlight.innerHTML = html || "<span class='muted'>No text.</span>";
+
+    matchCount.textContent = matches.length + (matches.length === 1 ? " match" : " matches");
+    matchesEmpty.style.display = matches.length ? "none" : "";
+
+    matches.forEach(function (mm, i) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td></td><td></td><td></td><td></td>";
+      var c = tr.children;
+      c[0].textContent = i + 1;
+      c[1].textContent = mm.index;
+      c[2].textContent = mm.full;
+      c[3].textContent = mm.groups.map(function (g, k) { return "$" + (k + 1) + " = " + (g === undefined ? "(undefined)" : JSON.stringify(g)); }).join(" · ") || "—";
+      matchesBody.appendChild(tr);
+    });
+  }
+
+  Tools.qs("#run").onclick = run;
+  Tools.qs("#copyPattern").onclick = function () {
+    Tools.copyText("/" + pattern.value + "/" + flags.value).then(function (ok) { Tools.toast(ok ? "Copied" : "Copy failed", ok ? "ok" : "err"); });
+  };
+  var live = Tools.debounce(run, 120);
+  pattern.addEventListener("input", live);
+  flags.addEventListener("input", live);
+  text.addEventListener("input", live);
+
+  pattern.value = "\\b(\\w+)=([\"']?)([^\"']+)\\2\\b";
+  text.value = "name=\"alice\" age=42 title='developer' id=007";
+  run();
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Timestamp Tool · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Timestamp Tool</h1>
+  <p class="sub">Convert between Unix seconds/milliseconds, ISO 8601, UTC, and your local time. Math runs on dates.</p>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Now</h2>
+        <span class="spacer" style="flex:1"></span>
+        <button id="now" class="primary">Refresh</button>
+      </div>
+      <div class="panel-body">
+        <table>
+          <tr><th>Unix (s)</th><td id="nowSec">—</td></tr>
+          <tr><th>Unix (ms)</th><td id="nowMs">—</td></tr>
+          <tr><th>ISO 8601</th><td id="nowIso">—</td></tr>
+          <tr><th>UTC</th><td id="nowUtc">—</td></tr>
+          <tr><th>Local</th><td id="nowLocal">—</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Convert</h2></div>
+      <div class="panel-body">
+        <label for="input">Input</label>
+        <div class="row">
+          <select id="mode" style="max-width:200px">
+            <option value="auto">Auto-detect</option>
+            <option value="sec">Unix seconds</option>
+            <option value="ms">Unix milliseconds</option>
+            <option value="iso">ISO 8601</option>
+            <option value="human">Human date</option>
+          </select>
+          <input id="input" type="text" placeholder="e.g. 1718880000, 2026-06-20T12:00:00Z, 2026-06-20 14:00" />
+          <button id="go" class="primary">Convert</button>
+        </div>
+        <div class="spacer-y"></div>
+        <div id="result" class="md-body"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2 style="margin:0">Add / subtract</h2>
+      <span class="spacer" style="flex:1"></span>
+      <button id="apply" class="primary">Apply</button>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div>
+          <label for="base">Base</label>
+          <select id="base" style="max-width:200px">
+            <option value="now">Now</option>
+            <option value="parsed">Parsed input above</option>
+          </select>
+        </div>
+        <div style="min-width:120px">
+          <label for="opSign">Sign</label>
+          <select id="opSign"><option>+</option><option>-</option></select>
+        </div>
+        <div style="width:100px">
+          <label for="opDays">Days</label>
+          <input id="opDays" type="number" value="0" />
+        </div>
+        <div style="width:100px">
+          <label for="opHours">Hours</label>
+          <input id="opHours" type="number" value="0" />
+        </div>
+        <div style="width:100px">
+          <label for="opMinutes">Minutes</label>
+          <input id="opMinutes" type="number" value="0" />
+        </div>
+      </div>
+      <div class="spacer-y"></div>
+      <div id="applied" class="md-body"></div>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Timestamp Tool" });
+
+  var $ = Tools.qs;
+  var lastParsed = null;
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function fmtLocal(d) {
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " +
+      pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+  }
+  function fmtUtc(d) {
+    return d.getUTCFullYear() + "-" + pad(d.getUTCMonth() + 1) + "-" + pad(d.getUTCDate()) + " " +
+      pad(d.getUTCHours()) + ":" + pad(d.getUTCMinutes()) + ":" + pad(d.getUTCSeconds()) + " UTC";
+  }
+
+  function refreshNow() {
+    var d = new Date();
+    $("nowSec").textContent = Math.floor(d.getTime() / 1000);
+    $("nowMs").textContent = d.getTime();
+    $("nowIso").textContent = d.toISOString();
+    $("nowUtc").textContent = fmtUtc(d);
+    $("nowLocal").textContent = fmtLocal(d);
+  }
+  $("now").onclick = refreshNow;
+  refreshNow();
+
+  function parseAuto(text) {
+    var t = String(text).trim();
+    if (!t) return null;
+    if (/^\d{10}$/.test(t)) return new Date(parseInt(t, 10) * 1000);
+    if (/^\d{13}$/.test(t)) return new Date(parseInt(t, 10));
+    if (/^\d+$/.test(t)) return new Date(parseInt(t, 10));
+    var d = new Date(t);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function showResult(d) {
+    if (!d) { $("result").innerHTML = "<span class='tag err'>Could not parse input</span>"; lastParsed = null; return; }
+    lastParsed = d;
+    $("result").innerHTML =
+      "<table><tr><th>Unix (s)</th><td>" + Math.floor(d.getTime() / 1000) + "</td></tr>" +
+      "<tr><th>Unix (ms)</th><td>" + d.getTime() + "</td></tr>" +
+      "<tr><th>ISO 8601</th><td>" + d.toISOString() + "</td></tr>" +
+      "<tr><th>UTC</th><td>" + fmtUtc(d) + "</td></tr>" +
+      "<tr><th>Local</th><td>" + fmtLocal(d) + "</td></tr></table>";
+  }
+
+  $("go").onclick = function () {
+    var mode = $("mode").value;
+    var raw = $("input").value;
+    var d = null;
+    if (mode === "sec") d = new Date(parseFloat(raw) * 1000);
+    else if (mode === "ms") d = new Date(parseFloat(raw));
+    else d = parseAuto(raw);
+    showResult(d);
+  };
+
+  $("apply").onclick = function () {
+    var base = $("base").value === "now" ? new Date() : (lastParsed || new Date());
+    var sign = $("opSign").value === "-" ? -1 : 1;
+    var ms = ((parseInt($("opDays").value, 10) || 0) * 86400 +
+              (parseInt($("opHours").value, 10) || 0) * 3600 +
+              (parseInt($("opMinutes").value, 10) || 0) * 60) * 1000 * sign;
+    var d = new Date(base.getTime() + ms);
+    $("applied").innerHTML =
+      "<table><tr><th>Base</th><td>" + fmtUtc(base) + " / " + fmtLocal(base) + "</td></tr>" +
+      "<tr><th>Offset</th><td>" + (sign < 0 ? "-" : "+") + " " + Math.abs(ms / 1000) + " s</td></tr>" +
+      "<tr><th>Result (UTC)</th><td>" + fmtUtc(d) + "</td></tr>" +
+      "<tr><th>Result (Local)</th><td>" + fmtLocal(d) + "</td></tr>" +
+      "<tr><th>Unix (s)</th><td>" + Math.floor(d.getTime() / 1000) + "</td></tr></table>";
+  };
+
+  // Live tick
+  setInterval(refreshNow, 1000);
+</script>
+</body>
+</html>

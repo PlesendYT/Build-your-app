@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tools · Build-your-app</title>
+<link rel="stylesheet" href="_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <section class="hero">
+    <h1>Developer tools</h1>
+    <p>Small, focused utilities that run entirely in the browser. Open any tool below; nothing leaves your machine.</p>
+  </section>
+
+  <section class="hub" id="hub"></section>
+
+  <p class="sub" style="margin-top:24px">More tools coming. Drop a new folder into <code>Tools/</code> with an <code>index.html</code> and it can be added here.</p>
+</main>
+<script src="_shared/app.js"></script>
+<script>
+  var TOOLS = [
+    { name: "API Tester",         href: "API Tester/index.html",         desc: "Send HTTP requests, inspect headers and bodies.", tag: "network" },
+    { name: "Base64 Tool",        href: "Base64 Tool/index.html",        desc: "Encode and decode text or files using Base64.",     tag: "encoding" },
+    { name: "Color Palette",      href: "Color Palette/index.html",      desc: "Generate palettes from a base color, export CSS.",  tag: "design" },
+    { name: "JSON Formatter",     href: "JSON Formatter/index.html",     desc: "Pretty-print, minify, and validate JSON.",           tag: "data" },
+    { name: "Markdown Preview",   href: "Markdown Preview/index.html",   desc: "Live Markdown editor with side-by-side preview.",   tag: "writing" },
+    { name: "Password Generator", href: "Password Generator/index.html", desc: "Create strong passwords with custom rules.",        tag: "security" },
+    { name: "Regex Tester",       href: "Regex Tester/index.html",       desc: "Build and test regular expressions with flags.",     tag: "regex" },
+    { name: "Timestamp Tool",     href: "Timestamp Tool/index.html",     desc: "Convert between Unix, ISO, and human dates.",        tag: "time" },
+    { name: "Website To EXE",     href: "Website To EXE/index.html",     desc: "Wrap a website into a portable Windows executable.", tag: "build" }
+  ];
+
+  Tools.mountToolbar("#toolbar-host", { tool: "Hub" });
+  var hub = Tools.qs("#hub");
+  TOOLS.forEach(function (t) {
+    var card = Tools.el('<div class="card"><span class="pill"></span><h3></h3><p></p><div class="actions"><a class="btn primary" href="#">Open</a></div></div>');
+    card.querySelector(".pill").textContent = t.tag;
+    card.querySelector("h3").textContent = t.name;
+    card.querySelector("p").textContent = t.desc;
+    card.querySelector("a").href = t.href;
+    hub.appendChild(card);
+  });
+</script>
+</body>
+</html>

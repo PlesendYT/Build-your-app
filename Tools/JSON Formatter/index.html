@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JSON Formatter · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>JSON Formatter</h1>
+  <p class="sub">Pretty-print, minify, and validate JSON. Errors point at the offending line and column.</p>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-header">
+        <h2 style="margin:0">Input</h2>
+        <span class="spacer" style="flex:1"></span>
+        <label class="btn ghost" for="file">Load file…</label>
+        <input id="file" type="file" accept=".json,application/json" hidden />
+        <button id="sample" class="ghost">Sample</button>
+        <button id="clear" class="ghost">Clear</button>
+      </div>
+      <div class="panel-body">
+        <textarea id="input" placeholder="Paste JSON here"></textarea>
+        <div class="row" style="margin-top:8px">
+          <label for="indent">Indent</label>
+          <select id="indent" style="max-width:100px">
+            <option value="2">2 spaces</option>
+            <option value="4">4 spaces</option>
+            <option value="tab">Tab</option>
+          </select>
+          <button id="format" class="primary">Format</button>
+          <button id="minify">Minify</button>
+          <button id="sort">Sort keys</button>
+          <span class="spacer" style="flex:1"></span>
+          <span id="status" class="tag">idle</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2 style="margin:0">Output</h2>
+        <span class="spacer" style="flex:1"></span>
+        <button id="copy" class="ghost">Copy</button>
+        <button id="download" class="ghost">Download</button>
+      </div>
+      <div class="panel-body">
+        <textarea id="output" placeholder="Formatted JSON"></textarea>
+        <div class="row" style="margin-top:8px">
+          <span id="meta" class="muted"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "JSON Formatter" });
+
+  var input = Tools.qs("#input"), output = Tools.qs("#output");
+  var indentSel = Tools.qs("#indent"), status = Tools.qs("#status"), meta = Tools.qs("#meta");
+
+  function setStatus(kind, msg) {
+    status.className = "tag " + (kind === "ok" ? "ok" : kind === "err" ? "err" : "");
+    status.textContent = msg;
+  }
+
+  function getIndent() { return indentSel.value === "tab" ? "\t" : parseInt(indentSel.value, 10); }
+
+  function tryParse(text) {
+    try { return { ok: true, value: JSON.parse(text) }; }
+    catch (e) { return { ok: false, error: e }; }
+  }
+
+  function doFormat(sort) {
+    var parsed = tryParse(input.value);
+    if (!parsed.ok) { showError(parsed.error); return; }
+    var text = JSON.stringify(sort ? sortKeys(parsed.value) : parsed.value, null, getIndent());
+    output.value = text;
+    setStatus("ok", "Valid JSON");
+    meta.textContent = text.length.toLocaleString() + " chars · " + countLines(text) + " lines";
+  }
+  function doMinify() {
+    var parsed = tryParse(input.value);
+    if (!parsed.ok) { showError(parsed.error); return; }
+    output.value = JSON.stringify(parsed.value);
+    setStatus("ok", "Minified");
+    meta.textContent = output.value.length.toLocaleString() + " chars";
+  }
+  function sortKeys(v) {
+    if (Array.isArray(v)) return v.map(sortKeys);
+    if (v && typeof v === "object") {
+      var out = {};
+      Object.keys(v).sort().forEach(function (k) { out[k] = sortKeys(v[k]); });
+      return out;
+    }
+    return v;
+  }
+  function countLines(t) { return t.split(/\r?\n/).length; }
+
+  function showError(e) {
+    setStatus("err", "Invalid JSON");
+    var msg = e.message || String(e);
+    var m = msg.match(/position (\d+)/);
+    if (m) {
+      var pos = parseInt(m[1], 10);
+      var before = input.value.slice(0, pos);
+      var line = before.split("\n").length;
+      var col = pos - before.lastIndexOf("\n");
+      meta.textContent = "Line " + line + ", column " + col + " — " + msg;
+    } else {
+      meta.textContent = msg;
+    }
+    output.value = "";
+  }
+
+  Tools.qs("#format").onclick = function () { doFormat(false); };
+  Tools.qs("#minify").onclick = doMinify;
+  Tools.qs("#sort").onclick = function () { doFormat(true); };
+  Tools.qs("#clear").onclick = function () { input.value = ""; output.value = ""; setStatus("ok", "Cleared"); meta.textContent = ""; };
+  Tools.qs("#sample").onclick = function () {
+    input.value = JSON.stringify({
+      name: "Build-your-app", version: "0.1.0", tools: ["api", "base64", "json"], settings: { theme: "auto", indent: 2 }, active: true
+    }, null, 2);
+    doFormat(false);
+  };
+  Tools.qs("#copy").onclick = function () { Tools.copyText(output.value).then(function (ok) { Tools.toast(ok ? "Copied" : "Copy failed", ok ? "ok" : "err"); }); };
+  Tools.qs("#download").onclick = function () { Tools.download("output.json", output.value, "application/json"); };
+  Tools.qs("#file").onchange = function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    Tools.readFile(f).then(function (text) { input.value = String(text); doFormat(false); });
+  };
+
+  var live = Tools.debounce(function () { if (input.value.trim()) doFormat(false); }, 350);
+  input.addEventListener("input", live);
+</script>
+</body>
+</html>

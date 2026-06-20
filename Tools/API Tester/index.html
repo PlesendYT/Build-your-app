@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>API Tester · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>API Tester</h1>
+  <p class="sub">Compose and send HTTP requests, then inspect status, headers, and the response body.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row">
+        <select id="method" style="max-width:120px">
+          <option>GET</option><option>POST</option><option>PUT</option>
+          <option>PATCH</option><option>DELETE</option><option>HEAD</option><option>OPTIONS</option>
+        </select>
+        <input id="url" type="url" placeholder="https://jsonplaceholder.typicode.com/todos/1" />
+        <button id="send" class="primary">Send</button>
+      </div>
+
+      <div class="spacer-y"></div>
+      <div class="row">
+        <details open style="flex:1;min-width:280px">
+          <summary>Headers</summary>
+          <div class="spacer-y"></div>
+          <div id="headers" class="kv"></div>
+          <div class="spacer-y"></div>
+          <button id="addHeader" class="ghost">+ Add header</button>
+        </details>
+
+        <details style="flex:1;min-width:280px">
+          <summary>Body</summary>
+          <div class="spacer-y"></div>
+          <label for="bodyType">Type</label>
+          <select id="bodyType">
+            <option value="none">none</option>
+            <option value="json">JSON</option>
+            <option value="text">Text</option>
+            <option value="form">Form (x-www-form-urlencoded)</option>
+          </select>
+          <div class="spacer-y"></div>
+          <textarea id="body" placeholder="Request body"></textarea>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2 style="margin:0">Response</h2>
+      <span class="spacer" style="flex:1"></span>
+      <span id="statusTag" class="tag">idle</span>
+      <span id="timeTag" class="tag">— ms</span>
+      <span id="sizeTag" class="tag">— B</span>
+      <button id="copy" class="ghost">Copy body</button>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <details open style="flex:1">
+          <summary>Body</summary>
+          <pre id="respBody" class="scroll" style="margin-top:8px"></pre>
+        </details>
+        <details style="flex:1">
+          <summary>Headers</summary>
+          <pre id="respHeaders" class="scroll" style="margin-top:8px"></pre>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">History</h2></div>
+    <div class="panel-body">
+      <table id="history">
+        <thead><tr><th>When</th><th>Method</th><th>URL</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p id="historyEmpty" class="muted">No requests sent yet.</p>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "API Tester" });
+
+  var $ = Tools.qs, headersEl = $("headers");
+  function addHeaderRow(k, v) {
+    var row = document.createElement("div");
+    row.className = "row";
+    row.style.gridColumn = "1 / -1";
+    row.style.display = "grid";
+    row.style.gridTemplateColumns = "1fr 1fr auto";
+    row.style.gap = "6px";
+    row.innerHTML = '<input type="text" placeholder="Header" value="' + Tools.escapeHtml(k || "") + '">' +
+                    '<input type="text" placeholder="Value" value="' + Tools.escapeHtml(v || "") + '">' +
+                    '<button class="del danger">✕</button>';
+    row.querySelector(".del").onclick = function () { row.remove(); };
+    headersEl.appendChild(row);
+  }
+  $("addHeader").onclick = function () { addHeaderRow(); };
+  addHeaderRow("Content-Type", "application/json");
+
+  function readHeaders() {
+    var out = {};
+    Tools.qsa("#headers .row").forEach(function (r) {
+      var i = r.querySelectorAll("input");
+      var k = i[0].value.trim(), v = i[1].value;
+      if (k) out[k] = v;
+    });
+    return out;
+  }
+  function buildBody() {
+    var t = $("bodyType").value;
+    var b = $("body").value;
+    if (t === "none" || !b) return undefined;
+    if (t === "json") return b;
+    if (t === "text") return b;
+    if (t === "form") {
+      var params = new URLSearchParams();
+      b.split("&").forEach(function (p) {
+        var eq = p.split("=");
+        if (eq[0]) params.append(eq[0], decodeURIComponent(eq.slice(1).join("=") || ""));
+      });
+      return params.toString();
+    }
+  }
+
+  var statusTag = $("statusTag"), timeTag = $("timeTag"), sizeTag = $("sizeTag");
+  var respBody = $("respBody"), respHeaders = $("respHeaders");
+  var historyBody = $("history").querySelector("tbody"), historyEmpty = $("historyEmpty");
+
+  async function send() {
+    var method = $("method").value;
+    var url = $("url").value.trim();
+    if (!url) { Tools.toast("Enter a URL", "err"); return; }
+
+    var init = { method: method, headers: readHeaders() };
+    var body = buildBody();
+    if (body !== undefined) init.body = body;
+    var bt = $("bodyType").value;
+    if (bt === "json" && body && !/^content-type$/i.test(getExistingHeader())) {
+      init.headers["Content-Type"] = "application/json";
+    }
+
+    statusTag.className = "tag warn"; statusTag.textContent = "sending…";
+    timeTag.textContent = "— ms"; sizeTag.textContent = "— B";
+    respBody.textContent = ""; respHeaders.textContent = "";
+
+    var t0 = performance.now();
+    try {
+      var r = await fetch(url, init);
+      var text = await r.text();
+      var dt = Math.round(performance.now() - t0);
+      var size = new Blob([text]).size;
+
+      statusTag.className = "tag " + (r.ok ? "ok" : "err");
+      statusTag.textContent = r.status + " " + r.statusText;
+      timeTag.textContent = dt + " ms";
+      sizeTag.textContent = formatBytes(size);
+
+      var pretty = text;
+      var ct = r.headers.get("content-type") || "";
+      if (ct.includes("json")) {
+        try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch (e) {}
+      }
+      respBody.textContent = pretty;
+      var hdrs = [];
+      r.headers.forEach(function (v, k) { hdrs.push(k + ": " + v); });
+      respHeaders.textContent = hdrs.join("\n");
+
+      addHistory(method, url, r.status, dt);
+    } catch (e) {
+      var dt = Math.round(performance.now() - t0);
+      statusTag.className = "tag err"; statusTag.textContent = "error";
+      timeTag.textContent = dt + " ms";
+      respBody.textContent = String(e && e.message || e);
+      addHistory(method, url, "ERR", dt);
+    }
+  }
+  function getExistingHeader() {
+    var found = "";
+    Tools.qsa("#headers .row").forEach(function (r) {
+      var k = r.querySelector("input").value.trim();
+      if (/^content-type$/i.test(k)) found = k;
+    });
+    return found;
+  }
+  function formatBytes(n) {
+    if (n < 1024) return n + " B";
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB";
+    return (n / 1024 / 1024).toFixed(2) + " MB";
+  }
+  function addHistory(m, u, s, dt) {
+    historyEmpty.style.display = "none";
+    var tr = document.createElement("tr");
+    var td = new Date();
+    tr.innerHTML = "<td></td><td></td><td></td><td></td><td></td>";
+    var cs = tr.children;
+    cs[0].textContent = td.toLocaleTimeString();
+    cs[1].textContent = m;
+    cs[2].textContent = u; cs[2].style.wordBreak = "break-all";
+    cs[3].textContent = s;
+    cs[4].textContent = dt + " ms";
+    historyBody.insertBefore(tr, historyBody.firstChild);
+    while (historyBody.children.length > 25) historyBody.removeChild(historyBody.lastChild);
+  }
+
+  $("send").onclick = send;
+  $("url").addEventListener("keydown", function (e) { if (e.key === "Enter") send(); });
+  $("copy").onclick = function () { copyText(respBody.textContent); };
+  function copyText(t) { Tools.copyText(t).then(function (ok) { Tools.toast(ok ? "Copied body" : "Copy failed", ok ? "ok" : "err"); }); }
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Base64 Tool · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Base64 Tool</h1>
+  <p class="sub">Encode text to Base64 or decode Base64 back to text. Files are handled as Base64 strings as well.</p>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Input</h2>
+        <span class="spacer" style="flex:1"></span>
+        <label for="encoding" style="margin:0">Encoding</label>
+        <select id="encoding" style="max-width:140px">
+          <option value="utf-8">UTF-8</option>
+          <option value="latin1">Latin-1</option>
+        </select>
+      </div>
+      <div class="panel-body">
+        <textarea id="input" placeholder="Type or paste text, or drop a file below"></textarea>
+        <div class="row" style="margin-top:8px">
+          <label class="btn ghost" for="file">Load file…</label>
+          <input id="file" type="file" hidden />
+          <button id="encode" class="primary">Encode</button>
+          <button id="decode">Decode</button>
+          <button id="swap" class="ghost">Swap</button>
+          <button id="clear" class="ghost">Clear</button>
+          <span class="spacer" style="flex:1"></span>
+          <span id="inInfo" class="muted"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h2 style="margin:0">Output</h2>
+        <span class="spacer" style="flex:1"></span>
+        <button id="copy" class="ghost">Copy</button>
+        <button id="download" class="ghost">Download</button>
+      </div>
+      <div class="panel-body">
+        <textarea id="output" placeholder="Result appears here"></textarea>
+        <div class="row" style="margin-top:8px">
+          <span id="outInfo" class="muted"></span>
+          <span class="spacer" style="flex:1"></span>
+          <span id="status" class="tag">idle</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="sub" style="margin-top:12px">Tip: drop a file onto the input area to load it as text. Use Latin-1 for legacy Base64 strings.</p>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Base64 Tool" });
+
+  var input = Tools.qs("#input"), output = Tools.qs("#output");
+  var encSel = Tools.qs("#encoding"), fileIn = Tools.qs("#file");
+  var status = Tools.qs("#status"), inInfo = Tools.qs("#inInfo"), outInfo = Tools.qs("#outInfo");
+
+  function bytesToBase64(bytes) {
+    var bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function base64ToBytes(b64) {
+    var bin = atob(b64.replace(/\s+/g, ""));
+    var out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  function doEncode() {
+    try {
+      var enc = encSel.value;
+      var bytes = new TextEncoder(enc).encode(input.value);
+      var b64 = bytesToBase64(bytes);
+      output.value = b64;
+      setStatus("ok", "Encoded " + bytes.length + " B → " + b64.length + " chars");
+      outInfo.textContent = b64.length + " chars · Base64";
+    } catch (e) { setStatus("err", e.message || String(e)); }
+  }
+  function doDecode() {
+    try {
+      var bytes = base64ToBytes(input.value);
+      var text = new TextDecoder(encSel.value).decode(bytes);
+      output.value = text;
+      setStatus("ok", "Decoded " + input.value.length + " chars → " + bytes.length + " B");
+      outInfo.textContent = bytes.length + " B · " + encSel.value;
+    } catch (e) { setStatus("err", e.message || String(e)); }
+  }
+  function setStatus(kind, msg) {
+    status.className = "tag " + (kind === "ok" ? "ok" : kind === "err" ? "err" : "");
+    status.textContent = msg;
+  }
+
+  function refreshInInfo() {
+    var n = input.value.length;
+    inInfo.textContent = n + " chars";
+  }
+  input.addEventListener("input", refreshInInfo);
+  refreshInInfo();
+
+  Tools.qs("#encode").onclick = doEncode;
+  Tools.qs("#decode").onclick = doDecode;
+  Tools.qs("#swap").onclick = function () {
+    var t = input.value; input.value = output.value; output.value = t;
+    refreshInInfo();
+  };
+  Tools.qs("#clear").onclick = function () { input.value = ""; output.value = ""; refreshInInfo(); setStatus("ok", "Cleared"); };
+  Tools.qs("#copy").onclick = function () {
+    Tools.copyText(output.value).then(function (ok) { Tools.toast(ok ? "Copied" : "Copy failed", ok ? "ok" : "err"); });
+  };
+  Tools.qs("#download").onclick = function () {
+    Tools.download("base64.txt", output.value, "text/plain;charset=utf-8");
+  };
+  fileIn.onchange = function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      input.value = String(fr.result);
+      refreshInInfo();
+      doEncode();
+    };
+    fr.readAsText(f, encSel.value);
+  };
+
+  // Drag and drop
+  ["dragover","dragenter"].forEach(function (ev) { input.addEventListener(ev, function (e) { e.preventDefault(); }); });
+  input.addEventListener("drop", function (e) {
+    e.preventDefault();
+    var f = e.dataTransfer.files && e.dataTransfer.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () { input.value = String(fr.result); refreshInInfo(); };
+    fr.readAsText(f, encSel.value);
+  });
+</script>
+</body>
+</html>

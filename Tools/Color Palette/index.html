@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Color Palette · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Color Palette</h1>
+  <p class="sub">Pick a base color, choose a scheme, and copy CSS variables or Tailwind-style tokens.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row" style="align-items:flex-end">
+        <div>
+          <label for="base">Base color</label>
+          <input id="base" type="text" value="#1f9d8c" style="width:140px" />
+        </div>
+        <input id="basePicker" type="color" value="#1f9d8c" style="width:48px;height:36px;padding:0;border-radius:6px" />
+        <div>
+          <label for="scheme">Scheme</label>
+          <select id="scheme">
+            <option value="analogous">Analogous</option>
+            <option value="complementary">Complementary</option>
+            <option value="triadic">Triadic</option>
+            <option value="tetradic">Tetradic</option>
+            <option value="shades">Shades</option>
+            <option value="tints">Tints</option>
+          </select>
+        </div>
+        <div>
+          <label for="count">Swatches</label>
+          <input id="count" type="number" min="3" max="12" value="6" style="width:80px" />
+        </div>
+        <button id="random" class="ghost">Random base</button>
+        <button id="copyCss" class="primary">Copy CSS</button>
+        <button id="copyJson" class="ghost">Copy JSON</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="swatches" class="grid cols-3" style="margin-top:12px"></section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Color Palette" });
+
+  var base = Tools.qs("#base"), basePicker = Tools.qs("#basePicker");
+  var scheme = Tools.qs("#scheme"), count = Tools.qs("#count");
+  var out = Tools.qs("#swatches");
+
+  function hexToHsl(hex) {
+    var h = hex.replace("#", "");
+    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
+    var r = parseInt(h.slice(0, 2), 16) / 255;
+    var g = parseInt(h.slice(2, 4), 16) / 255;
+    var b = parseInt(h.slice(4, 6), 16) / 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h2, s, l = (max + min) / 2;
+    if (max === min) { h2 = 0; s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h2 = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h2 = (b - r) / d + 2; break;
+        case b: h2 = (r - g) / d + 4; break;
+      }
+      h2 *= 60;
+    }
+    return { h: h2, s: s * 100, l: l * 100 };
+  }
+  function hslToHex(h, s, l) {
+    s /= 100; l /= 100;
+    var a = s * Math.min(l, 1 - l);
+    function f(n) {
+      var k = (n + h / 30) % 12;
+      var c = l - a * Math.max(-1, Math.min(k - 3, Math.min(9 - k, 1)));
+      return Math.round(255 * c).toString(16).padStart(2, "0");
+    }
+    return "#" + f(0) + f(8) + f(4);
+  }
+  function isLight(hex) {
+    var h = hex.replace("#", "");
+    var r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+    var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 160;
+  }
+
+  function palette(baseHex, kind, n) {
+    var hsl = hexToHsl(baseHex);
+    var h = hsl.h, s = hsl.s, l = hsl.l;
+    var hues = [];
+    if (kind === "analogous") {
+      var spread = 30;
+      for (var i = 0; i < n; i++) hues.push(h + (i - Math.floor(n / 2)) * spread);
+    } else if (kind === "complementary") {
+      hues = [h, h + 180];
+    } else if (kind === "triadic") {
+      hues = [h, h + 120, h + 240];
+    } else if (kind === "tetradic") {
+      hues = [h, h + 90, h + 180, h + 270];
+    } else if (kind === "shades") {
+      var step = 70 / Math.max(1, n - 1);
+      var ls = []; for (var i2 = 0; i2 < n; i2++) ls.push(Math.max(8, l - i2 * step));
+      return ls.map(function (ll) { return hslToHex(h, s, ll); });
+    } else if (kind === "tints") {
+      var step2 = 70 / Math.max(1, n - 1);
+      var ls2 = []; for (var i3 = 0; i3 < n; i3++) ls2.push(Math.min(92, l + i3 * step2));
+      return ls2.map(function (ll) { return hslToHex(h, s, ll); });
+    }
+    return hues.map(function (hh) { return hslToHex(((hh % 360) + 360) % 360, s, l); });
+  }
+
+  function render() {
+    var n = Math.max(3, Math.min(12, parseInt(count.value, 10) || 6));
+    var colors = palette(base.value, scheme.value, n);
+    out.innerHTML = "";
+    colors.forEach(function (c, i) {
+      var card = Tools.el('<div class="swatch"></div>');
+      card.classList.add(isLight(c) ? "light" : "dark");
+      card.style.background = c;
+      card.innerHTML = "<span class=\"lock\">" + (i + 1) + "</span><span>" + c.toUpperCase() + "</span>";
+      card.title = "Click to copy " + c;
+      card.onclick = function () {
+        Tools.copyText(c).then(function (ok) { Tools.toast(ok ? "Copied " + c : "Copy failed", ok ? "ok" : "err"); });
+      };
+      out.appendChild(card);
+    });
+  }
+
+  base.addEventListener("input", function () { basePicker.value = base.value; render(); });
+  basePicker.addEventListener("input", function () { base.value = basePicker.value; render(); });
+  scheme.addEventListener("change", render);
+  count.addEventListener("input", render);
+
+  Tools.qs("#random").onclick = function () {
+    var h = Math.floor(Math.random() * 360), s = 55 + Math.random() * 35, l = 40 + Math.random() * 25;
+    base.value = hslToHex(h, s, l);
+    basePicker.value = base.value;
+    render();
+  };
+  Tools.qs("#copyCss").onclick = function () {
+    var colors = palette(base.value, scheme.value, Math.max(3, Math.min(12, parseInt(count.value, 10) || 6)));
+    var lines = [":root {"];
+    colors.forEach(function (c, i) { lines.push("  --color-" + (i + 1) + ": " + c + ";"); });
+    lines.push("}");
+    Tools.copyText(lines.join("\n")).then(function (ok) { Tools.toast(ok ? "CSS copied" : "Copy failed", ok ? "ok" : "err"); });
+  };
+  Tools.qs("#copyJson").onclick = function () {
+    var colors = palette(base.value, scheme.value, Math.max(3, Math.min(12, parseInt(count.value, 10) || 6)));
+    Tools.copyText(JSON.stringify(colors, null, 2)).then(function (ok) { Tools.toast(ok ? "JSON copied" : "Copy failed", ok ? "ok" : "err"); });
+  };
+
+  render();
+</script>
+</body>
+</html>
