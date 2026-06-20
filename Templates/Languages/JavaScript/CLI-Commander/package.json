@@ -1,0 +1,10 @@
+{
+  "name": "commander-template",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "bin": { "demo": "./cli.js" },
+  "dependencies": {
+    "commander": "^12.0.0"
+  }
+}

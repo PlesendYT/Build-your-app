@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>URL Encoder · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>URL Encoder</h1>
+  <p class="sub">Percent-encode and decode strings, paths, and full URLs. Useful when constructing query strings or reading logs.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row">
+        <label for="component" style="margin:0">Mode</label>
+        <select id="component">
+          <option value="component">Component (encodeURIComponent)</option>
+          <option value="uri">URI (encodeURI)</option>
+          <option value="path">Path segment</option>
+          <option value="form">application/x-www-form-urlencoded</option>
+        </select>
+        <span class="spacer" style="flex:1"></span>
+        <button id="swap" class="ghost">Swap</button>
+      </div>
+      <div class="spacer-y"></div>
+      <label for="input">Input</label>
+      <textarea id="input" placeholder="Text or URL fragment"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button id="encode" class="primary">Encode</button>
+        <button id="decode">Decode</button>
+        <span class="spacer" style="flex:1"></span>
+        <span id="status" class="tag">idle</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">Output</h2>
+      <span class="spacer" style="flex:1"></span>
+      <button id="copy" class="ghost">Copy</button>
+    </div>
+    <div class="panel-body">
+      <textarea id="output" placeholder="Encoded or decoded result"></textarea>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">Reference</h2></div>
+    <div class="panel-body">
+      <p class="muted" style="margin:0">
+        <strong>Component</strong> escapes everything except <code>A–Z a–z 0–9 - _ . ! ~ * ' ( )</code>.
+        <strong>URI</strong> keeps <code>; , / ? : @ &amp; = + $ #</code> intact.
+        <strong>Path segment</strong> encodes <code>/</code> so the value is safe inside a single path piece.
+        <strong>Form</strong> encodes spaces as <code>+</code>, like browsers do for HTML forms.
+      </p>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "URL Encoder" });
+
+  var input = Tools.qs("#input"), output = Tools.qs("#output");
+  var mode = Tools.qs("#component"), status = Tools.qs("#status");
+
+  function setStatus(kind, msg) {
+    status.className = "tag " + (kind === "ok" ? "ok" : kind === "err" ? "err" : "");
+    status.textContent = msg;
+  }
+
+  function pathEncode(s) {
+    return encodeURIComponent(s).replace(/%2F/g, "%2F").replace(/'/g, "%27");
+  }
+  function pathDecode(s) { return decodeURIComponent(s); }
+
+  function doEncode() {
+    try {
+      var v = input.value;
+      var out;
+      if (mode.value === "component") out = encodeURIComponent(v);
+      else if (mode.value === "uri") out = encodeURI(v);
+      else if (mode.value === "path") out = pathEncode(v);
+      else out = encodeURIComponent(v).replace(/%20/g, "+");
+      output.value = out;
+      setStatus("ok", "Encoded (" + out.length + " chars)");
+    } catch (e) { setStatus("err", e.message || String(e)); }
+  }
+  function doDecode() {
+    try {
+      var v = input.value;
+      var raw = v.replace(/\+/g, "%20");
+      var out;
+      if (mode.value === "uri") out = decodeURI(raw);
+      else out = pathDecode(raw);
+      output.value = out;
+      setStatus("ok", "Decoded");
+    } catch (e) { setStatus("err", e.message || String(e)); }
+  }
+
+  Tools.qs("#encode").onclick = doEncode;
+  Tools.qs("#decode").onclick = doDecode;
+  Tools.qs("#swap").onclick = function () { var t = input.value; input.value = output.value; output.value = t; };
+  Tools.qs("#copy").onclick = function () { Tools.copyText(output.value).then(function (ok) { Tools.toast(ok ? "Copied" : "Copy failed", ok ? "ok" : "err"); }); };
+
+  input.value = "name=Anna O'Neil & co";
+  mode.value = "component";
+  doEncode();
+</script>
+</body>
+</html>

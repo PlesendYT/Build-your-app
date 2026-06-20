@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hex Viewer · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+<style>
+  .hex { font-family: var(--mono); font-size: 12px; line-height: 1.6; padding: 10px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; overflow: auto; max-height: 70vh; }
+  .hex .row { display: grid; grid-template-columns: 8ch 1fr 1fr; gap: 12px; }
+  .hex .addr { color: var(--muted); }
+  .hex .bytes { white-space: pre; }
+  .hex .ascii { white-space: pre; color: var(--muted); }
+  .hex .hl { background: color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 2px; }
+  .hex .row .bytes span { padding: 0 1px; }
+  .hex .row .bytes span.zero { color: var(--muted); }
+</style>
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Hex Viewer</h1>
+  <p class="sub">Inspect a file as raw bytes. The whole file is loaded into memory, so keep it small.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row">
+        <label class="btn primary" for="file">Choose file…</label>
+        <input id="file" type="file" hidden />
+        <span id="fileName" class="muted">no file loaded</span>
+        <span class="spacer" style="flex:1"></span>
+        <label for="bytesPerRow">Bytes / row</label>
+        <select id="bytesPerRow">
+          <option>8</option><option selected>16</option><option>24</option><option>32</option>
+        </select>
+      </div>
+      <div class="spacer-y"></div>
+      <details>
+        <summary>Or paste text</summary>
+        <textarea id="text" placeholder="Paste text to view as bytes" style="margin-top:8px;min-height:140px"></textarea>
+        <div class="row" style="margin-top:8px">
+          <label for="encoding">Encoding</label>
+          <select id="encoding"><option>utf-8</option><option>latin1</option></select>
+          <button id="loadText" class="primary">Load</button>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">Hex dump</h2>
+      <span class="spacer" style="flex:1"></span>
+      <span id="meta" class="muted"></span>
+    </div>
+    <div class="panel-body"><div id="hex" class="hex"></div></div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Hex Viewer" });
+
+  var fileEl = Tools.qs("#file"), fileName = Tools.qs("#fileName"), hex = Tools.qs("#hex");
+  var bytesPerRowEl = Tools.qs("#bytesPerRow"), meta = Tools.qs("#meta");
+  var data = null;
+
+  fileEl.onchange = function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      data = new Uint8Array(fr.result);
+      fileName.textContent = f.name + " (" + data.length.toLocaleString() + " B)";
+      render();
+    };
+    fr.readAsArrayBuffer(f);
+  };
+  Tools.qs("#loadText").onclick = function () {
+    var enc = Tools.qs("#encoding").value;
+    data = new TextEncoder(enc).encode(Tools.qs("#text").value);
+    fileName.textContent = "pasted text (" + data.length.toLocaleString() + " B)";
+    render();
+  };
+  bytesPerRowEl.addEventListener("change", render);
+
+  function render() {
+    if (!data) { hex.innerHTML = '<span class="muted">Load a file or paste text to view bytes.</span>'; meta.textContent = ""; return; }
+    var n = parseInt(bytesPerRowEl.value, 10) || 16;
+    var html = [];
+    for (var off = 0; off < data.length; off += n) {
+      var bytes = [];
+      var ascii = [];
+      for (var i = 0; i < n; i++) {
+        var b = data[off + i];
+        if (b === undefined) { bytes.push("  "); ascii.push(" "); continue; }
+        bytes.push(b.toString(16).padStart(2, "0"));
+        ascii.push((b >= 0x20 && b < 0x7f) ? String.fromCharCode(b) : ".");
+      }
+      html.push('<div class="row">' +
+        '<span class="addr">' + off.toString(16).padStart(8, "0") + '</span>' +
+        '<span class="bytes">' + bytes.join(" ") + '</span>' +
+        '<span class="ascii">' + ascii.join("") + '</span>' +
+        '</div>');
+    }
+    hex.innerHTML = html.join("");
+    meta.textContent = data.length.toLocaleString() + " bytes · " + Math.ceil(data.length / n).toLocaleString() + " rows";
+  }
+</script>
+</body>
+</html>

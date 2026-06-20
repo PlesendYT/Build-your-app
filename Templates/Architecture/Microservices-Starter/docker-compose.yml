@@ -1,0 +1,12 @@
+services:
+  api-a:
+    build: ./services/api-a
+    expose: ["3001"]
+  api-b:
+    build: ./services/api-b
+    expose: ["3002"]
+  gateway:
+    image: nginx:1.25-alpine
+    ports: ["8080:80"]
+    volumes: ["./nginx.conf:/etc/nginx/nginx.conf:ro"]
+    depends_on: [api-a, api-b]

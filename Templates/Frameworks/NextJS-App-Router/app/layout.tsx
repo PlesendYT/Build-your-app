@@ -1,0 +1,1 @@
+import type { ReactNode } from "react";`nexport default function RootLayout({ children }: { children: ReactNode }) { return (<html lang="en"><body style={{ fontFamily: "system-ui" }}>{children}</body></html>); }

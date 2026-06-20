@@ -1,0 +1,1 @@
+console.log('MV3 template content script loaded on', location.href);

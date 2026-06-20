@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cron Parser · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Cron Parser</h1>
+  <p class="sub">Explain a standard 5-field cron expression and preview the next 10 fire times in your local timezone.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row">
+        <input id="expr" type="text" value="*/15 9-17 * * MON-FRI" style="font-family:var(--mono);max-width:420px" />
+        <button id="parse" class="primary">Explain</button>
+        <span class="spacer" style="flex:1"></span>
+        <span id="status" class="tag">idle</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Breakdown</h2></div>
+      <div class="panel-body">
+        <table>
+          <thead><tr><th>Field</th><th>Value</th><th>Meaning</th></tr></thead>
+          <tbody id="breakdown"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Next 10 fires</h2></div>
+      <div class="panel-body">
+        <ol id="next" class="md-body" style="font-family:var(--mono);font-size:12.5px"></ol>
+      </div>
+    </div>
+  </section>
+
+  <p class="sub" style="margin-top:12px">Standard cron fields are <strong>minute hour day-of-month month day-of-week</strong>. Day-of-week uses 0=Sunday, 6=Saturday.</p>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Cron Parser" });
+
+  var exprEl = Tools.qs("#expr"), status = Tools.qs("#status");
+  var breakdown = Tools.qs("#breakdown"), next = Tools.qs("#next");
+
+  var FIELDS = [
+    { key: "minute", names: ["minute", "0-59"], min: 0, max: 59 },
+    { key: "hour", names: ["hour", "0-23"], min: 0, max: 23 },
+    { key: "dom", names: ["day of month", "1-31"], min: 1, max: 31 },
+    { key: "month", names: ["month", "1-12"], min: 1, max: 12, namesMap: { 1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun", 7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec" } },
+    { key: "dow", names: ["day of week", "0-6 (Sun=0)"], min: 0, max: 6, namesMap: { 0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat" }, allow7: true }
+  ];
+
+  function parseField(spec, def) {
+    var allowed = [], notes = [];
+    def.values.forEach(function (v) { allowed.push(v); });
+    return { allowed: allowed, raw: spec };
+  }
+
+  function expand(spec, f) {
+    var values = new Set();
+    spec.split(",").forEach(function (part) {
+      var stepMatch = part.match(/^(.+)\/(\d+)$/);
+      var step = 1, range = part;
+      if (stepMatch) { step = parseInt(stepMatch[2], 10); range = stepMatch[1]; }
+      if (range === "*") range = f.min + "-" + f.max;
+      if (/^[0-9]+$/.test(range)) {
+        var n = parseInt(range, 10);
+        if (f.allow7 && n === 7) n = 0;
+        if (n < f.min || n > f.max) throw new Error("Value " + n + " out of " + f.min + "-" + f.max + " for " + f.key);
+        for (var v = n; v <= f.max; v += step) values.add(v);
+      } else {
+        var m = range.match(/^(\d+)-(\d+)$/);
+        if (!m) throw new Error("Cannot parse '" + part + "'");
+        var a = parseInt(m[1], 10), b = parseInt(m[2], 10);
+        if (f.allow7 && b === 7) b = 0;
+        if (a > b) {
+          for (var v2 = a; v2 <= f.max; v2 += step) values.add(v2);
+          for (var v3 = f.min; v3 <= b; v3 += step) values.add(v3);
+        } else {
+          for (var v4 = a; v4 <= b; v4 += step) values.add(v4);
+        }
+      }
+    });
+    return Array.from(values).sort(function (x, y) { return x - y; });
+  }
+
+  function describe(values, f) {
+    if (values.length === f.max - f.min + 1) return "every " + f.key;
+    var str = values.map(function (v) { return f.namesMap && f.namesMap[v] ? f.namesMap[v] : String(v); });
+    if (str.length > 8) return "at " + str.slice(0, 6).join(", ") + ", … (" + str.length + " values)";
+    return "at " + str.join(", ");
+  }
+
+  function matches(d, allowed) { return allowed.indexOf(d) !== -1; }
+
+  function nextFires(exp, count) {
+    var d = new Date(); d.setSeconds(0, 0); d.setMinutes(d.getMinutes() + 1);
+    var fires = [], guard = 0;
+    while (fires.length < count && guard < 60 * 24 * 366) {
+      guard++;
+      if (matches(d.getMinutes(), exp.minute.values) &&
+          matches(d.getHours(), exp.hour.values) &&
+          matches(d.getDate(), exp.dom.values) &&
+          matches(d.getMonth() + 1, exp.month.values)) {
+        // day-of-week: classic cron treats DOM and DOW as OR when both are constrained.
+        var dowMatches = matches(d.getDay(), exp.dow.values);
+        var domAll = exp.dom.values.length === 31;
+        var dowAll = exp.dow.values.length === 7;
+        if ((domAll || dowAll) ? (domAll ? dowMatches : true) : (dowMatches || matches(d.getDate(), exp.dom.values))) {
+          fires.push(new Date(d.getTime()));
+        }
+      }
+      d.setMinutes(d.getMinutes() + 1);
+    }
+    return fires;
+  }
+
+  function setStatus(kind, msg) { status.className = "tag " + (kind === "ok" ? "ok" : "err"); status.textContent = msg; }
+
+  function parse() {
+    breakdown.innerHTML = ""; next.innerHTML = "";
+    var raw = exprEl.value.trim().replace(/\s+/g, " ");
+    var parts = raw.split(" ");
+    if (parts.length !== 5) { status.className = "tag err"; status.textContent = "Need 5 fields"; return; }
+
+    var out = {};
+    try {
+      FIELDS.forEach(function (f, i) {
+        out[f.key] = { values: expand(parts[i], f), raw: parts[i] };
+      });
+    } catch (e) { status.className = "tag err"; status.textContent = e.message; return; }
+
+    FIELDS.forEach(function (f) {
+      var row = document.createElement("tr");
+      row.innerHTML = "<td></td><td></td><td></td>";
+      var c = row.children;
+      c[0].textContent = f.names[0] + " (" + f.names[1] + ")";
+      c[1].textContent = out[f.key].raw;
+      c[2].textContent = describe(out[f.key].values, f);
+      breakdown.appendChild(row);
+    });
+
+    var fires = nextFires(out, 10);
+    if (!fires.length) {
+      status.className = "tag err"; status.textContent = "No future fires within a year"; return;
+    }
+    status.className = "tag ok"; status.textContent = fires.length + " upcoming fires";
+    fires.forEach(function (d) {
+      var li = document.createElement("li");
+      li.textContent = d.toString();
+      next.appendChild(li);
+    });
+  }
+
+  Tools.qs("#parse").onclick = parse;
+  exprEl.addEventListener("keydown", function (e) { if (e.key === "Enter") parse(); });
+  parse();
+</script>
+</body>
+</html>

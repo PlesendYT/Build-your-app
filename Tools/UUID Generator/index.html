@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UUID Generator · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>UUID Generator</h1>
+  <p class="sub">Generate UUIDs and short IDs locally using the browser crypto APIs. Nothing leaves your machine.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row">
+        <div>
+          <label for="version">Version</label>
+          <select id="version">
+            <option value="v4" selected>v4 — random</option>
+            <option value="v7">v7 — time-ordered (random fallback if unsupported)</option>
+          </select>
+        </div>
+        <div>
+          <label for="count">How many</label>
+          <input id="count" type="number" value="8" min="1" max="200" style="width:90px" />
+        </div>
+        <div>
+          <label for="format">Format</label>
+          <select id="format">
+            <option value="hyphen">hyphenated</option>
+            <option value="urn">urn:uuid:</option>
+            <option value="hex">no dashes</option>
+            <option value="base36">base36 (short)</option>
+          </select>
+        </div>
+        <label class="row" style="gap:6px;align-self:flex-end"><input id="upper" type="checkbox" /> Uppercase</label>
+        <label class="row" style="gap:6px;align-self:flex-end"><input id="dedupe" type="checkbox" checked /> Avoid duplicates</label>
+        <span class="spacer" style="flex:1"></span>
+        <button id="generate" class="primary">Generate</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">Output</h2>
+      <span class="spacer" style="flex:1"></span>
+      <button id="copyAll" class="ghost">Copy all</button>
+      <button id="download" class="ghost">Download .txt</button>
+    </div>
+    <div class="panel-body">
+      <textarea id="out" class="scroll" style="min-height:240px"></textarea>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "UUID Generator" });
+
+  function uuidV4() {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    var b = new Uint8Array(16); crypto.getRandomValues(b);
+    b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80;
+    var h = []; for (var i = 0; i < 16; i++) h.push(b[i].toString(16).padStart(2, "0"));
+    return h.slice(0, 4).join("") + "-" + h.slice(4, 6).join("") + "-" + h.slice(6, 8).join("") + "-" + h.slice(8, 10).join("") + "-" + h.slice(10, 16).join("");
+  }
+
+  function uuidV7() {
+    // Build a v7 UUID manually: 48-bit unix ms + random.
+    var ms = Date.now();
+    var b = new Uint8Array(16); crypto.getRandomValues(b);
+    b[0] = (ms / 2 ** 40) & 0xff;
+    b[1] = (ms / 2 ** 32) & 0xff;
+    b[2] = (ms / 2 ** 24) & 0xff;
+    b[3] = (ms / 2 ** 16) & 0xff;
+    b[4] = (ms / 2 ** 8) & 0xff;
+    b[5] = ms & 0xff;
+    b[6] = (b[6] & 0x0f) | 0x70; // version 7
+    b[8] = (b[8] & 0x3f) | 0x80;
+    var h = []; for (var i = 0; i < 16; i++) h.push(b[i].toString(16).padStart(2, "0"));
+    return h.slice(0, 4).join("") + "-" + h.slice(4, 6).join("") + "-" + h.slice(6, 8).join("") + "-" + h.slice(8, 10).join("") + "-" + h.slice(10, 16).join("");
+  }
+
+  function toBase36(uuid) {
+    var hex = uuid.replace(/-/g, "");
+    var n = BigInt("0x" + hex);
+    var chars = "0123456789abcdefghijklmnopqrstuvwxyz";
+    var out = "";
+    while (n > 0n) { out = chars[Number(n % 36n)] + out; n = n / 36n; }
+    return out;
+  }
+
+  function generate() {
+    var ver = Tools.qs("#version").value;
+    var n = Math.max(1, Math.min(200, parseInt(Tools.qs("#count").value, 10) || 1));
+    var fmt = Tools.qs("#format").value;
+    var upper = Tools.qs("#upper").checked;
+    var dedupe = Tools.qs("#dedupe").checked;
+    var seen = new Set(), list = [];
+    while (list.length < n) {
+      var id = ver === "v7" ? uuidV7() : uuidV4();
+      if (fmt === "urn") id = "urn:uuid:" + id;
+      else if (fmt === "hex") id = id.replace(/-/g, "");
+      else if (fmt === "base36") id = toBase36(id);
+      if (upper) id = id.toUpperCase();
+      if (dedupe) { if (seen.has(id)) continue; seen.add(id); }
+      list.push(id);
+    }
+    Tools.qs("#out").value = list.join("\n");
+  }
+
+  Tools.qs("#generate").onclick = generate;
+  ["version", "count", "format", "upper", "dedupe"].forEach(function (id) { Tools.qs("#" + id).addEventListener("input", generate); });
+  Tools.qs("#copyAll").onclick = function () { Tools.copyText(Tools.qs("#out").value).then(function (ok) { Tools.toast(ok ? "Copied" : "Copy failed", ok ? "ok" : "err"); }); };
+  Tools.qs("#download").onclick = function () { Tools.download("uuids.txt", Tools.qs("#out").value, "text/plain"); };
+  generate();
+</script>
+</body>
+</html>

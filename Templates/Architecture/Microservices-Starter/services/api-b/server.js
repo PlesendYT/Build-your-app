@@ -1,0 +1,1 @@
+const express = require('express');\nconst app = express();\napp.get('/health', (_, res) => res.json({ service: 'b', ok: true }));\napp.listen(3002);

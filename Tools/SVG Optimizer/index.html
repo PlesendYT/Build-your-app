@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SVG Optimizer · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+<style>
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; min-height: 60vh; }
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; } }
+  .preview { background: repeating-conic-gradient(#d8dde4 0% 25%, #ffffff 0% 50%) 50% / 16px 16px; border: 1px solid var(--border); border-radius: 6px; min-height: 240px; display: flex; align-items: center; justify-content: center; padding: 12px; }
+  @media (prefers-color-scheme: dark) { .preview { background: repeating-conic-gradient(#20262e 0% 25%, #161b22 0% 50%) 50% / 16px 16px; } }
+  .preview svg { max-width: 100%; max-height: 380px; }
+</style>
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>SVG Optimizer</h1>
+  <p class="sub">Strip comments, collapse whitespace, drop unused namespaces, and minify markup. Runs entirely in the browser.</p>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Input</h2>
+        <span class="spacer" style="flex:1"></span>
+        <label class="btn ghost" for="file">Load .svg…</label>
+        <input id="file" type="file" accept=".svg,image/svg+xml" hidden />
+        <button id="sample" class="ghost">Sample</button>
+      </div>
+      <div class="panel-body">
+        <textarea id="in" placeholder="Paste SVG markup"></textarea>
+        <div class="row" style="margin-top:8px">
+          <label class="row" style="gap:6px"><input id="optCollapse" type="checkbox" checked /> Collapse whitespace</label>
+          <label class="row" style="gap:6px"><input id="optStripComments" type="checkbox" checked /> Strip comments</label>
+          <label class="row" style="gap:6px"><input id="optStripMeta" type="checkbox" checked /> Remove metadata</label>
+          <label class="row" style="gap:6px"><input id="optStripNs" type="checkbox" /> Remove unused xmlns</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Output</h2>
+        <span class="spacer" style="flex:1"></span>
+        <button id="copy" class="ghost">Copy</button>
+        <button id="download" class="ghost">Download</button>
+      </div>
+      <div class="panel-body">
+        <textarea id="out" placeholder="Optimized SVG"></textarea>
+        <div class="row" style="margin-top:8px">
+          <span id="meta" class="muted"></span>
+          <span class="spacer" style="flex:1"></span>
+          <span id="status" class="tag">idle</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">Preview</h2></div>
+    <div class="panel-body">
+      <div id="preview" class="preview"></div>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "SVG Optimizer" });
+
+  var inEl = Tools.qs("#in"), outEl = Tools.qs("#out"), preview = Tools.qs("#preview");
+  var meta = Tools.qs("#meta"), status = Tools.qs("#status");
+
+  function setStatus(kind, msg) { status.className = "tag " + (kind === "ok" ? "ok" : kind === "err" ? "err" : ""); status.textContent = msg; }
+
+  function optimize() {
+    var src = inEl.value;
+    if (!src.trim()) { outEl.value = ""; preview.innerHTML = '<span class="muted">Preview appears here.</span>'; meta.textContent = ""; setStatus("ok", ""); return; }
+
+    var cleaned = src;
+    if (Tools.qs("#optStripComments").checked) cleaned = cleaned.replace(/<!--[\s\S]*?-->/g, "");
+    if (Tools.qs("#optStripMeta").checked) cleaned = cleaned.replace(/<metadata[\s\S]*?<\/metadata>/gi, "").replace(/<title[\s\S]*?<\/title>/gi, "").replace(/<desc[\s\S]*?<\/desc>/gi, "");
+    if (Tools.qs("#optCollapse").checked) cleaned = cleaned.replace(/>\s+</g, "><").replace(/\s{2,}/g, " ").trim();
+    if (Tools.qs("#optStripNs").checked) {
+      cleaned = cleaned.replace(/\s+xmlns:[a-zA-Z]+="[^"]*"/g, function (m) {
+        var prefix = m.match(/xmlns:([a-zA-Z]+)/)[1];
+        if (new RegExp("\\b" + prefix + ":").test(cleaned.replace(m, ""))) return m;
+        return "";
+      });
+    }
+
+    outEl.value = cleaned;
+    var before = src.length, after = cleaned.length;
+    meta.textContent = before.toLocaleString() + " → " + after.toLocaleString() + " bytes (" + (100 - Math.round((after / before) * 100)) + "% smaller)";
+    setStatus("ok", "Optimized");
+
+    // Preview (sanitize via DOMParser; only render SVG root).
+    try {
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(cleaned, "image/svg+xml");
+      var svg = doc.documentElement;
+      if (svg.nodeName.toLowerCase() === "svg") {
+        preview.innerHTML = "";
+        preview.appendChild(document.importNode(svg, true));
+      } else {
+        preview.innerHTML = '<span class="tag err">Invalid SVG</span>';
+      }
+    } catch (e) {
+      preview.innerHTML = '<span class="tag err">' + (e.message || String(e)) + '</span>';
+    }
+  }
+
+  Tools.qs("#copy").onclick = function () { Tools.copyText(outEl.value).then(function (ok) { Tools.toast(ok ? "Copied" : "Copy failed", ok ? "ok" : "err"); }); };
+  Tools.qs("#download").onclick = function () { Tools.download("optimized.svg", outEl.value, "image/svg+xml"); };
+  Tools.qs("#file").onchange = function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return;
+    Tools.readFile(f).then(function (t) { inEl.value = String(t); optimize(); });
+  };
+  Tools.qs("#sample").onclick = function () {
+    inEl.value = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">\n  <!-- a friendly circle -->\n  <metadata>made with care</metadata>\n  <circle cx="32" cy="32" r="28" fill="#1f9d8c"/>\n  <text x="32" y="38" font-size="20" text-anchor="middle" fill="white">Hi</text>\n</svg>\n';
+    optimize();
+  };
+
+  ["input", "change"].forEach(function (ev) {
+    inEl.addEventListener(ev, optimize);
+    Tools.qsa("input[type=checkbox]").forEach(function (c) { c.addEventListener(ev, optimize); });
+  });
+  Tools.qs("#sample").click();
+</script>
+</body>
+</html>

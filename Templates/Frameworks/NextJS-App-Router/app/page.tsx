@@ -1,0 +1,1 @@
+export default function Page() { return (<main style={{ padding: "2rem" }}><h1>Next.js App Router</h1><p>Edit app/page.tsx to change this page.</p></main>); }

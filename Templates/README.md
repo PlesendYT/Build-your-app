@@ -1,46 +1,64 @@
 # Template Collection
 
-Eine riesige Sammlung von Projekt-Templates für Spieleentwicklung, App-Entwicklung und mehr.
-A massive collection of project templates for game development, app development, and more.
+A large collection of project templates for games, apps, services, and tooling.
 
-## Struktur / Structure
+## Structure
 
 ```
 Templates/
-├── Engines/         # Game Engine Templates (Unity, Unreal, Godot, UEFN, ...)
-├── Languages/       # Language-Specific Templates (Python, Rust, Go, ...)
-├── Frameworks/      # Web Framework Templates (React, Django, Spring, ...)
-├── Mobile/          # Mobile App Templates (Android, iOS, Flutter, ...)
-├── Web/             # Web Development Templates (HTML, CSS, PWA, ...)
-└── Tools/           # Tool & Utility Templates (Docker, CI/CD, ...)
+├── AI/                  # LLM, embeddings, vector DB, ML
+├── Architecture/        # Clean, Hexagonal, Microservices
+├── Bots/                # Discord, Slack, Matrix, Telegram, Twitch, WhatsApp
+├── Browser-Extensions/  # Chrome MV3, Firefox MV2
+├── CLI/                 # CLI templates per language
+├── Cybersecurity/       # scanners, packet sniffer, vuln lookup, network
+├── Databases/           # Postgres, MongoDB, SQLite, Redis, ORM
+├── Desktop/             # Electron, Tauri, WPF, JavaFX, etc.
+├── DevOps/              # Docker, Compose, GitHub Actions, Ansible
+├── Embedded/            # Arduino, ESP32, STM32, etc.
+├── Engines/             # Unity, Unreal, Godot, SDL2
+├── Frameworks/          # Next, Nuxt, SvelteKit, Django REST, etc.
+├── Languages/           # Per-language starter projects
+├── Minecraft/           # Plugins, mods, datapacks
+├── Mobile/              # Android, iOS, Flutter, React Native, MAUI
+├── Tools/               # .gitignore packs, Makefile snippets
+├── Web/                 # HTML, CSS frameworks, PWA, JAMStack
+└── Web-Apps/            # Self-contained Express/EJS web apps
 ```
 
-## Verwendung / Usage
+## Usage
 
-Jedes Template enthält eine README.md mit:
-- Beschreibung (DE + EN)
-- Features
-- Verwendung / How to use
-- Technologie-Stack
-- Erweiterungsmöglichkeiten
+Each template has its own `README.md` with:
 
-Each template includes a README.md with:
 - Description (DE + EN)
 - Features
-- How to use
+- How to use (commands)
 - Tech stack
-- Extension possibilities
+- Extension ideas
 
-## Übersicht / Overview
+## Categories
 
-| Bereich / Area | Anzahl Templates / Templates | Enthaltene Sprachen / Languages |
+| Area | Templates | Highlights |
 |---|---|---|
-| Engines | ~200+ | C#, C++, Verse, GDScript, GML, Python, JS, Lua, Rust |
-| Languages | ~160+ | Python, JS, TS, Rust, C++, C, C#, Java, Kotlin, Go, Lua, Dart, Swift, Zig, Nim |
-| Frameworks | ~54 | React, Vue, Angular, Django, Flask, Spring, Laravel, ASP.NET, NextJS, NuxtJS, SvelteKit, Rails, Phoenix |
-| Mobile | ~25 | Kotlin, Swift, Dart, JS, C# |
-| Web | ~4 | HTML, CSS, JS |
+| AI | 7 | LocalLLM, HuggingFace, VectorDB |
+| Architecture | 8 | Clean, Hexagonal, Microservices |
+| Bots | 4 | Discord (py + js), Slack, Matrix |
+| Browser-Extensions | 4 | Chrome MV3, Firefox MV2 |
+| CLI | 6 | Click, Commander, Cobra, Clap |
+| Cybersecurity | 8 | Scanners, Packet sniffer, Vuln lookup |
+| Databases | 7 | Postgres, Mongo, SQLite, Redis |
+| Desktop | 9 | Electron, Tauri, WPF, JavaFX |
+| DevOps | 9 | Compose stacks, GH Actions, Ansible |
+| Embedded | 7 | Arduino, ESP32, STM32 |
+| Engines | 13 | Unity, Unreal, Godot, SDL2 |
+| Frameworks | 14 | Next, Nuxt, SvelteKit, Django REST |
+| Languages | 15 | Python, JS, TS, Go, Rust, Java, Kotlin, Swift, C#, Dart, Lua, C, C++, Zig, Nim |
+| Minecraft | 4 | Plugins, mods, datapacks |
+| Mobile | 5 | Android, iOS, Flutter, React Native, MAUI |
+| Tools | 2 | .gitignore pack, Makefile snippets |
+| Web | 5 | Astro, PWA, Hugo, CSS framework, static HTML |
+| Web-Apps | 10 | Self-contained Express apps |
 
-## Lizenz / License
+## License
 
-MIT - Feel free to use, modify, and share.
+MIT — feel free to use, modify, and share.

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Diff Viewer · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+<style>
+  .diff { font-family: var(--mono); font-size: 12.5px; line-height: 1.5; white-space: pre; }
+  .diff .row { display: grid; grid-template-columns: 4ch 4ch 1fr; padding: 1px 8px; gap: 6px; }
+  .diff .row.add { background: rgba(45, 164, 78, 0.12); }
+  .diff .row.del { background: rgba(207, 79, 79, 0.12); }
+  .diff .row.ctx { color: var(--muted); }
+  .diff .row .gutter { color: var(--muted); user-select: none; text-align: right; }
+  .diff .marker { width: 1.4ch; display: inline-block; }
+  .diff .row.add .marker { color: var(--accent-2); }
+  .diff .row.del .marker { color: var(--danger); }
+</style>
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>Diff Viewer</h1>
+  <p class="sub">Side-by-side or unified diff of two text blocks. Useful for code reviews, config edits, or quick comparisons.</p>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Before</h2>
+        <span class="spacer" style="flex:1"></span>
+        <label class="btn ghost" for="fileA">Load file…</label>
+        <input id="fileA" type="file" hidden />
+      </div>
+      <div class="panel-body"><textarea id="a" placeholder="Original text"></textarea></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">After</h2>
+        <span class="spacer" style="flex:1"></span>
+        <label class="btn ghost" for="fileB">Load file…</label>
+        <input id="fileB" type="file" hidden />
+      </div>
+      <div class="panel-body"><textarea id="b" placeholder="Revised text"></textarea></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-body">
+      <div class="row">
+        <label for="mode" style="margin:0">View</label>
+        <select id="mode">
+          <option value="unified" selected>Unified</option>
+          <option value="split">Split (side-by-side)</option>
+        </select>
+        <label class="row" style="gap:6px"><input id="ignoreWs" type="checkbox" /> Ignore whitespace</label>
+        <label class="row" style="gap:6px"><input id="ignoreCase" type="checkbox" /> Ignore case</label>
+        <span class="spacer" style="flex:1"></span>
+        <span id="addTag" class="tag ok">+0</span>
+        <span id="delTag" class="tag err">-0</span>
+        <button id="swap" class="ghost">Swap</button>
+        <button id="clear" class="ghost">Clear</button>
+        <button id="copy" class="ghost">Copy patch</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">Result</h2></div>
+    <div class="panel-body">
+      <div id="diff" class="diff scroll" style="max-height:70vh;border:1px solid var(--border);border-radius:6px;background:var(--panel-2);padding:8px"></div>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "Diff Viewer" });
+
+  var aEl = Tools.qs("#a"), bEl = Tools.qs("#b");
+  var mode = Tools.qs("#mode"), ignoreWs = Tools.qs("#ignoreWs"), ignoreCase = Tools.qs("#ignoreCase");
+  var addTag = Tools.qs("#addTag"), delTag = Tools.qs("#delTag");
+  var diff = Tools.qs("#diff");
+
+  // Myers-ish LCS implementation kept small and dependency-free.
+  function lcs(a, b) {
+    var n = a.length, m = b.length;
+    if (!n || !m) return { n: n, m: m, dp: null };
+    var dp = [];
+    for (var i = 0; i <= n; i++) { dp.push(new Int32Array(m + 1)); }
+    for (i = n - 1; i >= 0; i--) {
+      for (var j = m - 1; j >= 0; j--) {
+        if (a[i] === b[j]) dp[i][j] = dp[i + 1][j + 1] + 1;
+        else dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+      }
+    }
+    return { n: n, m: m, dp: dp };
+  }
+  function buildHunks(a, b, ctx) {
+    var info = lcs(a, b);
+    var i = 0, j = 0, ops = [];
+    if (!info.dp) {
+      while (i < info.n) { ops.push({ op: "del", a: a[i++] }); }
+      while (j < info.m) { ops.push({ op: "add", b: b[j++] }); }
+      return ops;
+    }
+    while (i < info.n && j < info.m) {
+      if (a[i] === b[j]) { ops.push({ op: "ctx", a: a[i], b: b[j] }); i++; j++; }
+      else if (info.dp[i + 1][j] >= info.dp[i][j + 1]) { ops.push({ op: "del", a: a[i++] }); }
+      else { ops.push({ op: "add", b: b[j++] }); }
+    }
+    while (i < info.n) ops.push({ op: "del", a: a[i++] });
+    while (j < info.m) ops.push({ op: "add", b: b[j++] });
+    return collapse(ops, ctx);
+  }
+  function collapse(ops, ctx) {
+    var out = [];
+    for (var k = 0; k < ops.length; k++) {
+      if (ops[k].op !== "ctx") {
+        var start = Math.max(0, k - ctx);
+        var end = Math.min(ops.length, k + ctx + 1);
+        var seen = false;
+        for (var s = start; s < end; s++) {
+          if (out.indexOf(ops[s]) === -1) { out.push(ops[s]); seen = true; }
+          if (ops[s].op !== "ctx") seen = true;
+        }
+        k = end - 1;
+      } else {
+        out.push(ops[k]);
+      }
+    }
+    return out;
+  }
+
+  function normalize(s) {
+    var t = s.replace(/\r\n?/g, "\n");
+    if (ignoreWs.checked) t = t.replace(/[ \t]+/g, " ");
+    if (ignoreCase.checked) t = t.toLowerCase();
+    return t;
+  }
+
+  function escape(s) { return Tools.escapeHtml(s); }
+
+  function render() {
+    var a = normalize(aEl.value).split("\n");
+    var b = normalize(bEl.value).split("\n");
+    var ops = buildHunks(a, b, 3);
+    var adds = 0, dels = 0;
+    ops.forEach(function (o) { if (o.op === "add") adds++; else if (o.op === "del") dels++; });
+    addTag.textContent = "+" + adds;
+    delTag.textContent = "-" + dels;
+
+    var la = aEl.value.replace(/\r\n?/g, "\n").split("\n");
+    var lb = bEl.value.replace(/\r\n?/g, "\n").split("\n");
+
+    if (mode.value === "split") {
+      var grid = '<div class="grid cols-2"><div class="diff" id="left"></div><div class="diff" id="right"></div></div>';
+      diff.innerHTML = grid;
+      var left = diff.querySelector("#left"), right = diff.querySelector("#right");
+      var ia = 0, ib = 0;
+      ops.forEach(function (o) {
+        var leftLine = "", rightLine = "", klass = "";
+        if (o.op === "ctx") {
+          leftLine = rowHtml(++ia, "&nbsp;", escape(la[ia - 1]), "ctx");
+          rightLine = rowHtml(++ib, "&nbsp;", escape(lb[ib - 1]), "ctx");
+        } else if (o.op === "del") {
+          ia++;
+          leftLine = rowHtml(ia, "-", escape(la[ia - 1]), "del");
+          rightLine = rowHtml("", "&nbsp;", "", "ctx");
+        } else if (o.op === "add") {
+          ib++;
+          leftLine = rowHtml("", "&nbsp;", "", "ctx");
+          rightLine = rowHtml(ib, "+", escape(lb[ib - 1]), "add");
+        }
+        left.innerHTML += leftLine;
+        right.innerHTML += rightLine;
+      });
+    } else {
+      var html = "";
+      var ia2 = 0, ib2 = 0;
+      ops.forEach(function (o) {
+        if (o.op === "ctx") {
+          ia2++; ib2++;
+          html += rowHtml(ia2, "&nbsp;", escape(la[ia2 - 1]), "ctx");
+        } else if (o.op === "del") {
+          ia2++;
+          html += rowHtml(ia2, "-", escape(la[ia2 - 1]), "del");
+        } else if (o.op === "add") {
+          ib2++;
+          html += '<div class="row add"><span class="gutter">' + ib2 + '</span><span class="gutter">&nbsp;</span><span><span class="marker">+</span>' + escape(lb[ib2 - 1]) + '</span></div>';
+        }
+      });
+      diff.innerHTML = html || '<span class="muted">No differences.</span>';
+    }
+
+    // Build a copyable patch
+    var patch = "";
+    var ia3 = 0, ib3 = 0;
+    ops.forEach(function (o) {
+      if (o.op === "ctx") { ia3++; ib3++; }
+      else if (o.op === "del") { ia3++; patch += "-" + la[ia3 - 1] + "\n"; }
+      else if (o.op === "add") { ib3++; patch += "+" + lb[ib3 - 1] + "\n"; }
+    });
+    diff.dataset.patch = patch;
+  }
+
+  function rowHtml(lineNo, marker, text, klass) {
+    return '<div class="row ' + klass + '"><span class="gutter">' + (lineNo || "&nbsp;") + '</span><span class="gutter">' + (marker === "&nbsp;" ? "&nbsp;" : marker) + '</span><span>' + (marker && marker !== "&nbsp;" ? '<span class="marker">' + marker + '</span>' : "") + text + '</span></div>';
+  }
+
+  Tools.qs("#swap").onclick = function () { var t = aEl.value; aEl.value = bEl.value; bEl.value = t; render(); };
+  Tools.qs("#clear").onclick = function () { aEl.value = ""; bEl.value = ""; render(); };
+  Tools.qs("#copy").onclick = function () { Tools.copyText(diff.dataset.patch || "").then(function (ok) { Tools.toast(ok ? "Patch copied" : "Copy failed", ok ? "ok" : "err"); }); };
+  ["input", "change"].forEach(function (ev) {
+    aEl.addEventListener(ev, render); bEl.addEventListener(ev, render);
+    mode.addEventListener(ev, render); ignoreWs.addEventListener(ev, render); ignoreCase.addEventListener(ev, render);
+  });
+  Tools.qs("#fileA").onchange = function (e) { Tools.readFile(e.target.files[0]).then(function (t) { aEl.value = t; render(); }); };
+  Tools.qs("#fileB").onchange = function (e) { Tools.readFile(e.target.files[0]).then(function (t) { bEl.value = t; render(); }); };
+
+  aEl.value = "function greet(name) {\n  return 'Hi ' + name;\n}\n";
+  bEl.value = "function greet(name, excited) {\n  const suffix = excited ? '!' : '';\n  return 'Hi ' + name + suffix;\n}\n";
+  render();
+</script>
+</body>
+</html>

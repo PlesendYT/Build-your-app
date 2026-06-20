@@ -1,0 +1,20 @@
+services:
+  web:
+    build: ./web
+    ports: ["8080:80"]
+    depends_on: [db, cache]
+    restart: unless-stopped
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: demo
+      POSTGRES_USER: demo
+      POSTGRES_DB: demo
+    volumes: ["dbdata:/var/lib/postgresql/data"]
+    restart: unless-stopped
+  cache:
+    image: redis:7-alpine
+    restart: unless-stopped
+
+volumes:
+  dbdata:

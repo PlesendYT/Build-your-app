@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JWT Decoder · Build-your-app</title>
+<link rel="stylesheet" href="../_shared/tools.css" />
+</head>
+<body>
+<header id="toolbar-host"></header>
+<main class="shell">
+  <h1>JWT Decoder</h1>
+  <p class="sub">Decode the header and payload of a JSON Web Token. Signatures are not verified here &mdash; never paste tokens you do not own.</p>
+
+  <section class="panel">
+    <div class="panel-body">
+      <label for="token">Token</label>
+      <textarea id="token" placeholder="eyJhbGciOi... (paste a JWT)"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button id="decode" class="primary">Decode</button>
+        <button id="clear" class="ghost">Clear</button>
+        <button id="sample" class="ghost">Sample</button>
+        <span class="spacer" style="flex:1"></span>
+        <span id="status" class="tag">idle</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid cols-2">
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Header</h2></div>
+      <div class="panel-body"><pre id="header" class="scroll"></pre></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><h2 style="margin:0">Payload</h2></div>
+      <div class="panel-body"><pre id="payload" class="scroll"></pre></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-header"><h2 style="margin:0">Signature</h2>
+      <span class="spacer" style="flex:1"></span>
+      <span id="algTag" class="tag">—</span>
+    </div>
+    <div class="panel-body">
+      <pre id="signature" class="scroll"></pre>
+    </div>
+  </section>
+
+  <section class="panel" id="claimsPanel" style="display:none">
+    <div class="panel-header"><h2 style="margin:0">Common claims</h2></div>
+    <div class="panel-body">
+      <table id="claims">
+        <thead><tr><th>Claim</th><th>Value</th><th>Notes</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<script src="../_shared/app.js"></script>
+<script>
+  Tools.mountToolbar("#toolbar-host", { tool: "JWT Decoder" });
+
+  var tokenEl = Tools.qs("#token"), status = Tools.qs("#status");
+  var headerEl = Tools.qs("#header"), payloadEl = Tools.qs("#payload"), sigEl = Tools.qs("#signature");
+  var claimsPanel = Tools.qs("#claimsPanel"), claimsBody = Tools.qs("#claims").querySelector("tbody"), algTag = Tools.qs("#algTag");
+
+  function b64urlDecode(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    try {
+      var bin = atob(s);
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    } catch (e) {
+      // Fallback for non-UTF8 payloads (rare for JWTs).
+      return atob(s);
+    }
+  }
+  function b64urlEncode(s) {
+    var bytes = new TextEncoder().encode(s);
+    var bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/=+$/, "").replace(/\+/g, "-").replace(/\//g, "_");
+  }
+
+  function setStatus(kind, msg) {
+    status.className = "tag " + (kind === "ok" ? "ok" : kind === "err" ? "err" : "");
+    status.textContent = msg;
+  }
+
+  function decode() {
+    var raw = tokenEl.value.trim();
+    headerEl.textContent = ""; payloadEl.textContent = ""; sigEl.textContent = "";
+    claimsPanel.style.display = "none"; claimsBody.innerHTML = "";
+    algTag.className = "tag"; algTag.textContent = "—";
+
+    if (!raw) { setStatus("err", "Empty token"); return; }
+    var parts = raw.split(".");
+    if (parts.length !== 3) { setStatus("err", "Expected 3 dot-separated parts, got " + parts.length); return; }
+
+    var hStr, pStr;
+    try { hStr = b64urlDecode(parts[0]); }
+    catch (e) { setStatus("err", "Header is not valid base64url"); return; }
+    try { pStr = b64urlDecode(parts[1]); }
+    catch (e) { setStatus("err", "Payload is not valid base64url"); return; }
+
+    var header, payload;
+    try { header = JSON.parse(hStr); }
+    catch (e) { setStatus("err", "Header is not valid JSON"); return; }
+    try { payload = JSON.parse(pStr); }
+    catch (e) { setStatus("err", "Payload is not valid JSON"); return; }
+
+    headerEl.textContent = JSON.stringify(header, null, 2);
+    payloadEl.textContent = JSON.stringify(payload, null, 2);
+    sigEl.textContent = parts[2] || "(empty)";
+    setStatus("ok", "Decoded");
+
+    algTag.textContent = (header.alg || "?") + " · " + (header.typ || "JWT");
+    algTag.className = "tag " + (header.alg && /^none$/i.test(header.alg) ? "err" : "ok");
+
+    // Standard claim notes
+    var notes = {
+      iss: "Issuer", sub: "Subject", aud: "Audience", exp: "Expiration", nbf: "Not before", iat: "Issued at", jti: "JWT ID"
+    };
+    var rows = [];
+    Object.keys(payload).forEach(function (k) {
+      var v = payload[k];
+      var row = { key: k, value: v, note: notes[k] || "" };
+      if (k === "exp" || k === "nbf" || k === "iat") {
+        var num = typeof v === "number" ? v : parseInt(v, 10);
+        if (!isNaN(num)) {
+          var d = new Date(num * 1000);
+          var note = k === "exp" ? (d.getTime() < Date.now() ? "Expired" : "Valid until " + d.toISOString())
+                      : k === "nbf" ? (d.getTime() > Date.now() ? "Not yet valid" : "Valid from " + d.toISOString())
+                      : "Issued " + d.toISOString();
+          row.note = (notes[k] || "") + " — " + note;
+        }
+      }
+      rows.push(row);
+    });
+    if (rows.length) {
+      claimsPanel.style.display = "";
+      rows.forEach(function (r) {
+        var tr = document.createElement("tr");
+        tr.innerHTML = "<td></td><td></td><td></td>";
+        var c = tr.children;
+        c[0].textContent = r.key;
+        c[1].textContent = typeof r.value === "object" ? JSON.stringify(r.value) : String(r.value);
+        c[2].textContent = r.note;
+        claimsBody.appendChild(tr);
+      });
+    }
+  }
+
+  Tools.qs("#decode").onclick = decode;
+  Tools.qs("#clear").onclick = function () { tokenEl.value = ""; decode(); };
+  Tools.qs("#sample").onclick = function () {
+    var h = b64urlEncode(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+    var p = b64urlEncode(JSON.stringify({
+      iss: "build-your-app", sub: "user-42", aud: "tools", iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 3600, role: "admin", scope: ["read", "write"]
+    }));
+    tokenEl.value = h + "." + p + ".YQbQ8xrkR0m2zJ9w2j0bE5tT2g5aS3sK4nG7uX1yZ8w";
+    decode();
+  };
+
+  Tools.qs("#sample").click();
+</script>
+</body>
+</html>

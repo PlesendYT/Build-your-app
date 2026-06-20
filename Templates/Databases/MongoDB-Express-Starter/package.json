@@ -1,0 +1,9 @@
+{
+  "name": "mongo-express-starter",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.19.0",
+    "mongoose": "^8.4.0"
+  }
+}

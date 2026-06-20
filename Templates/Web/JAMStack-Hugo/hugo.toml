@@ -1,0 +1,5 @@
+baseURL = "https://example.com/"
+languageCode = "en-us"
+title = "Hugo JAMStack"
+[params]
+  description = "Static site built with Hugo"

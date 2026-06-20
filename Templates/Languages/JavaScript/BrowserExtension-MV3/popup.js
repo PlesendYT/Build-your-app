@@ -1,0 +1,1 @@
+document.getElementById('ping').addEventListener('click', () => alert('pong'));

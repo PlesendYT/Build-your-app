@@ -1,0 +1,1 @@
+FROM node:20-alpine`nWORKDIR /app`nCOPY package.json ./`nRUN npm install --omit=dev`nCOPY server.js ./`nEXPOSE 3002`nCMD ["node", "server.js"]

@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "MV3 Template",
+  "version": "1.0.0",
+  "description": "Minimal Manifest V3 extension",
+  "action": { "default_popup": "popup.html", "default_title": "MV3 Template" },
+  "background": { "service_worker": "background.js" },
+  "permissions": ["storage", "activeTab"],
+  "content_scripts": [{ "matches": ["<all_urls>"], "js": ["content.js"], "run_at": "document_idle" }]
+}

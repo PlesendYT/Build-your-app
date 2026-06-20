@@ -1,0 +1,1 @@
+module example.com/cli-cobra\n\ngo 1.22\n\nrequire github.com/spf13/cobra v1.8.0

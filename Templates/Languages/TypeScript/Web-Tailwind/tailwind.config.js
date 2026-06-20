@@ -1,0 +1,1 @@
+/** @type {import('tailwindcss').Config} */\nexport default { content: ['./index.html', './src/**/*.{ts,html}'], theme: { extend: {} }, plugins: [] };

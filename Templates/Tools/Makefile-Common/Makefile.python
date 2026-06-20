@@ -1,0 +1,17 @@
+PY ?= python3
+VENV ?= .venv
+ACT := $(VENV)/bin/activate
+
+.PHONY: help venv install run test clean
+help:
+	@echo "Targets: venv install run test clean"
+venv:
+	test -d $(VENV) || $(PY) -m venv $(VENV)
+install: venv
+	. $(ACT) && pip install -r requirements.txt
+run:
+	. $(ACT) && $(PY) main.py
+test:
+	. $(ACT) && pytest
+clean:
+	rm -rf $(VENV) .pytest_cache __pycache__

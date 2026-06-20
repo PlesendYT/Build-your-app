@@ -1,0 +1,1 @@
+export function greet(name: string): string { return Hello, !; }\nexport const VERSION = '0.1.0';
