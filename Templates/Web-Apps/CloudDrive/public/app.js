@@ -1,3 +1,10 @@
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Cloud Drive client - folder navigation, upload, and file sharing
 let currentFolderId = null;
 const itemList = document.getElementById('item-list');
@@ -19,8 +26,8 @@ function renderBreadcrumb(crumbs) {
   breadcrumb.innerHTML = crumbs.map((c, i) => {
     const isLast = i === crumbs.length - 1;
     return isLast
-      ? `<span>${c.name}</span>`
-      : `<a href="#" data-id="${c.id}">${c.name}</a> <span>/</span> `;
+      ? `<span>${escapeHtml(c.name)}</span>`
+      : `<a href="#" data-id="${c.id}">${escapeHtml(c.name)}</a> <span>/</span> `;
   }).join('');
   breadcrumb.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', (e) => {
@@ -37,7 +44,7 @@ function renderItems(folders, files) {
   folders.forEach(f => {
     const div = document.createElement('div');
     div.className = 'folder-item';
-    div.innerHTML = `<span><span class="icon">📁</span>${f.name}</span><span class="meta">Folder</span>`;
+    div.innerHTML = `<span><span class="icon">📁</span>${escapeHtml(f.name)}</span><span class="meta">Folder</span>`;
     div.addEventListener('click', () => navigateTo(f.id));
     itemList.appendChild(div);
   });
@@ -46,7 +53,7 @@ function renderItems(folders, files) {
     const div = document.createElement('div');
     div.className = 'file-item';
     div.innerHTML = `
-      <span><span class="icon">📄</span>${f.originalName} <span class="meta">(${(f.size / 1024).toFixed(1)} KB)</span></span>
+      <span><span class="icon">📄</span>${escapeHtml(f.originalName)} <span class="meta">(${(f.size / 1024).toFixed(1)} KB)</span></span>
       <div class="actions-right">
         <a href="/api/drive/download/${f.shareCode}">Download</a>
         <a href="#" class="share-link" data-id="${f.id}">Share</a>

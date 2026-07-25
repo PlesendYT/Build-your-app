@@ -1,3 +1,10 @@
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Renderer logic for the App Launcher
 // Manages app grid rendering, search filtering, and CRUD operations
 
@@ -17,8 +24,8 @@ function renderApps() {
   const filtered = apps.filter(a => a.name.toLowerCase().includes(query));
   grid.innerHTML = filtered.map(a => `
     <div class="app-card">
-      <h3>${a.name}</h3>
-      <p>${a.path}</p>
+      <h3>${escapeHtml(a.name)}</h3>
+      <p>${escapeHtml(a.path)}</p>
       <button class="remove-btn" onclick="removeApp(${a.id})">Remove</button>
     </div>
   `).join('');

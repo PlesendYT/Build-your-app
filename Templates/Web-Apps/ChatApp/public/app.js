@@ -29,11 +29,18 @@ socket.on('message', (msg) => {
   displayMessage(msg);
 });
 
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Add a message to the UI
 function displayMessage(msg) {
   const div = document.createElement('div');
   div.className = 'message';
-  div.innerHTML = `<strong>${msg.username}</strong> <span class="time">${new Date(msg.timestamp).toLocaleTimeString()}</span><p>${msg.message}</p>`;
+  div.innerHTML = `<strong>${escapeHtml(msg.username)}</strong> <span class="time">${new Date(msg.timestamp).toLocaleTimeString()}</span><p>${escapeHtml(msg.message)}</p>`;
   messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }

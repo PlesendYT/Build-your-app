@@ -6,9 +6,19 @@ const editor = document.getElementById('editor');
 const preview = document.getElementById('preview');
 const fileName = document.getElementById('fileName');
 
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Simple markdown-to-HTML converter supporting headings, bold, lists, and code
 function renderMarkdown(text) {
-  return text
+  // First escape HTML to prevent XSS
+  let escaped = escapeHtml(text);
+  // Then convert markdown syntax
+  return escaped
     .replace(/^### (.+)/gm, '<h3>$1</h3>')
     .replace(/^## (.+)/gm, '<h2>$1</h2>')
     .replace(/^# (.+)/gm, '<h1>$1</h1>')

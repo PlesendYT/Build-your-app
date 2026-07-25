@@ -5,9 +5,9 @@ const Redis = require("ioredis");
 
 // Create a Redis client with authentication
 const redis = new Redis({
-  host: "localhost",
-  port: 6379,
-  password: "secret",
+  host: process.env.REDIS_HOST || "localhost",
+  port: process.env.REDIS_PORT || 6379,
+  password: process.env.REDIS_PASSWORD || "",
 });
 
 /** Simulate fetching data from a slow database */

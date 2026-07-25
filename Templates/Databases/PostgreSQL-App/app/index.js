@@ -5,11 +5,11 @@ const { Pool } = require("pg");
 
 // Create a connection pool to the PostgreSQL database
 const pool = new Pool({
-  user: "admin",
-  host: "localhost",
-  database: "myapp",
-  password: "secret",
-  port: 5432,
+  user: process.env.PGUSER || "admin",
+  host: process.env.PGHOST || "localhost",
+  database: process.env.PGDATABASE || "myapp",
+  password: process.env.PGPASSWORD || "secret",
+  port: process.env.PGPORT || 5432,
 });
 
 async function main() {

@@ -1,3 +1,10 @@
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Renderer logic for the Note Taking App
 // Manages folder selection, note CRUD, search, and the editor pane
 
@@ -15,7 +22,7 @@ async function refresh() {
 // Render the folder list and highlight the selected folder
 function renderFolders() {
   document.getElementById('folderList').innerHTML = data.folders.map(f =>
-    `<li class="${f === currentFolder ? 'active' : ''}" onclick="selectFolder('${f}')">${f}</li>`
+    `<li class="${f === currentFolder ? 'active' : ''}" onclick="selectFolder('${escapeHtml(f)}')">${escapeHtml(f)}</li>`
   ).join('');
 }
 
@@ -44,7 +51,7 @@ function renderNotes() {
     n.folder === currentFolder && (n.title.toLowerCase().includes(query) || n.content.toLowerCase().includes(query))
   );
   document.getElementById('notesList').innerHTML = filtered.map(n =>
-    `<li class="${n.id === currentNoteId ? 'active' : ''}" onclick="selectNote(${n.id})">${n.title}</li>`
+    `<li class="${n.id === currentNoteId ? 'active' : ''}" onclick="selectNote(${n.id})">${escapeHtml(n.title)}</li>`
   ).join('');
 }
 

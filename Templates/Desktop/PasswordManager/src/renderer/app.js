@@ -1,3 +1,10 @@
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Renderer process for the Password Manager UI
 // Handles unlock flow, credential CRUD operations, and DOM updates
 
@@ -25,8 +32,8 @@ async function renderPasswords() {
   const entries = await window.passwordAPI.getPasswords();
   passwordList.innerHTML = entries.map(e => `
     <tr>
-      <td>${e.site}</td>
-      <td>${e.username}</td>
+      <td>${escapeHtml(e.site)}</td>
+      <td>${escapeHtml(e.username)}</td>
       <td><button class="danger" onclick="deleteEntry(${e.id})">Delete</button></td>
     </tr>
   `).join('');

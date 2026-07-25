@@ -1,3 +1,10 @@
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // File hosting client - handle file uploads and list files
 const dropZone = document.getElementById('drop-zone');
 const fileInput = document.getElementById('file-input');
@@ -45,7 +52,7 @@ async function loadFiles() {
   fileList.innerHTML = files.map(f => `
     <div class="file-item">
       <div class="info">
-        <div class="name">${f.originalName}</div>
+        <div class="name">${escapeHtml(f.originalName)}</div>
         <div class="meta">${(f.size / 1024).toFixed(1)} KB | ${f.downloads} downloads</div>
       </div>
       <div class="actions">

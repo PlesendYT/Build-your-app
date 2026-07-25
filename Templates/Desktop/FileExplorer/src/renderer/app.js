@@ -1,3 +1,10 @@
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Renderer logic for the File Explorer
 // Handles directory navigation, file listing, and operations
 
@@ -15,7 +22,7 @@ async function loadDirectory(dirPath) {
   entriesEl.innerHTML = entries.map(e => `
     <tr>
       <td class="${e.isDirectory ? 'dir' : 'file'}" onclick="${e.isDirectory ? `navigate('${e.path.replace(/'/g, "\\'")}')` : ''}">
-        ${e.isDirectory ? '📁 ' : '📄 '}${e.name}
+        ${e.isDirectory ? '📁 ' : '📄 '}${escapeHtml(e.name)}
       </td>
       <td>${e.isDirectory ? '-' : (e.size / 1024).toFixed(1) + ' KB'}</td>
       <td><button class="danger" onclick="deleteEntry('${e.path.replace(/'/g, "\\'")}')">Delete</button></td>

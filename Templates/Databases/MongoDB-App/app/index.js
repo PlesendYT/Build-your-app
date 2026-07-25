@@ -16,7 +16,7 @@ const User = mongoose.model("User", userSchema);
 
 async function main() {
   // Connect to MongoDB running in Docker
-  await mongoose.connect("mongodb://admin:secret@localhost:27017/myapp");
+  await mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/myapp");
   console.log("Connected to MongoDB");
 
   // CREATE: Insert a new user document

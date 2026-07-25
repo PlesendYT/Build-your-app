@@ -1,6 +1,6 @@
 // Auth middleware - JWT verification and route protection
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'auth-starter-jwt-secret';
+const JWT_SECRET = process.env.JWT_SECRET || require('crypto').randomBytes(32).toString('hex');
 
 // Middleware to require a valid JWT for protected routes
 function requireAuth(req, res, next) {

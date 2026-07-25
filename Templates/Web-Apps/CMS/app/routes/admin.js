@@ -5,8 +5,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Content = require('../models/Content');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'cms-secret';
-const ADMIN_USER = { username: 'admin', password: bcrypt.hashSync('admin123', 10) };
+const JWT_SECRET = process.env.JWT_SECRET || require('crypto').randomBytes(32).toString('hex');
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || bcrypt.hashSync('admin123', 10);
 
 // Auth middleware for admin routes
 function requireAuth(req, res, next) {
@@ -28,7 +29,7 @@ router.get('/login', (req, res) => {
 // Handle admin login
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  if (username !== ADMIN_USER.username || !bcrypt.compareSync(password, ADMIN_USER.password)) {
+  if (username !== ADMIN_USERNAME || !bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)) {
     return res.render('admin/login', { error: 'Invalid credentials' });
   }
   const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1d' });

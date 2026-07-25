@@ -1,3 +1,10 @@
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Renderer logic for the Music Player
 // Manages audio playback, library browsing, search, and playlist queue
 
@@ -30,7 +37,7 @@ function renderLibrary() {
   const query = document.getElementById('searchInput').value.toLowerCase();
   const filtered = tracks.filter(t => t.name.toLowerCase().includes(query));
   library.innerHTML = filtered.map((t, i) =>
-    `<li class="${t === tracks[currentIndex] ? 'playing' : ''}" onclick="loadTrack(${tracks.indexOf(t)})">${t.name}</li>`
+    `<li class="${t === tracks[currentIndex] ? 'playing' : ''}" onclick="loadTrack(${tracks.indexOf(t)})">${escapeHtml(t.name)}</li>`
   ).join('');
 }
 

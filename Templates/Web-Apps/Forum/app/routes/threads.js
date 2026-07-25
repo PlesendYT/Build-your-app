@@ -5,7 +5,7 @@ const Thread = require('../models/Thread');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'forum-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || require('crypto').randomBytes(32).toString('hex');
 
 // Middleware to extract user from JWT cookie if present
 function loadUser(req, res, next) {

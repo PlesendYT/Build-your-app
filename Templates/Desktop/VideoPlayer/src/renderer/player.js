@@ -1,3 +1,10 @@
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Renderer logic for the Video Player
 // Handles video playback, drag-drop, playlist management, and controls
 
@@ -41,7 +48,7 @@ function addToPlaylist(files) {
 // Render the playlist as a clickable list
 function renderPlaylist() {
   playlist.innerHTML = playlistItems.map((item, i) =>
-    `<li class="${i === currentIndex ? 'active' : ''}" onclick="loadVideo(playlistItems[${i}].path, playlistItems[${i}].name); currentIndex = ${i};">${item.name}</li>`
+    `<li class="${i === currentIndex ? 'active' : ''}" onclick="loadVideo(playlistItems[${i}].path, playlistItems[${i}].name); currentIndex = ${i};">${escapeHtml(item.name)}</li>`
   ).join('');
 }
 

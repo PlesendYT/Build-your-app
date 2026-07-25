@@ -1,11 +1,8 @@
 // Twitch IRC bot configuration
-// Get OAuth token at https://twitchapps.com/tmi
+// Set these values in environment variables or a .env file (never commit real credentials)
 
 module.exports = {
-  // Your Twitch username
-  username: "YOUR_TWITCH_USERNAME",
-  // OAuth token from twitchapps.com/tmi (include the "oauth:" prefix)
-  password: "oauth:YOUR_OAUTH_TOKEN",
-  // Channel(s) to join (lowercase, without #)
-  channels: ["target_channel"],
+  username: process.env.TWITCH_USERNAME || "YOUR_TWITCH_USERNAME",
+  password: process.env.TWITCH_OAUTH_TOKEN || "oauth:YOUR_OAUTH_TOKEN",
+  channels: [process.env.TWITCH_CHANNEL || "target_channel"],
 };

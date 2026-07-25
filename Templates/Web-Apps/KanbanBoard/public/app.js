@@ -24,6 +24,13 @@ async function loadBoard() {
   renderBoard(data);
 }
 
+// Escape HTML to prevent XSS attacks
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Render all columns and their cards
 function renderBoard(board) {
   const container = document.getElementById('board-container');
@@ -32,7 +39,7 @@ function renderBoard(board) {
     const colEl = document.createElement('div');
     colEl.className = 'column';
     colEl.dataset.columnId = col.id;
-    colEl.innerHTML = `<div class="column-header"><span>${col.title}</span><span></span></div>`;
+    colEl.innerHTML = `<div class="column-header"><span>${escapeHtml(col.title)}</span><span></span></div>`;
     // Render each card in the column
     col.cards.forEach(card => {
       colEl.appendChild(createCardElement(card));
@@ -53,7 +60,7 @@ function createCardElement(card) {
   div.className = 'card';
   div.draggable = true;
   div.dataset.cardId = card.id;
-  div.innerHTML = `<span>${card.title}</span><span class="delete-btn" data-id="${card.id}">✕</span>`;
+  div.innerHTML = `<span>${escapeHtml(card.title)}</span><span class="delete-btn" data-id="${card.id}">✕</span>`;
   // Drag event handlers for reordering
   div.addEventListener('dragstart', () => div.classList.add('dragging'));
   div.addEventListener('dragend', () => div.classList.remove('dragging'));

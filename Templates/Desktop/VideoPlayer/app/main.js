@@ -19,7 +19,8 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
-      webSecurity: false
+      nodeIntegration: false,
+      webSecurity: false // Required for file:// protocol video playback
     }
   });
   win.loadFile('../src/renderer/index.html');
